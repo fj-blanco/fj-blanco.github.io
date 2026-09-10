@@ -1,0 +1,274 @@
+:root {
+  color-scheme: light;
+  --background: #f9f8f3;
+  --text: #252721;
+  --muted: #696d64;
+  --link: #2d6250;
+  --line: #dadcd4;
+  --soft: #efefe9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 18px;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  line-height: 1.72;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #dce8df;
+}
+
+main {
+  width: min(100% - 2rem, 42rem);
+  margin: 0 auto;
+  padding: 3.5rem 0 6rem;
+}
+
+.home {
+  padding-top: clamp(5rem, 13vh, 8rem);
+}
+
+h1 {
+  max-width: 38rem;
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.15rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+p {
+  margin: 1.35rem 0;
+}
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+a:hover {
+  text-decoration-thickness: 0.13em;
+}
+
+a:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+.affiliation {
+  margin: 1.25rem 0 0.2rem;
+  font-size: 1.15rem;
+}
+
+.areas,
+.byline,
+.note-list time {
+  color: var(--muted);
+}
+
+.areas {
+  margin-top: 0;
+}
+
+.home-nav,
+.profile-links,
+.software-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.25rem;
+}
+
+.home-nav {
+  margin-top: 2rem;
+}
+
+.home-section {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.home-section h2 {
+  margin: 0;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.profile-links,
+.software-links {
+  margin-top: 0.55rem;
+}
+
+.profile-header {
+  margin-bottom: 2.5rem;
+}
+
+.profile-page > p {
+  max-width: 39rem;
+}
+
+.profile-contact {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 3.75rem;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.76rem;
+  letter-spacing: 0.035em;
+}
+
+.breadcrumb a {
+  color: inherit;
+}
+
+.page-header,
+.article-header {
+  margin-bottom: 3rem;
+}
+
+.article-header {
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.article-header .byline {
+  margin: 1.25rem 0 1.5rem;
+  line-height: 1.55;
+}
+
+.article-header .byline strong {
+  color: var(--text);
+}
+
+.repo-link {
+  display: inline-block;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--link);
+  border-radius: 0.15rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.repo-link:hover {
+  background: var(--soft);
+}
+
+code,
+pre,
+table {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+code {
+  font-size: 0.84em;
+  overflow-wrap: anywhere;
+}
+
+.table-wrap {
+  margin: 2rem 0;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+th,
+td {
+  padding: 0.7rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+thead th {
+  border-top: 1px solid var(--line);
+  font-weight: 700;
+}
+
+tbody th {
+  white-space: nowrap;
+}
+
+td code {
+  white-space: nowrap;
+}
+
+.architecture {
+  margin: 2rem 0;
+}
+
+.architecture pre {
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+  border-left: 2px solid var(--link);
+  background: var(--soft);
+  font-size: 0.78rem;
+  line-height: 1.8;
+}
+
+.note-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.note-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.note-list time {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 36rem) {
+  html {
+    font-size: 17px;
+  }
+
+  main {
+    width: min(100% - 1.5rem, 43rem);
+    padding-top: 2rem;
+  }
+
+  .home {
+    padding-top: 5rem;
+  }
+
+  .breadcrumb {
+    margin-bottom: 2.5rem;
+  }
+}

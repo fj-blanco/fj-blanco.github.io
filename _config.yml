@@ -1,0 +1,21 @@
+title: Javier Blanco-Romero
+description: Research notes on cryptography, networking, distributed systems, and IoT.
+url: "https://fj-blanco.github.io"
+baseurl: ""
+markdown: kramdown
+theme: null
+force_polling: true
+
+defaults:
+  - scope:
+      path: "notes"
+      type: pages
+    values:
+      layout: default
+      section: notes
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor

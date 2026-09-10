@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ page.description | default: site.description | escape }}">
+  <title>{% if page.title == site.title %}{{ site.title }}{% else %}{{ page.title }} — {{ site.title }}{% endif %}</title>
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+</head>
+<body>
+  <main{% if page.main_class %} class="{{ page.main_class }}"{% endif %}>
+    {% if page.section %}
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      {% if page.section == "notes" %}
+      {% unless page.url == "/notes/" %}
+      <span aria-hidden="true">/</span>
+      <a href="{{ '/notes/' | relative_url }}">Notes</a>
+      {% endunless %}
+      {% endif %}
+    </nav>
+    {% endif %}
+    {{ content }}
+  </main>
+</body>
+</html>
