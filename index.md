@@ -14,7 +14,7 @@ main_class: home
   <a href="/about/">About</a>
   <a href="https://pervasive.gast.it.uc3m.es/members/francisco-javier-blanco-romero/">Research</a>
   <a href="https://scholar.google.com/citations?user=YkhPZxkAAAAJ">Publications</a>
-  <a href="/notes/home-assistant-pqc/">Notes</a>
+  <a href="/notes/">Notes</a>
 </nav>
 
 <section class="home-section software" aria-labelledby="software-heading">
