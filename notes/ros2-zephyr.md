@@ -1,43 +1,62 @@
 ---
+
 title: Native ROS 2 on Zephyr
 description: Running the normal ROS 2 C stack directly on an ESP32-S3 using Zephyr and Cyclone DDS.
 date: 2026-09-16
 permalink: /notes/ros2-zephyr/
----
+------------------------------
 
 <header class="article-header">
+
   <h1>Native ROS 2 on Zephyr</h1>
+
   <p class="byline">
-    <strong>Javier Blanco-Romero</strong><br>
-    Researcher at Universidad Carlos III de Madrid<br>
-    <time datetime="2026-09-16">16 September 2026</time>
+
+```
+<strong>Javier Blanco-Romero</strong><br>
+
+Researcher at Universidad Carlos III de Madrid<br>
+
+<time datetime="2026-09-16">16 September 2026</time>
+```
+
   </p>
-  <a class="repo-link" href="https://github.com/servoagents/ros2_zephyr">Code on GitHub <span aria-hidden="true">→</span></a>
+
+<a class="repo-link" href="https://github.com/servoagents/ros2_zephyr">Code on GitHub <span aria-hidden="true">→</span></a>
+
 </header>
 
 I have been spending some time exploring different ways of running ROS 2 on embedded devices.
 
 Most of it started around [micro-ROS](https://github.com/micro-ROS) and Zephyr. I have also been experimenting with the Zephyr integration of [rmw_zenoh_pico](https://github.com/esol-community/rmw_zenoh_pico), including an ESP32 example using `rclc` over Zenoh-Pico. That work is being discussed in [rmw_zenoh_pico issue #8](https://github.com/esol-community/rmw_zenoh_pico/issues/8).
 
-A fair amount of this has been done by button-pushing GPT-5.6 Sol High and then checking what actually happens on the board.
+In the usual Micro XRCE-DDS setup, the microcontroller runs a lightweight XRCE client and connects to a Micro XRCE-DDS Agent on a more capable machine. The Agent bridges that client into the DDS/ROS 2 network.
 
-While working on the Zenoh-Pico path, I also wanted to try a more direct setup. Instead of XRCE-DDS or Zenoh-Pico underneath ROS 2, I wanted to see whether a reasonably capable microcontroller could run a normal DDS implementation itself.
+While working on those paths I also wanted to try direct DDS. If the microcontroller has enough RAM and networking support, it should in principle be possible for it to participate directly in DDS instead of putting an XRCE Agent or another protocol hop in between.
 
-The first step was getting [Eclipse Cyclone DDS](https://github.com/eclipse-cyclonedds/cyclonedds) working cleanly on current Zephyr versions. I have been testing the ongoing [Cyclone DDS Zephyr PR #2461](https://github.com/eclipse-cyclonedds/cyclonedds/pull/2461) and shared a couple of small follow-up fixes from the ESP32-S3 work.
+I started with [Eclipse Cyclone DDS](https://github.com/eclipse-cyclonedds/cyclonedds). Cyclone already had some Zephyr support, but using it on current Zephyr versions and on an ESP32-S3 exposed a few portability and resource issues. I have been testing the ongoing [Cyclone DDS Zephyr PR #2461](https://github.com/eclipse-cyclonedds/cyclonedds/pull/2461) and shared a couple of small follow-up fixes from this work.
 
 Once direct DDS was working, I started putting the ROS layer on top.
 
-The result is [ros2_zephyr](https://github.com/servoagents/ros2_zephyr), together with a small C RMW, [rmw_cyclonedds_c](https://github.com/servoagents/rmw_cyclonedds_c).
+The project is split into two repositories with different roles. A fair amount of this was done by button-pushing GPT-5.6 Sol High and then checking what actually happens on the board.
 
-The current path is:
+[ros2_zephyr](https://github.com/servoagents/ros2_zephyr) is the Zephyr integration and build layer. It pins the ROS 2, Zephyr and Cyclone DDS versions used by the project, cross-compiles the selected ROS packages into static firmware libraries, exposes the Zephyr CMake and Kconfig integration, and keeps the platform-specific compatibility code and hardware samples in one place.
+
+[rmw_cyclonedds_c](https://github.com/servoagents/rmw_cyclonedds_c) is the middleware repository. It contains two ROS packages. `rmw_cyclonedds_c` implements the standard RMW C API and maps ROS publishers, subscriptions, waits and QoS onto Cyclone DDS. `rosidl_typesupport_cyclonedds_c` generates the DDS type descriptions and the field-by-field conversions used by ROS C message types.
+
+I did not try to port `rmw_cyclonedds_cpp` directly. It is useful as a reference for ROS/DDS behavior, but its architecture is aimed at a full ROS 2 environment, with dynamic type construction, introspection and a broader runtime setup. For the embedded version I wanted a smaller profile with static linking, generated C type support, explicit resource ownership, fixed-size messages and no runtime RMW plugin loading.
+
+The application side still uses normal ROS 2 C APIs.
 
 ```text
 rclc -> rcl -> rmw_cyclonedds_c -> Cyclone DDS -> Zephyr
 ```
 
-There is no Micro XRCE-DDS Agent in between. The ESP32-S3 is a normal DDS/RTPS participant.
+Keeping the middleware separate from the Zephyr integration also makes it possible to test the ROS/DDS behavior on Linux first, before adding RTOS, cross-compilation and hardware-specific variables.
 
-I tested the complete stack over Wi-Fi against an unmodified ROS 2 Lyrical machine using `rmw_cyclonedds_cpp`. The board can publish directly to a desktop ROS 2 subscriber and subscribe directly to a desktop publisher.
+I tested the complete stack over Wi-Fi against an unmodified ROS 2 Lyrical machine using `rmw_cyclonedds_cpp`. The ESP32-S3 can publish directly to a desktop ROS 2 subscriber and subscribe directly to a desktop publisher.
+
+There is no Micro XRCE-DDS Agent in between. The board is a normal DDS/RTPS participant.
 
 The current profile is still small. It uses fixed-size messages and best-effort QoS. I tested `std_msgs/msg/UInt32` at 1, 10 and 100 Hz in both directions.
 
@@ -45,13 +64,9 @@ The complete subscriber firmware uses 1,016,132 bytes of flash. A direct Cyclone
 
 The subscriber uses about 258 kB of linked DRAM. The publisher is slightly smaller in flash, at about 940 kB, with almost the same DRAM use.
 
-Most of the debugging ended up being about resource sizing.
+Most of the debugging ended up being about resource sizing. At one point the board discovered the desktop participant but stopped during endpoint discovery. Packet captures initially pointed towards retransmission or Wi-Fi. JTAG tracing later showed that one of Cyclone's builtin discovery workers was using more stack than we had reserved. During discovery it used a little over 6 kB and crossed into the adjacent thread stack, corrupting saved execution state. Moving the Cyclone workers to 8 kB fixed that problem.
 
-At one point the board discovered the desktop participant but stopped during endpoint discovery. Packet captures initially pointed towards retransmission or Wi-Fi. JTAG tracing eventually showed that one of Cyclone's builtin discovery workers was using more stack than we had reserved.
-
-During discovery it used a little over 6 kB and crossed into the adjacent thread stack, corrupting saved execution state. Moving the Cyclone workers to 8 kB fixed that problem.
-
-That exposed another limit. Zephyr's POSIX mutex pool was too small for the number of DDS objects created while processing the endpoints advertised by a normal ROS 2 peer. The direct DDS experiment worked with 192 mutex slots. The complete ROS node needed 256.
+That exposed another limit. The configured Zephyr POSIX mutex pool was also too small for the number of DDS objects created while processing the endpoints advertised by a normal ROS 2 peer. The direct DDS experiment worked with 192 mutex slots, while the complete ROS node needed 256. Increasing the pool removed that limit.
 
 With those resource limits adjusted, normal DDS discovery worked. No RTPS change and no Wi-Fi driver workaround were needed.
 
@@ -69,13 +84,13 @@ At this point I have three embedded ROS 2 paths that I want to keep exploring wi
 * [rmw_zenoh_pico](https://github.com/esol-community/rmw_zenoh_pico), which I have been testing on Zephyr and ESP32.
 * Native DDS through `rmw_cyclonedds_c`.
 
-I do not expect one of them to be better everywhere. They make different trade-offs in memory, discovery, routing and deployment.
+They make different trade-offs in memory, discovery, routing and deployment. The useful part is that the application can stay on the same ROS 2 C API.
 
 The next step for `rmw_cyclonedds_c` is Reliable QoS, followed by Transient Local and enough graph support for normal ROS 2 tools to see the embedded node. Later I would like to run the same application through XRCE-DDS, Zenoh-Pico and Cyclone DDS on the same hardware and compare memory use, discovery traffic, latency, jitter, throughput and energy.
 
 For now, the result is fairly narrow. A normal ROS 2 C node can run on an ESP32-S3 under Zephyr and exchange messages directly with stock ROS 2 over Cyclone DDS, without an Agent.
 
-All the integration code is available at **[servoagents/ros2_zephyr](https://github.com/servoagents/ros2_zephyr)** and the RMW implementation at **[servoagents/rmw_cyclonedds_c](https://github.com/servoagents/rmw_cyclonedds_c)**.
+All the integration code is available at **[servoagents/ros2_zephyr](https://github.com/servoagents/ros2_zephyr)** and the middleware implementation at **[servoagents/rmw_cyclonedds_c](https://github.com/servoagents/rmw_cyclonedds_c)**.
 
 ## Technical appendix
 
