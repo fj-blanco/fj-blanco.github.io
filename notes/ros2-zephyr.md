@@ -1,29 +1,18 @@
 ---
-
 title: Native ROS 2 on Zephyr
 description: Running the normal ROS 2 C stack directly on an ESP32-S3 using Zephyr and Cyclone DDS.
 date: 2026-09-16
 permalink: /notes/ros2-zephyr/
-------------------------------
+---
 
 <header class="article-header">
-
   <h1>Native ROS 2 on Zephyr</h1>
-
   <p class="byline">
-
-```
-<strong>Javier Blanco-Romero</strong><br>
-
-Researcher at Universidad Carlos III de Madrid<br>
-
-<time datetime="2026-09-16">16 September 2026</time>
-```
-
+    <strong>Javier Blanco-Romero</strong><br>
+    Researcher at Universidad Carlos III de Madrid<br>
+    <time datetime="2026-09-16">16 September 2026</time>
   </p>
-
-<a class="repo-link" href="https://github.com/servoagents/ros2_zephyr">Code on GitHub <span aria-hidden="true">→</span></a>
-
+  <a class="repo-link" href="https://github.com/servoagents/ros2_zephyr">Code on GitHub <span aria-hidden="true">→</span></a>
 </header>
 
 I have been spending some time exploring different ways of running ROS 2 on embedded devices.
