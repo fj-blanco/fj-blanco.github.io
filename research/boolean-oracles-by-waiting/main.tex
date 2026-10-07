@@ -1,0 +1,453 @@
+\documentclass[11pt,a4paper]{article}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,xcolor,booktabs,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,arrows,positioning,calc,automata}
+\usepackage[numbers,sort&compress]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{1pt}
+\usepackage{url}
+\usepackage[colorlinks=true,allcolors=blue!45!black]{hyperref}
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\id}{\openone}
+\hypersetup{pdftitle={Boolean Oracles by Waiting},pdfauthor={Javier Blanco-Romero}}
+\title{Boolean Oracles by Waiting}
+\author{Javier Blanco-Romero\\\small Department of Telematic Engineering, Universidad Carlos III de Madrid,\\Legan\'es, Madrid, Spain}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Can a single fixed Hamiltonian compute every Boolean function if the only thing we choose is when to stop it? It can. We build such a device from the input qubits, one output qubit, and one auxiliary spin coupled to each of them with a strength that is a power of two times a common scale. The auxiliary precesses in a field set by the logical state, and since a precession frequency is the length of a field vector, a square root, the frequencies of different logical states are rationally independent. Waiting then sweeps their phases over a torus and eventually reaches any pattern of signs. Without the auxiliary, a parity constraint forbids this unless some interaction involves every input. The price of this frugal interface is set by information. A stopping time resolved within a budget of action carries about the logarithm of that budget in bits, while a truth table holds exponentially many bits. For any fixed Hamiltonian, almost every Boolean function therefore needs doubly exponential action, even with heralded retries of arbitrarily rare success, whereas a sequence of two-body controls needs only single exponential action.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+A Hamiltonian computer is a very simple machine. Prepare an input, let it evolve, read the answer~\cite{Feynman1986}. Usually the program lives in the Hamiltonian, or in a sequence of controls applied to it. Here we play a minimalist game. Freeze the couplings once and for all, freeze the preparation and the readout, and keep a single knob, the moment at which we stop the clock. Can waiting alone select every computation? And if it can, what does it cost?
+
+The computations we have in mind are Boolean oracles. For a Boolean function $f:\{0,1\}^n\to\{0,1\}$, the oracle acts as
+\begin{equation}
+ U_f\ket{x}_{\mathrm{in}}\ket{\beta}_b
+ =\ket{x}_{\mathrm{in}}\ket{\beta\oplus f(x)}_b,
+ \label{eq:oracle}
+\end{equation}
+where $x$ is the input string, $\beta$ the value of the output qubit $b$, and $\oplus$ addition modulo two. It flips the output exactly when $f(x)=1$, so a device that produces every oracle evaluates every Boolean function. If the Hamiltonian may depend on $f$ the problem is trivial, since $U_f^2=\id$ and $H_f=(\pi\hbar/2T)(\id-U_f)$ implements the oracle in any time $T>0$~\cite{Hadfield2021}, with all the difficulty written into couplings that span the whole register. We ask instead for one Hamiltonian, the same for every $f$, with the function encoded in time alone.
+
+The mechanism is recurrence. Clock hands turning at rationally independent rates never return together to their starting positions, but given time they pass arbitrarily close to any configuration we prescribe. This is Kronecker's theorem~\cite{Weyl1916}, already used for universal quantum state transfer~\cite{Cameron2014}. If each logical basis state carries its own clock hand, waiting can bring all hands to the phases a chosen oracle requires. Other programmable schemes select the computation through an encoded program state~\cite{Bohdanowicz2017}, controlled ancillas~\cite{Proctor2013,Proctor2014}, added local controls~\cite{Junge2026} or a circuit-dependent impurity~\cite{Pham2026}; here nothing is added.
+
+The register cannot do it alone, because few-qubit interactions tie the phases of different basis states together and some oracles violate the tie. One auxiliary spin breaks it, since a precession frequency is the length of a field vector and square roots obey no rational relations. Waiting is then universal, and its price is measured by the action, the spectral width of the Hamiltonian times the evolution time in units of $\hbar$. A stopping time chosen within action $R$ takes only about $R$ distinguishable values and carries about $\log R$ bits, while a truth table on $n$ inputs carries $2^n$. For any fixed Hamiltonian, all but a vanishing fraction of Boolean functions therefore need an expected action
+\begin{equation*}
+ C>\delta\bigl(2^{2^{n-1}}-1\bigr),
+\end{equation*}
+where $\delta$ is the required bias of the output bit. The count follows Shannon's counting of circuits~\cite{Shannon1949} and later counts of reachable quantum evolutions~\cite{Poulin2011,Caro2022}, and we make it survive heralding, in which failed runs are repeated and success may be arbitrarily rare~\cite{Combes2015}. With many real control parameters the count is far less restrictive, and standard two-body synthesis reaches every oracle with single exponential action~\cite{Barenco1995,Nie2026}.
+
+Section~\ref{sec:task} recasts an oracle as a pattern of phases, Sec.~\ref{sec:aux} shows why the register alone cannot produce every pattern, and Sec.~\ref{sec:existence} builds the device with one auxiliary spin. Section~\ref{sec:density} estimates how long one must wait, Sec.~\ref{sec:capacity} proves the counting bound, and Sec.~\ref{sec:precision} discusses where the program is stored and how precisely it must be read.
+
+\section{What an oracle asks for}
+\label{sec:task}
+
+\subsection{Registers and conventions}
+
+The device has $n$ input qubits labeled $i=1,\ldots,n$, one output qubit $b$, and one auxiliary qubit $a$. The inputs and the output form the logical register of $m=n+1$ qubits, and the full Hilbert space is
+\begin{equation}
+ \mathcal H=\mathcal H_{\mathrm{in}}\otimes\mathcal H_b\otimes\mathcal H_a,
+ \qquad \dim\mathcal H=2^{n+2},
+\end{equation}
+with $\mathcal H_{\mathrm{in}}=(\mathbb C^2)^{\otimes n}$ and $\mathcal H_b=\mathcal H_a=\mathbb C^2$.
+
+We write operators without hats. $X,Y,Z$ are the Pauli operators, a subscript names the qubit they act on, and identity factors elsewhere are implicit; an identity with a subscript, such as $\id_a$, acts on the named register. The computational states $\ket0,\ket1$ are the eigenstates of $Z$, and $\ket\pm=(\ket0\pm\ket1)/\sqrt2$ are the eigenstates of $X$. The norm $\norm{\cdot}$ is the operator norm for operators and the Euclidean norm for vectors. A Pauli string is a tensor product of Pauli operators and identities, and its weight is the number of nonidentity factors. A Hamiltonian is $k$-local if it is a sum of terms of weight at most $k$. This bounds the interaction order, not the spatial range.
+
+The resource we count is action. For a Hermitian $H$ with largest and smallest eigenvalues $\lambda_{\max}$ and $\lambda_{\min}$, the spectral width is
+\begin{equation}
+ W(H)=\lambda_{\max}(H)-\lambda_{\min}(H),
+\end{equation}
+and evolution for a time $t\ge0$ has dimensionless action $tW(H)/\hbar$. The action is the largest relative phase the evolution can build up between two energy eigenstates, so it counts the turns of the device's internal clock. Width, rather than the largest eigenvalue, is the natural energy scale because adding a multiple of the identity to $H$ changes only a global phase.
+
+\subsection{The oracle is a pattern of signs}
+
+The output qubit looks complicated in Eq.~\eqref{eq:oracle}, because the oracle flips it. In the $X$ basis it becomes simple. Flipping the output does nothing to $\ket+_b$ and multiplies $\ket-_b$ by $-1$, so
+\begin{equation*}
+\begin{aligned}
+ U_f\ket{x}_{\mathrm{in}}\ket+_b&=\ket{x}_{\mathrm{in}}\ket+_b,\\
+ U_f\ket{x}_{\mathrm{in}}\ket-_b&=(-1)^{f(x)}\ket{x}_{\mathrm{in}}\ket-_b ,
+\end{aligned}
+\end{equation*}
+the phase kickback familiar from query algorithms. It is convenient to label the basis $\ket{x}_{\mathrm{in}}\ket{\chi_y}_b$ by $m$ bits $z=(x,y)\in\{0,1\}^m$, with $\ket{\chi_0}=\ket+$ and $\ket{\chi_1}=\ket-$. In this basis the oracle is diagonal,
+\begin{equation}
+ U_f\ket{z}=(-1)^{g(z)}\ket{z},\qquad g(x,y)=y\,f(x).
+ \label{eq:signs}
+\end{equation}
+Implementing an oracle therefore means producing the right pattern of $2^m$ signs, and the phase function $g$ is just the truth table of $f$ placed on the $y=1$ half of the basis.
+
+Now suppose a fixed Hamiltonian is diagonal in the same basis, with energies $E_z$. After a time $t$, basis state $z$ has acquired the phase $e^{-iE_zt/\hbar}$. Up to a global phase, we need $E_zt/\hbar$ to be close to $\pi g(z)$ modulo $2\pi$ for every $z$ at once. Each basis state is a clock hand turning at angular velocity $E_z/\hbar$, and waiting is the search for a moment at which all hands point to the prescribed positions. Kronecker's theorem says such moments exist when the velocities are rationally independent. The design problem is to obtain $2^m$ independent clock rates from couplings that involve only a few qubits each.
+
+\section{Why the register alone is not enough}
+\label{sec:aux}
+
+The first idea is to make the logical register its own clock, with a diagonal Hamiltonian such as $\sum_ic_iZ_i+\sum_{i<j}c_{ij}Z_iZ_j$. Its energies are polynomials of degree two in the signs $(-1)^{z_i}$, and such polynomials are far from generic. Their alternating sum over the cube $\sum_z(-1)^{|z|}E_z$, which picks out the coefficient of the product of all signs, vanishes. This single linear relation among the clock rates already rules out some sign patterns. The point holds for every Hamiltonian on the register, diagonal or not.
+
+\begin{proposition}[Locality threshold]
+\label{prop:aux}
+Let $n\ge2$. A fixed $k$-local Hamiltonian on the $n+1$ logical qubits, with no auxiliary, can approximate every oracle up to a global phase by varying its evolution time if and only if $k\ge n$. In particular, for $n\ge3$ two-body interactions need at least one auxiliary qubit, and Sec.~\ref{sec:existence} shows that one suffices.
+\end{proposition}
+
+\begin{proof}
+\emph{Eigenvectors are forced.} An evolution generated by $H$ commutes with $H$, and so does any limit of such evolutions. If waiting approaches $U_f$ up to a phase, then $U_f$ commutes with $H$. Apply this to the point function that equals one at a single input string $x$. Its oracle is a reflection,
+\begin{equation}
+ U_f=\id-2\ket{x,-}\bra{x,-},\qquad
+ \ket{x,-}=\ket{x}_{\mathrm{in}}\ket-_b,
+\end{equation}
+and commuting with it makes $\ket{x,-}$ an eigenvector of $H$, with eigenvalue $h_x=\bra{x,-}H\ket{x,-}$. If every oracle is reachable, this holds for all $2^n$ strings.
+
+\emph{Locality ties the eigenvalues together.} Expand $H$ in Pauli strings. An input factor $X_i$ or $Y_i$ has zero expectation in $\ket{x}$, while $Z_i$ contributes the sign $(-1)^{x_i}$. A $k$-local $H$ therefore makes $h_x$ a polynomial of degree at most $k$ in the signs. For $k<n$ the coefficient of the product of all $n$ signs vanishes,
+\begin{equation}
+ \sum_{x\in\{0,1\}^n}(-1)^{|x|}h_x=0,
+\end{equation}
+where $|x|=\sum_i x_i$ is the Hamming weight. Exponentiating, the phases obey a conservation law,
+\begin{equation}
+ \prod_{x\in\{0,1\}^n}\bigl(e^{-ith_x/\hbar}\bigr)^{(-1)^{|x|}}=1
+ \label{eq:parity}
+\end{equation}
+at every time. The identity survives limits, and a global phase cancels from it because $\sum_x(-1)^{|x|}=0$. A point oracle puts exactly one minus sign on these eigenvectors, so its alternating product is $-1$, and no $k$-local Hamiltonian with $k<n$ reaches it.
+
+\emph{Order $n$ suffices.} An $n$-local Hamiltonian can give the output-minus sector rationally independent energies while making the output-plus sector return to the identity at a common sequence of times. Kronecker's theorem then sets the minus-sector signs independently. Appendix~\ref{app:no-auxiliary} gives the construction.
+\end{proof}
+
+The obstruction is a parity of phases. To escape it with two-body couplings, the clock rates must depend on the logical bits in a way that no low-degree polynomial can mimic. That requires a nonlinear element.
+
+\section{One auxiliary spin}
+\label{sec:existence}
+
+\subsection{Why a precessing spin}
+
+A spin in a magnetic field is the most economical nonlinear element at hand. The field can depend linearly on whatever sets it, but the spin precesses at an angular frequency proportional to the length of the field vector, and length is a square root. If a two-body coupling makes the field on an auxiliary spin depend on the logical state, each logical state gets its own precession frequency, and these frequencies are square roots of different numbers. Square roots of integers with distinct squarefree parts are linearly independent over the rationals~\cite{Besicovitch1940}. This is exactly the independence Kronecker's theorem needs.
+
+To build this, encode each logical qubit by a projector onto its ``one'' state,
+\begin{equation}
+ P_i=\tfrac12(\id-Z_i)\quad (i=1,\ldots,n),\qquad
+ P_m=\tfrac12(\id-X_b).
+\end{equation}
+For an input, $P_i$ projects onto $\ket1_i$. For the output, $P_m$ projects onto $\ket-_b$, which is why the output enters in the $X$ basis; the index $i=m$ in a sum over projectors refers to the output. With the integer $M=4^m$ and an energy scale $J>0$, the Hamiltonian is
+\begin{equation}
+ H_n=J\Bigl(X_a+\frac{Z_a}{M}\sum_{i=1}^{m}2^{i-1}P_i\Bigr).
+ \label{eq:hamiltonian}
+\end{equation}
+The auxiliary feels a fixed transverse field $JX_a$ and couples to logical qubit $i$ through $Z_aP_i$ with strength $2^{i-1}J/M$, a star of two-body interactions (Fig.~\ref{fig:device}).
+
+Each choice in Eq.~\eqref{eq:hamiltonian} has a reason. In the basis state $z$ the projectors take the values $z_i\in\{0,1\}$, so the weighted sum is the integer $s_z=\sum_i2^{i-1}z_i$, the binary number formed by the bits of $z$. The powers of two make sure that different basis states give different fields. The auxiliary then sees the static field $J(X+s_zZ/M)$ and precesses at angular frequency $2Jr_z/\hbar$, with
+\begin{equation*}
+ r_z=\sqrt{1+(s_z/M)^2}=\frac{\sqrt{M^2+s_z^2}}{M}.
+\end{equation*}
+The large denominator $M=4^m$ does two jobs. It keeps every $M^2+s_z^2$ inside a short interval, which is what forces their squarefree parts to be distinct, as we will see. And it keeps all frequencies within a factor $1+4^{-m}$ of $J$, so the spectral width stays close to $2J$ however large the register grows; any large cost will have to come from time. Finally, the couplings of $H_n/J$ are dyadic rationals, integers divided by powers of two, with $O(n^2)$ binary digits in total. They depend on $n$ but neither on $f$ nor on the accuracy we will ask for, so no truth table can hide in their digits. Rescaling $J$ only rescales all times.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth, every node/.style={font=\footnotesize},
+  qb/.style={circle, draw=ink, line width=0.6pt, fill=white, minimum size=6.2mm, inner sep=0pt},
+  aux/.style={circle, draw=accent!85!black, line width=0.8pt, fill=accent!14, minimum size=7.4mm, inner sep=0pt},
+  link/.style={line width=0.55pt, draw=ink!70}]
+  \definecolor{ink}{HTML}{2B2B29}\definecolor{accent}{HTML}{2A78D6}\definecolor{warm}{HTML}{EB6834}
+  \node[aux] (a) at (0,0) {$a$};
+  \node[qb] (x1) at (-2.45, 1.55) {$x_1$};
+  \node[qb] (x2) at (-2.45, 0.55) {$x_2$};
+  \node[ink!70] at (-2.45,-0.3) {$\vdots$};
+  \node[qb] (xn) at (-2.45,-1.25) {$x_n$};
+  \node[qb, draw=warm!85!black, fill=warm!12] (b) at (2.05, 0) {$b$};
+  \draw[link] (a) -- node[above, sloped, pos=0.62, inner sep=2pt, yshift=1.5pt] {\scriptsize$J/M$} (x1);
+  \draw[link] (a) -- node[above, sloped, pos=0.62, inner sep=2pt, yshift=1.5pt] {\scriptsize$2J/M$} (x2);
+  \draw[link] (a) -- node[below, sloped, pos=0.62, inner sep=2pt, yshift=-1.5pt] {\scriptsize$2^{n-1}J/M$} (xn);
+  \draw[link] (a) -- node[above, pos=0.5, inner sep=2.5pt] {\scriptsize$2^{n}J/M$} (b);
+  \node[accent!80!black, align=center] at (0,0.95) {$JX_a$};
+  \node[ink!80, anchor=west] at (-2.0,-1.9) {\scriptsize couplings $Z_aP_i$};
+
+  \begin{scope}[shift={(3.55,0.85)}]
+    \draw[ink, line width=0.6pt] (0,0) circle (0.36);
+    \draw[ink, line width=0.7pt] (0,0) -- (0,0.26);
+    \draw[ink, line width=0.7pt] (0,0) -- (0.18,-0.08);
+    \fill[ink] (0,0) circle (0.9pt);
+  \end{scope}
+  \node[align=center, ink] at (3.55,-0.15) {stop at\\ $t=2\pi q\hbar/J$};
+  \node[align=center, ink!75] at (3.55,-0.95) {$q$ encodes $f$};
+\end{tikzpicture}
+\caption{The fixed oracle device on $n+2$ qubits. Input node $i$ carries the bit $x_i$, $b$ is the output qubit, and $a$ is the auxiliary. A field $JX_a$ drives the auxiliary, which couples to each logical qubit through $Z_aP_i$ with strength $2^{i-1}J/M$. The couplings never change; the Boolean function is selected by the integer $q$ that fixes the stopping time.}
+\label{fig:device}
+\end{figure}
+
+\subsection{Universality by waiting}
+
+\begin{theorem}[Universality by waiting]
+\label{thm:existence}
+The Hamiltonian $H_n$ has spectral width $2J<W(H_n)<2J(1+4^{-m})$. For every Boolean function $f$ and every tolerance $\eta>0$ there is a positive integer $q$ such that, at $t=2\pi q\hbar/J$,
+\begin{equation}
+ \norm{e^{-itH_n/\hbar}-U_f\otimes\id_a}<\eta .
+ \label{eq:full}
+\end{equation}
+The approximation is in operator norm, hence uniform over all initial states, including states entangled with a noninteracting reference, and the auxiliary is returned unchanged to the same accuracy.
+\end{theorem}
+
+\begin{proof}
+\emph{Split into sectors.} The projectors $P_i$ are diagonal in the basis $\ket z$ of Sec.~\ref{sec:task}. With $z$ fixed, only the auxiliary evolves, under the $2\times2$ block
+\begin{equation}
+ H_z=J\Bigl(X+\frac{s_z}{M}Z\Bigr),\qquad H_z^2=J^2r_z^2\id,
+ \label{eq:block}
+\end{equation}
+with $X,Z$ acting on the auxiliary. The block has eigenvalues $\pm Jr_z$, so $W(H_n)=2J\max_zr_z$, and $s_z<2^m$ gives $1<\max_zr_z<1+4^{-m}$.
+
+\emph{When is a block a pure sign?} Because $H_z^2\propto\id$, the evolution of a block is a rotation of the auxiliary,
+\begin{equation*}
+ e^{-itH_z/\hbar}=\cos(Jr_zt/\hbar)\id-i\sin(Jr_zt/\hbar)\frac{H_z}{Jr_z}.
+\end{equation*}
+Whenever the rotation angle is a multiple of $\pi$, the sine vanishes and the block is $\pm\id$, independently of the rotation axis and of the auxiliary's state. This is why the auxiliary comes back unchanged. We sample at $t=2\pi q\hbar/J$ with integer $q$. Then the sector $z=0$, which has $s_0=0$ and $r_0=1$, returns exactly to the identity, matching $g(0)=0$ in Eq.~\eqref{eq:signs}. For the other sectors the distance to the target sign is
+\begin{equation}
+ \norm{e^{-2\pi iqH_z/J}-(-1)^{g(z)}\id}=2\bigl|\sin(e_z/2)\bigr| ,
+ \label{eq:blockerror}
+\end{equation}
+where $e_z\in(-\pi,\pi]$ is $2\pi qr_z-\pi g(z)$ reduced modulo $2\pi$. We need every $qr_z$ to lie close to $g(z)/2$ modulo one.
+
+\emph{The rates are independent.} The integers $M^2+s_z^2$ are distinct and lie in $[M^2,M^2+M)$, since $s_z^2<4^m=M$. Their squarefree parts, the integers left after removing all square factors, are also distinct. Otherwise two of them would be $du^2<dv^2$ with a common squarefree $d$ and positive integers $u<v$; since $\sqrt d\,u\ge M$, their gap $d(v^2-u^2)\ge2du+d\ge2M+1$ would exceed the length of the interval. By Besicovitch's theorem~\cite{Besicovitch1940}, $1=r_0$ and the remaining $r_z$ therefore obey no nonzero rational linear relation.
+
+\emph{Align all phases.} Kronecker's theorem in its discrete form~\cite{Weyl1916,Cameron2014} states that when $1,r_1,\ldots,r_k$ are rationally independent, the points $(qr_1,\ldots,qr_k)$ modulo one, for $q=1,2,\ldots$, come arbitrarily close to every point of the unit cube. It supplies integers $q$ for which every $qr_z$ lies as close as we like to $g(z)/2$ modulo one. Taking the maximum of Eq.~\eqref{eq:blockerror} over sectors proves Eq.~\eqref{eq:full}, and tensoring with a reference identity does not change the norm.
+\end{proof}
+
+The auxiliary is a translator. The two-body couplings can only make the field on it linear in the logical bits, and that linear dependence is what the parity constraint of Sec.~\ref{sec:aux} cannot escape. The spin turns the field into a frequency through a square root, and the square roots of distinct squarefree integers cannot conspire.
+
+\section{How long must one wait?}
+\label{sec:density}
+
+Theorem~\ref{thm:existence} guarantees good stopping times but says nothing about when they arrive. A first estimate comes from asking how often they occur.
+
+\begin{proposition}[Frequency of good stopping times]
+\label{prop:density}
+Fix $f$ and $0<\eta<2$, and let $\varphi=2\arcsin(\eta/2)$. The positive integers $q$ for which Eq.~\eqref{eq:full} holds at $t=2\pi q\hbar/J$ have natural density, the limiting fraction among $1,\ldots,L$ as $L\to\infty$, equal to
+\begin{equation}
+ \rho_\eta=\Bigl(\frac{\varphi}{\pi}\Bigr)^{2^{n+1}-1},
+ \label{eq:density}
+\end{equation}
+the same for every Boolean function.
+\end{proposition}
+
+\begin{proof}
+By Eq.~\eqref{eq:blockerror}, Eq.~\eqref{eq:full} holds exactly when $|e_z|<\varphi$ in all $2^m-1$ sectors $z\ne0$, that is, when each $qr_z$ lies modulo one within an interval of length $\varphi/\pi$ centered at $g(z)/2$. Since $1$ and the $r_z$ with $z\ne0$ are rationally independent, Weyl's theorem~\cite{Weyl1916} makes the fractional parts $(qr_z\bmod1)_{z\ne0}$ uniformly distributed over the $(2^m-1)$-dimensional unit cube. The density of $q$ landing in a box equals the box volume, $(\varphi/\pi)^{2^m-1}$, wherever the box is centered.
+\end{proof}
+
+Geometrically, the target is a box of side $\varphi/\pi$ in $2^{n+1}-1$ dimensions, and the winding line visits it a fraction of the time equal to its volume. The good integers $q_1<q_2<\cdots$ thus satisfy $q_j/j\to\rho_\eta^{-1}$, so their average spacing grows doubly exponentially with $n$.
+
+Density is a long-run statement, though, and says nothing about the first visit. At $n=2$ and $\eta=0.1$, for instance, the identity oracle is already within $0.03747$ at $q=1$, although $\rho_\eta^{-1}\simeq3.01\times10^{10}$. All oracles share one density but can have very different first good times. To show that most of them must wait long, we need an argument that holds at every time and for every fixed Hamiltonian. Counting supplies it.
+
+\section{The price of a program stored in time}
+\label{sec:capacity}
+
+\subsection{The idea}
+
+By the time-energy uncertainty relation, a system whose energies span a width $W$ needs a time of at least order $\hbar/W$ to reach a distinguishable state. Within a total action $R$, a stopping time can therefore be set to only about $R$ mutually distinguishable values. Each value computes at most one function, and there are $2^{2^n}$ functions, so most of them need $R$ doubly exponential in $n$. This section makes the estimate precise for many knobs and many control intervals, and in a form that heralding cannot evade. Heralding is the subtle point. A rarely accepted run has a tiny accepted branch, and after normalization two tiny branches can point in very different directions even when the runs themselves are close. Charging for every rejected attempt removes this loophole.
+
+\subsection{Model}
+
+We allow more auxiliary qubits than the construction uses. Fix a total of $N\ge n+1$ qubits, split into the input register, the output $b$, a work register $\mathrm w$ of $N_{\mathrm w}$ qubits, and a flag register $\mathrm h$ of $N_{\mathrm h}$ qubits, with $N_{\mathrm w}+N_{\mathrm h}=N-n-1$. Either may be empty. Each run starts in
+\begin{equation}
+ \ket{\psi_x}=\ket{x}_{\mathrm{in}}\ket0_b
+              \ket{0^{N_{\mathrm w}}}_{\mathrm w}
+              \ket{0^{N_{\mathrm h}}}_{\mathrm h},
+\end{equation}
+where $\ket{0^r}$ denotes $r$ qubits in $\ket0$. At the end a measurement of the flag accepts or rejects the run. A fixed projector $P_{\mathrm h}$ on the flag register defines acceptance, which on the full device reads
+\begin{equation}
+ \Pi=\id_{\mathrm{in}}\otimes\id_b\otimes\id_{\mathrm w}\otimes P_{\mathrm h}.
+\end{equation}
+For example, a single flag qubit can announce success by ending in $\ket1$, and $\Pi=\id$ describes a procedure that always accepts. After acceptance the output is read in the computational basis and the work qubits are discarded. Preparation, register labels, and both measurements are the same for all functions.
+
+Evolution consists of at most $S$ intervals. In interval $j=1,\ldots,S$ a $k$-local Hamiltonian $H_j$ acts for a time $t_j\ge0$, so the evolution and its action are
+\begin{equation}
+ U=e^{-it_SH_S/\hbar}\cdots e^{-it_1H_1/\hbar},\qquad
+ A=\sum_{j=1}^{S}t_jW(H_j)/\hbar.
+\end{equation}
+Times and couplings may depend on $f$, but not on the input $x$. The run on input $x$ is accepted with probability $p_x=\norm{\Pi U\ket{\psi_x}}^2>0$. Given acceptance, the state is $\Pi U\ket{\psi_x}/\sqrt{p_x}$, and measuring $b$ must return $f(x)$ with error probability at most $\epsilon<1/2$. We write $\delta=1-2\epsilon>0$ for the required bias of the output. Returning a correct classical bit is weaker than implementing the oracle coherently, so lower bounds in this model also apply to Theorem~\ref{thm:existence}.
+
+Rejected runs are reset and repeated. Independent retries need $1/p_x$ runs on average, so the worst-case expected action is
+\begin{equation}
+ C=\max_x\frac{A}{p_x}.
+\end{equation}
+Resets and readout are free; charging for them can only raise the cost~\cite{Combes2015}. For a budget $R\ge0$, let $\mathcal F(R)$ be the set of functions admitting an implementation with $C\le R$. Finally, count the knobs. The number of nonidentity Pauli strings of weight at most $k$ on $N$ qubits is
+\begin{equation}
+ K(N,k)=\sum_{r=1}^{\min(k,N)}3^r\binom Nr,
+\end{equation}
+choosing $r$ qubits and one of $X,Y,Z$ on each. A $k$-local generator, up to its identity component, therefore has $K(N,k)$ real coefficients, and $S$ intervals have $d=K(N,k)S$.
+
+\subsection{Capacity}
+
+\begin{theorem}[Capacity]
+\label{thm:capacity}
+For fixed $N,k,S,\epsilon$,
+\begin{equation}
+ |\mathcal F(R)|\le\Bigl(1+\frac{2R}{\delta}\Bigr)^{d},\qquad d=K(N,k)\,S .
+ \label{eq:capacity}
+\end{equation}
+The bound holds even when success probabilities approach zero. If the allowed generator tuples lie in a real linear space of dimension $d'$ modulo scalars, $d$ may be replaced by $d'$.
+\end{theorem}
+
+The proof is a packing argument in the space of controls. Each implementation is a point in a $d$-dimensional space, points that compute different functions must be far apart, and only so many far-apart points fit in a ball of radius set by the budget. The one twist is a change of radial coordinate that handles rare acceptance.
+
+\begin{proof}
+\emph{Controls as points.} Adding a scalar to a Hamiltonian changes only a global phase, so let $[Q]$ denote a Hermitian operator $Q$ modulo multiples of the identity. A run is the point
+\begin{equation}
+ G=([t_jH_j/\hbar])_{j=1}^S
+\end{equation}
+of integrated generators, in a real space of dimension $d$. Each entry is one interval's generator multiplied by its duration, so it fixes that interval's evolution completely. Equip this space with the norm
+\begin{equation}
+ \norm G_*=\sum_{j=1}^S\inf_{c\in\mathbb R}\norm{t_jH_j/\hbar-c\id}=A/2,
+\end{equation}
+where the equality follows by centering each spectrum. The norm of a run is half its action. If $R=0$, or the allowed space is zero dimensional, the evolution is fixed up to a phase and at most one function is possible; assume otherwise. Writing $U_G$ for the evolution of $G$, Duhamel's formula expresses the difference of two exponentials as an integral of the difference of their generators, so each interval's evolution changes by at most the change in its integrated generator. Summing over the ordered product gives
+\begin{equation}
+ \inf_{\theta\in\mathbb R}\norm{U_G-e^{i\theta}U_{G'}}\le\norm{G-G'}_*.
+ \label{eq:control-distance}
+\end{equation}
+Nearby controls give nearby evolutions.
+
+\emph{Different answers force distance.} Take implementations $G,G'$ of two distinct functions, with actions $A,A'$, and an input $x$ on which the functions differ. Their unnormalized accepted states are $u=\Pi U_G\ket{\psi_x}$ and $v=\Pi U_{G'}\ket{\psi_x}$, with acceptance probabilities $p=\norm u^2$ and $p'=\norm v^2$. The output observable $Z_b$ commutes with $\Pi$, since output and flag are different qubits. Conditional correctness makes $\bra u Z_b\ket u$ and $\bra v Z_b\ket v$ opposite in sign, with magnitudes at least $\delta p$ and $\delta p'$. For every phase $\theta$,
+\begin{equation}
+ \begin{aligned}
+ \delta(p+p')&\le\bigl|\bra u Z_b\ket u-\bra v Z_b\ket v\bigr|\\
+ &\le(\sqrt p+\sqrt{p'})\norm{u-e^{i\theta}v},
+ \end{aligned}
+\end{equation}
+by expanding the difference of quadratic forms and using $\norm{Z_b}=1$. Projection does not increase norms, so Eq.~\eqref{eq:control-distance} also bounds $\norm{u-e^{i\theta}v}$. Here the budget enters, since $C\le R$ gives $p\ge A/R$ and $p'\ge A'/R$. Together with $(\sqrt p+\sqrt{p'})^2\le2(p+p')$, this yields
+\begin{equation}
+ \norm{G-G'}_*\ge\delta\sqrt{(A+A')/(2R)}.
+ \label{eq:run-separation}
+\end{equation}
+
+\emph{Rescale to uniform separation.} The separation~\eqref{eq:run-separation} shrinks for cheap runs, so points near the origin could crowd together. Measure them instead in the radial coordinate $\sqrt A$. Set $V=G/\sqrt A$ (and $V=0$ if $A=0$), so that $\norm V_*=\sqrt A/2$. With $\alpha=\sqrt A\ge\alpha'=\sqrt{A'}$, the reverse triangle inequality gives $\alpha-\alpha'\le2\norm{V-V'}_*$, and hence
+\begin{equation}
+ \begin{aligned}
+ \norm{G-G'}_*&=\norm{\alpha(V-V')+(\alpha-\alpha')V'}_*\\
+ &\le\alpha\norm{V-V'}_*+(\alpha-\alpha')\alpha'/2\\
+ &\le(\alpha+\alpha')\norm{V-V'}_*.
+ \end{aligned}
+\end{equation}
+Combined with Eq.~\eqref{eq:run-separation} and $\alpha+\alpha'\le\sqrt{2(A+A')}$, this shows that distinct functions have rescaled points at least $\delta/(2\sqrt R)$ apart, whatever their actions. Two distinct functions cannot both have zero action, and $p_x\le1$ gives $A\le R$, so every rescaled point lies within $\norm V_*\le\sqrt R/2$.
+
+\emph{Count.} Place an open ball of radius $\delta/(4\sqrt R)$ around one rescaled point per function. The balls are disjoint and lie inside a ball of radius $\sqrt R/2+\delta/(4\sqrt R)$. Volumes in a $d$-dimensional normed space scale as the $d$th power of the radius, and the ratio gives $(1+2R/\delta)^d$. The same argument runs in dimension $d'$ when the controls lie in a smaller linear space.
+\end{proof}
+
+Taking logarithms, $\log_2|\mathcal F(R)|\le d\log_2(1+2R/\delta)$. This is the bit count of the introduction made exact, with $d$ real knobs and budget $R$ selecting at most $d\log_2(1+2R/\delta)$ bits' worth of functions. The $\sqrt A$ rescaling is what lets the count tolerate success probabilities approaching zero, because a rare success has to be paid for with many retries. The retry model resets each failed run before the next attempt.
+
+\subsection{Consequences}
+
+\begin{corollary}[A fixed Hamiltonian]
+\label{cor:fixed}
+If $H$ is fixed and only its nonnegative duration depends on $f$, then, with the same preparation, readout, and retry rules, at most $1+R/\delta$ functions are evaluable with expected action at most $R$, whatever the dimension or locality of $H$. Consequently all but a fraction $2^{-2^{n-1}}$ of Boolean functions require
+\begin{equation}
+ C>\delta\bigl(2^{2^{n-1}}-1\bigr) .
+ \label{eq:fixedlower}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+If $W(H)=0$ the evolution is scalar and at most one function is possible. Otherwise all integrated generators are proportional to one fixed operator, and the rescaled points lie on a single ray at distances $\sqrt A/2\in[0,\sqrt R/2]$ from the origin, at least $\delta/(2\sqrt R)$ apart. There are at most $1+R/\delta$ of them. Setting $R=\delta(2^{2^{n-1}}-1)$ allows at most $2^{2^{n-1}}$ of the $2^{2^n}$ functions.
+\end{proof}
+
+This applies to our construction. An operator-norm error $\eta$ gives decision error at most $\eta^2$, because the ideal output has no amplitude in the wrong-output subspace, so any fixed $0<\eta<1/\sqrt2$ allows Corollary~\ref{cor:fixed} with $\epsilon=\eta^2$ and no heralding. Since $W(H_n)/J$ is bounded above and below, almost every oracle needs a doubly exponential waiting time in units of $\hbar/J$. The statement holds at all nonnegative times, not just the integer times of Proposition~\ref{prop:density}, and it is the rigorous counterpart of the torus estimate. It does not provide a matching upper bound on the first good time. Adding auxiliary qubits does not help either, since the corollary holds whatever the size of the device.
+
+More knobs do help. Letting the controls change between intervals enlarges the space being packed, and the same count becomes a tradeoff between action and the number of intervals.
+
+\begin{corollary}[Action and control intervals]
+\label{cor:exchange}
+Fix $N,k,S$ and $0\le\epsilon<1/2$, with the preparation and readout of Theorem~\ref{thm:capacity}. All but a fraction $2^{-2^{n-1}}$ of Boolean functions have the following property. Every implementation with at most $S$ intervals has expected action $C$ satisfying
+\begin{equation}
+ K(N,k)\,S\,\log_2\Bigl(1+\frac{2C}{\delta}\Bigr)>2^{n-1}.
+ \label{eq:exchange}
+\end{equation}
+The exceptional set may depend on these fixed parameters. Conversely, controlled two-body evolution implements every oracle exactly, up to a global phase, with $O(n2^n)$ intervals and action, without auxiliary qubits.
+\end{corollary}
+
+\begin{proof}
+For the lower bound, apply Theorem~\ref{thm:capacity} with
+\begin{equation*}
+ R=\frac{\delta}{2}\Bigl(2^{2^{n-1}/[K(N,k)S]}-1\Bigr).
+\end{equation*}
+At most $2^{2^{n-1}}$ functions admit $C\le R$, which proves Eq.~\eqref{eq:exchange}.
+
+For the upper bound we use the sign picture of Eq.~\eqref{eq:signs} and write the sign pattern as a product of simple rotations. Expand $g$ in Walsh characters $w_B(z)=\prod_{i\in B}(-1)^{z_i}$, the Fourier basis on bit strings, labeled by subsets $B\subseteq\{1,\ldots,m\}$. With Fourier coefficients $\widehat g_B$,
+\begin{equation}
+ \begin{aligned}
+ \widehat g_B&=2^{-m}\sum_zg(z)w_B(z),\\
+ (-1)^{g(z)}&=\prod_Be^{-i\pi\widehat g_Bw_B(z)}.
+ \end{aligned}
+\end{equation}
+After a change of the output to its $X$ basis, let $Z_B=\prod_{i\in B}Z_i$, with index $m$ denoting the output. Each nonempty $B$ contributes a rotation $e^{-i\pi\widehat g_BZ_B}$, implemented by a chain of controlled-NOT gates that computes the parity of $B$ on one qubit, a single-qubit rotation, and the reverse chain~\cite{Barenco1995}. This uses $O(m)$ gates per subset and no scratch qubits; the empty subset is a global phase. Each gate has a Hermitian logarithm of spectral width at most $2\pi$, so it costs at most $2\pi$ action. Summing over the $2^m$ subsets and the output basis changes gives $O(n2^n)$ intervals and action.
+\end{proof}
+
+For two-body interactions on $N=n+2$ qubits, $K(N,2)=O(n^2)$. With $S=1$, Eq.~\eqref{eq:exchange} gives $C=2^{\Omega(2^n/n^2)}$ for almost every function, even if the constant Hamiltonian is tailored to each function. Read the other way, at a budget $R(n)\le2^{cn}$ with $c>0$ the fraction of functions reachable with $S(n)$ intervals is at most
+\begin{equation}
+ \frac{\bigl(1+2R(n)/\delta\bigr)^{K(N,2)S(n)}}{2^{2^n}},
+\end{equation}
+so reaching even half of all truth tables at single exponential action requires $S(n)=\Omega(2^n/n^3)$ intervals. The elementary controlled construction is within polynomial factors of this count, and sharper oracle synthesis is available~\cite{Nie2026}.
+
+\section{Where the program is stored}
+\label{sec:precision}
+
+The capacity bound reads like a conservation law. A typical truth table holds $2^n$ bits, and a device can keep them in its couplings, in its sequence of controls, or in its stopping time, at an exchange rate set by $d\log_2(1+2R/\delta)$. The Hamiltonian $H_f$ of the introduction keeps everything in its couplings and runs at constant action, but those couplings involve the whole register. If they must be two-body, Eq.~\eqref{eq:exchange} with $S=1$ shows that constant action requires at least of order $2^{n/2}$ qubits, enough coefficients to hold the table. At single exponential action, a control sequence needs at least of order $2^n/n^3$ intervals. Our star keeps the bits in a single duration and pays with doubly exponential action. For typical functions the bits can be moved from one place to another, but not compressed away. The bound concerns typical truth tables rather than an explicit hard function, and it differs from the no-programming theorem~\cite{Nielsen1997}, which varies the program state of a fixed processor, whereas changing the duration changes the processor unitary itself. Energy alone does not bound computational speed~\cite{Jordan2017}, and any such bound depends on which resources are counted~\cite{Russell2017,Bournez2021}; ours counts action, summed over all attempts.
+
+A program stored in time also has to be read accurately. Let $H$ be the ideal Hamiltonian, $E$ a Hermitian error in it, and $\Delta t$ an error in the stopping time. If the ideal evolution approximates $U_f\otimes\id_a$ within $\eta$, Duhamel's formula bounds the actual error, up to a global phase, by
+\begin{equation}
+ \eta+\frac{t}{\hbar}\inf_{c\in\mathbb R}\norm{E-c\id}+\frac{|\Delta t|}{2\hbar}W(H+E) .
+ \label{eq:stability}
+\end{equation}
+This is a sufficient calibration condition against arbitrary perturbations of the stated size. For an additional error allowance $\xi$, it suffices that the centered Hamiltonian error be $O(\hbar\xi/t)$ and the timing error $O(\hbar\xi/W(H+E))$. For the star, specifying each of its $O(n)$ coefficients to operator-norm accuracy of order $\hbar\xi/t$ is sufficient, with $O(\log_2(tJ/\hbar)+\log_2(n/\xi))$ binary digits per coefficient. At doubly exponential durations this is exponentially many digits. The absolute clock resolution can stay constant, while the range of times the clock must represent grows with $t$. The program sits in the digits of the stopping time, and our sufficient condition asks for the couplings to be known to a comparable number of digits. Equidistribution supplies no bound on the first good duration, so it supplies no upper bound on the precision sufficient for that first implementation either.
+
+\section{Conclusion}
+\label{sec:discussion}
+
+A fixed two-body Hamiltonian with dyadic couplings and one auxiliary spin approximates every Boolean oracle, selected purely by the stopping time. The auxiliary works because a precession frequency is the length of a field, and square roots break the parity constraint that binds any low-order Hamiltonian on the register alone; for $n\ge3$ two-body locality makes it necessary. The duration, however, is a single real number, and within an action budget $R$ it carries about $\log R$ bits. Almost every truth table therefore costs doubly exponential action on any fixed Hamiltonian, and heralded retries cannot evade this even when success becomes arbitrarily rare. A sequence of two-body controls reaches every oracle with single exponential action. Realizing a computation is easy; selecting it through time alone is what costs.
+
+The star has bounded interaction order but unbounded degree, and it imposes no spatial propagation constraint. The stopping clock is external, failed runs are reset, and the lower bounds concern almost all truth tables at each input size. Natural next steps are quantitative first-arrival bounds for the construction, bounded-degree realizations, expected-action bounds for adaptive protocols, and, with additional structure beyond counting, an obstruction for an explicit, efficiently described family of functions.
+
+\section*{Acknowledgments}
+This work was supported in part by Universidad Carlos III de Madrid.
+
+\paragraph*{Data availability.}
+All analytical results are derived in the article. Scripts and outputs for finite numerical checks are included in the accompanying ancillary files.
+
+\appendix
+
+\section{An oracle device without an auxiliary}
+\label{app:no-auxiliary}
+
+This construction proves the attainability statement in Proposition~\ref{prop:aux}. The idea is to let the output-minus sector carry the oracle signs while the output-plus sector returns to the identity whenever those signs are read.
+
+Let $[n]=\{1,\ldots,n\}$, choose real numbers $h_x$, and expand the diagonal input operator in parity products,
+\begin{equation}
+ \sum_xh_x\ket x\bra x=\sum_{B\subseteq[n]}c_BZ_B,
+ \qquad Z_B=\prod_{i\in B}Z_i,
+\end{equation}
+with real coefficients $c_B$ and $Z_\varnothing=\id$. With output projectors $\Pi_\pm=(\id_b\pm X_b)/2$, an energy $\lambda>|c_{[n]}|$, and $\kappa=\sqrt{\lambda^2-c_{[n]}^2}$, set
+\begin{equation}
+ \begin{aligned}
+ H={}&\sum_{\substack{B\subseteq[n]\\ |B|<n}}c_BZ_B\otimes\Pi_-
+       +c_{[n]}Z_{[n]}\otimes\id_b\\
+     &+\kappa X_1\otimes\Pi_+ .
+ \end{aligned}
+\end{equation}
+Every term has weight at most $n$. On the minus sector $H$ has eigenvalues $h_x$. On the plus sector it reduces to $c_{[n]}Z_{[n]}+\kappa X_1$, two anticommuting terms whose square is $\lambda^2\id$, so at times $t=2\pi q\hbar/\lambda$ with integer $q$ this sector returns exactly to the identity. Choosing $1$ and all $h_x/\lambda$ rationally independent (for instance $h_x=\sqrt{\ell_x}$ for distinct primes $\ell_x$ in fixed energy units, and an integer $\lambda>|c_{[n]}|$), Kronecker's theorem drives the minus-sector phases $e^{-2\pi iqh_x/\lambda}$ toward any signs $(-1)^{f(x)}$. The $n$-body parity term $c_{[n]}Z_{[n]}$ is what supplies the phase freedom that lower orders lack, and it is the price of doing without the auxiliary.
+
+\section*{AI assistance}
+AI tools assisted with writing, mathematical derivations, literature review, and numerical code. Some claims in this working paper remain to be independently checked.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+\end{document}

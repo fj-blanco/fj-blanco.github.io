@@ -27,7 +27,7 @@ I started with [Eclipse Cyclone DDS](https://github.com/eclipse-cyclonedds/cyclo
 
 Once direct DDS was working, I started putting the ROS layer on top.
 
-The project is split into two repositories with different roles. A fair amount of this was done by button-pushing GPT-5.6 Sol High and then checking what actually happens on the board.
+The project is split into two repositories with different roles. AI tools helped with development; I tested the results on the board.
 
 [ros2_zephyr](https://github.com/servoagents/ros2_zephyr) is the Zephyr integration and build layer. It pins the ROS 2, Zephyr and Cyclone DDS versions used by the project, cross-compiles the selected ROS packages into static firmware libraries, exposes the Zephyr CMake and Kconfig integration, and keeps the platform-specific compatibility code and hardware samples in one place.
 

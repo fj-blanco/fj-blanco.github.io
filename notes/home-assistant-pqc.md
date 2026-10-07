@@ -29,7 +29,7 @@ gRPC ─────────────> grpcio ──────> bundled
 
 These paths do not all follow the same TLS policy.
 
-I used GPT-5.6 Sol to help me explore the code and put the tests together, then ran the experiments against the official Home Assistant images and captured the actual TLS `ClientHello` messages. Home Assistant 2026.9.1 contains Python 3.14.6 linked against OpenSSL 3.5.7.
+I used AI tools to help explore the code and write the tests, then ran the experiments against the official Home Assistant images and captured the TLS `ClientHello` messages. Home Assistant 2026.9.1 contains Python 3.14.6 linked against OpenSSL 3.5.7.
 
 [OpenSSL 3.5](https://docs.openssl.org/3.5/man3/SSL_CTX_set1_curves/) implements `X25519MLKEM768`, the hybrid TLS 1.3 group standardized in [RFC 10024](https://www.rfc-editor.org/rfc/rfc10024.html). It combines X25519 with ML-KEM-768. OpenSSL includes it in its default TLS group list and sends it as one of the initial key shares.
 

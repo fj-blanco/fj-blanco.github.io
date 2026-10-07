@@ -1,0 +1,270 @@
+---
+layout: "paper"
+title: "Soft-pair which-path records from a gapped detector"
+description: "A soft pair-emission channel records path information even when slow switching suppresses detector excitation."
+section: "research"
+main_class: "paper-page"
+math: true
+permalink: "/research/soft-pair-which-path-records/"
+area: "Quantum fields · Interference"
+authors: ["Javier Blanco-Romero"]
+---
+{% raw %}
+<h2 class="unnumbered" id="abstract">Abstract</h2>
+<p>A two-level detector with an energy gap, switched on and off slowly, is almost never excited by the vacuum. It can still leave a record of where it was. We place a ground-state Unruh-DeWitt detector in a superposition of two fixed positions in the Minkowski vacuum of a massless scalar field and stretch its switching pulse by a time <span class="math inline">\(T\)</span>. The one-quantum channel, which excites the detector, costs less visibility than any inverse power of <span class="math inline">\(T\)</span>. A second channel stays open, in which a virtual excitation emits a pair of soft quanta and returns the detector to its ground state. This pair channel costs visibility at fourth order in the coupling and only as <span class="math inline">\(T^{-4}\)</span>, with a coefficient set by the pulse shape and independent of the detector's spatial profile. In a joint weak-coupling and slow-switching limit, the pair channel controls the full visibility, the excitation probability is negligible in comparison, and a detector found in its ground state still carries the leading path record in the field.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Take a two-level detector with energy gap <span class="math inline">\(\Omega\)</span>, hold it in a superposition of two places, and couple it to the vacuum of a massless field through a pulse that switches on and off over a long time <span class="math inline">\(T\)</span>. The detector is almost never excited, because a slow pulse has no Fourier component at the frequency <span class="math inline">\(\Omega\)</span> it would need. It is tempting to conclude that the field learns almost nothing about the path. That conclusion is too quick. In second-order perturbation theory the detector can borrow its gap energy for a moment, emit two quanta of arbitrarily low frequency, and fall back to its ground state. Nothing forbids these soft pairs, since their total energy can be as small as the pulse allows, and they carry information about where the detector was.</p>
+<p>Detectors on superposed trajectories have become a standard setting for asking such questions [<a href="#ref-Foo2020">1</a>, <a href="#ref-Gooding2026">2</a>]. The difference between field dressing, which disappears when the coupling is switched off, and a lasting loss of interference is well understood [<a href="#ref-Unruh2000">3</a>, <a href="#ref-GundhiBassi2023">4</a>], and recent work has clarified how switching produces a final field record [<a href="#ref-Gundhi2024">5</a>, <a href="#ref-GundhiUlbricht2025">6</a>]. Pair creation below an internal excitation threshold is the microscopic dynamical Casimir effect [<a href="#ref-Souza2018">7</a>, <a href="#ref-LoLaw2018">8</a>, <a href="#ref-Farias2019">9</a>], its link to decoherence has a long history [<a href="#ref-Dalvit2000">10</a>], and the fifth-power low-frequency spectrum that drives our result already appears in the oscillator model of Ref. [<a href="#ref-Farias2019">9</a>]. Related work treats the internal degree of freedom and the field as a composite environment [<a href="#ref-Sinha2021">11</a>], and derives spatial decoherence for uniformly accelerated motion [<a href="#ref-Jakubec2026">12</a>].</p>
+<p>We compute the final path visibility <span class="math inline">\(\mathcal{V}_T\)</span> for two static branches separated by a distance <span class="math inline">\(d\)</span> and a pulse <span class="math inline">\(\chi(t/T)\)</span> with coupling <span class="math inline">\(\lambda\)</span>. Keeping the branches static isolates the switching as the only drive. The one-quantum loss falls faster than any power of <span class="math inline">\(T\)</span>, while the soft pairs give</p>
+<p><span class="math display">\[1-\mathcal{V}_T\simeq\frac{\lambda^4d^2}{60\pi^3\Omega^2T^4}\]</span></p>
+<p>for a Gaussian pulse. Two factors make up this law. A pair is created with probability of order <span class="math inline">\(\lambda^4/(\Omega^2T^2)\)</span>, and its wavelengths are of order <span class="math inline">\(T\)</span>, so resolving arms a distance <span class="math inline">\(d\)</span> apart costs a further <span class="math inline">\(d^2/T^2\)</span>. The internal state of the detector is the same on both branches, and the record lives in the field. The detector's response and the information left in the field, two observables often identified at second order, separate at fourth.</p>
+<p>Section <a href="#sec:model">2</a> sets up the model and writes the visibility as a property of the total field momentum. Section <a href="#sec:second">3</a> shows what second order misses, Sec. <a href="#sec:law">4</a> derives the soft-pair law, and Sec. <a href="#sec:joint">5</a> controls the full visibility and the ground-state conditioned one. Section <a href="#sec:gauss">6</a> works out the Gaussian pulse. We use units with <span class="math inline">\(\hbar=c=1\)</span>.</p>
+<h2 id="sec:model">Model and path observable</h2>
+<p>The two positions are <span class="math inline">\(\bm x_A\)</span> and <span class="math inline">\(\bm x_B\)</span>, with <span class="math inline">\(\bm d=\bm x_B-\bm x_A\)</span> and <span class="math inline">\(d=|\bm d|\)</span>. On either branch <span class="math inline">\(X\in\{A,B\}\)</span> the detector is an Unruh-DeWitt detector, a two-level system with ground state <span class="math inline">\(\lvert g\rangle\)</span>, excited state <span class="math inline">\(\lvert e\rangle\)</span> and raising and lowering operators <span class="math inline">\(\sigma^\pm\)</span>, coupled linearly to a free massless scalar field <span class="math inline">\(\phi\)</span> in <span class="math inline">\(3+1\)</span> dimensional Minkowski spacetime. In the interaction picture,</p>
+<p><a id="eq:H"></a> <span class="math display">\[\begin{aligned}
+ H_X(t)&amp;=\lambda\chi_T(t)\mu(t)\Phi_{\bm x_X}(t),
+ &amp;\chi_T(t)&amp;=\chi(t/T),\end{aligned}\tag{1}\]</span></p>
+<p><span class="math display">\[\begin{aligned}
+ \mu(t)&amp;=\sigma^+\mathrm{e}^{\mathrm{i}\Omega t}+\sigma^-\mathrm{e}^{-\mathrm{i}\Omega t},
+ &amp;\Omega&amp;&gt;0,
+\end{aligned}\]</span></p>
+<p>with dimensionless coupling <span class="math inline">\(\lambda\)</span> and gap <span class="math inline">\(\Omega\)</span>. The switching function <span class="math inline">\(\chi\)</span> is real, nonzero and a Schwartz function, <span class="math inline">\(\chi\in\mathcal{S}(\mathbb R)\)</span>, meaning smooth with all derivatives decaying faster than any power; smooth compactly supported pulses are included. The parameter <span class="math inline">\(T\)</span> stretches the whole pulse. The detector samples the field over a fixed region,</p>
+<p><a id="eq:smear"></a> <span class="math display">\[\Phi_{\bm x}(t)=\int\mathrm{d}^3\bm y\,f(\bm y-\bm x)\phi(t,\bm y),
+ \qquad \int\mathrm{d}^3\bm y\,f(\bm y)=1,
+\tag{2}\]</span></p>
+<p>where the profile <span class="math inline">\(f\in\mathcal{S}(\mathbb R^3)\)</span> is real and radial. This fixed nonzero width regularizes the perturbative calculation, and no pointlike limit is taken, since spatial profiles matter in higher-order detector calculations [<a href="#ref-Hummer2016">13</a>]. Profile and Hamiltonian are defined in the common rest frame of the two branches.</p>
+<p>We Fourier transform with</p>
+<p><a id="eq:fourier"></a> <span class="math display">\[\widehat\chi(\nu)=\int\mathrm{d}s\,\chi(s)\mathrm{e}^{\mathrm{i}\nu s},
+ \qquad \widetilde f(\bm k)=\int\mathrm{d}^3\bm y\,f(\bm y)\mathrm{e}^{-\mathrm{i}\bm k\cdot\bm y}.
+ 
+\tag{3}\]</span></p>
+<p>With <span class="math inline">\(k=|\bm k|\)</span> and <span class="math inline">\([a_{\bm k},a_{\bm p}^{\dagger}]=\delta^3(\bm k-\bm p)\)</span>, the creation part of the smeared field is</p>
+<p><a id="eq:modes"></a> <span class="math display">\[\Phi_{\bm x}^{(+)}(t)=\int\mathrm{d}^3\bm k\,b(k)\mathrm{e}^{\mathrm{i}kt-\mathrm{i}\bm k\cdot\bm x}a_{\bm k}^{\dagger},
+ \quad b(k)=\frac{\widetilde f(k)}{\sqrt{2k(2\pi)^3}}.
+\tag{4}\]</span></p>
+<p>The detector starts in <span class="math inline">\(\lvert g\rangle\)</span>, the field in its vacuum <span class="math inline">\(\lvert 0\rangle\)</span>, and the two paths have equal amplitudes. If <span class="math inline">\(U_X\)</span> is the evolution along branch <span class="math inline">\(X\)</span>, the final branch states, their overlap and the visibility are</p>
+<p><a id="eq:visibility"></a> <span class="math display">\[\lvert \Psi_X\rangle=U_X\lvert g,0\rangle,\qquad
+ \mathcal{C}_T=\langle\Psi_A|\Psi_B\rangle,\qquad
+ \mathcal{V}_T=|\mathcal{C}_T|.
+\tag{5}\]</span></p>
+<p>Nothing is measured or postselected. The paths are split and recombined while the interaction is off, exactly for compactly supported pulses and asymptotically for Schwartz pulses. We ignore recoil, control noise and motion during the interaction.</p>
+<p>The two branches differ only by a translation, which turns the visibility into a statement about momentum. Let <span class="math inline">\(\lvert \Psi_{\rm ref}\rangle\)</span> be the final state of a detector at the origin and <span class="math inline">\(\bm P\)</span> the total momentum of the free field. Then</p>
+<p><a id="eq:translation"></a> <span class="math display">\[\lvert \Psi_X\rangle=\mathrm{e}^{-\mathrm{i}\bm P\cdot\bm x_X}\lvert \Psi_{\rm ref}\rangle,
+ \qquad
+ \mathcal{C}_T=\langle \Psi_{\rm ref}\rvert\mathrm{e}^{-\mathrm{i}\bm P\cdot\bm d}\lvert \Psi_{\rm ref}\rangle.
+ 
+\tag{6}\]</span></p>
+<p>Parity makes this overlap real, and in the weak-coupling regime, where <span class="math inline">\(\mathcal{C}_T&gt;0\)</span>,</p>
+<p><a id="eq:momentum"></a> <span class="math display">\[D_{\bm d}=1-\cos(\bm P\cdot\bm d),\qquad
+ 1-\mathcal{V}_T=\langle \Psi_{\rm ref}\rvert D_{\bm d}\lvert \Psi_{\rm ref}\rangle.
+ 
+\tag{7}\]</span></p>
+<p>This identity is exact. The positive operator <span class="math inline">\(D_{\bm d}\)</span> annihilates the vacuum and preserves particle number, so branch-independent vacuum phases drop out before any expansion. The field resolves the path through the total momentum of the quanta it holds, so a pair counts according to how its two momenta add up.</p>
+<h2 id="sec:second">What second order misses</h2>
+<p>Expand the reference state in the coupling,</p>
+<p><span class="math display">\[\lvert \Psi_{\rm ref}\rangle=\sum_{n=0}^{\infty}\lambda^n\lvert \psi_n(T)\rangle,
+ \qquad \lvert \psi_0\rangle=\lvert g,0\rangle.
+\tag{8}\]</span></p>
+<p>Equation <a href="#eq:momentum">(7)</a> then gives, at fixed <span class="math inline">\(T\)</span>,</p>
+<p><a id="eq:series"></a> <span class="math display">\[1-\mathcal{V}_T=\lambda^2v_2(T)+\lambda^4v_4(T)+R_6(\lambda,T),
+ \quad R_6=O_T(\lambda^6),
+\tag{9}\]</span></p>
+<p>where <span class="math inline">\(O_T\)</span> means a bound whose constant may depend on <span class="math inline">\(T\)</span>, and</p>
+<p><a id="eq:v2state"></a> <span class="math display">\[\begin{aligned}
+ v_2&amp;=\langle \psi_1\rvert D_{\bm d}\lvert \psi_1\rangle,\end{aligned}\tag{10}\]</span></p>
+<p><a id="eq:v4state"></a> <span class="math display">\[\begin{aligned}
+ v_4&amp;=\langle \psi_2\rvert D_{\bm d}\lvert \psi_2\rangle
+       +2\operatorname{Re}\langle \psi_1\rvert D_{\bm d}\lvert \psi_3\rangle.
+\end{aligned}\tag{11}\]</span></p>
+<p>Odd orders vanish by field parity, and <span class="math inline">\(v_2\)</span> is half the squared distance between the two first-order branch states.</p>
+<p>At first order the detector is excited and one quantum is emitted, with amplitude <span class="math inline">\(-\mathrm{i}b(k)\widehat\chi_T(k+\Omega)\)</span>. Angular integration gives</p>
+<p><a id="eq:v2"></a> <span class="math display">\[v_2(T)=\frac{1}{4\pi^2}\int_0^{\infty}\mathrm{d}k\,k|\widetilde f(k)|^2
+ |\widehat\chi_T(k+\Omega)|^2[1-\operatorname{sinc}(kd)],
+\tag{12}\]</span></p>
+<p>with <span class="math inline">\(\operatorname{sinc}z=\sin z/z\)</span> and <span class="math inline">\(\widehat\chi_T(\nu)=T\widehat\chi(T\nu)\)</span>. The pulse must supply the frequency <span class="math inline">\(k+\Omega\ge\Omega\)</span>, and a stretched Schwartz pulse has none to spare,</p>
+<p><a id="eq:super"></a> <span class="math display">\[v_2(T)=O_N(T^{-N})\quad\text{for every }N&gt;0,
+\tag{13}\]</span></p>
+<p>where the constant may depend on <span class="math inline">\(N\)</span>. The same holds for <span class="math inline">\(\|\psi_1(T)\|\)</span>. At fixed smearing <span class="math inline">\(\|\psi_3(T)\|=O(T^3)\)</span>, so the second term of Eq. <a href="#eq:v4state">(11)</a> is also negligible. The first term need not be.</p>
+<p>At second order the detector is back in <span class="math inline">\(\lvert g\rangle\)</span>, and the state has a vacuum part and a two-particle part <span class="math inline">\(\lvert \zeta_T\rangle\)</span>. The Dyson expansion gives</p>
+<p><a id="eq:pair"></a> <span class="math display">\[\lvert \zeta_T\rangle=\int\mathrm{d}^3\bm k\,\mathrm{d}^3\bm p\,
+ b(k)b(p)F_T(k,p)a_{\bm k}^{\dagger}a_{\bm p}^{\dagger}\lvert g,0\rangle,
+ 
+\tag{14}\]</span></p>
+<p>with the symmetric kernel</p>
+<p><a id="eq:F"></a> <span class="math display">\[\begin{aligned}
+ F_T(k,p)={}&amp;-\int_{-\infty}^{\infty}\mathrm{d}u\,\mathrm{e}^{\mathrm{i}(k+p)u}
+ \int_0^{\infty}\mathrm{d}r\,\mathrm{e}^{-\mathrm{i}\Omega r}\\
+
+ &amp;\times\chi_T(u+r/2)\chi_T(u-r/2)
+ \cos[(k-p)r/2].
+\end{aligned}\tag{15}\]</span></p>
+<p>Here <span class="math inline">\(u=(t+t&#39;)/2\)</span> is the mean time of the two vertices and <span class="math inline">\(r=t-t&#39;\ge0\)</span> their ordered separation, during which the detector sits in its excited state and accumulates the phase <span class="math inline">\(\mathrm{e}^{-\mathrm{i}\Omega r}\)</span>. Symmetrizing the two creation operators produces the cosine, and Eq. <a href="#eq:pair">(14)</a> has no extra factor <span class="math inline">\(1/2\)</span>.</p>
+<p>The two vacuum contractions in <span class="math inline">\(\|\zeta_T\|^2\)</span> give a factor two, and Eq. <a href="#eq:momentum">(7)</a> gives the exact two-particle contribution</p>
+<p><a id="eq:pairvisibility"></a> <span class="math display">\[\begin{aligned}
+ v_{4,\mathrm{pair}}(T)={}&amp;\frac{1}{8\pi^4}\int_0^{\infty}\mathrm{d}k\,\mathrm{d}p\,kp
+ |\widetilde f(k)\widetilde f(p)|^2|F_T(k,p)|^2\\
+
+ &amp;\times[1-\operatorname{sinc}(kd)\operatorname{sinc}(pd)],\end{aligned}\tag{16}\]</span></p>
+<p><a id="eq:pairdominates"></a> <span class="math display">\[\begin{aligned}
+ v_4(T)={}&amp;v_{4,\mathrm{pair}}(T)+O_N(T^{-N}).
+\end{aligned}\tag{17}\]</span></p>
+<p>The product of sinc functions comes from averaging <span class="math inline">\(\cos[(\bm k+\bm p)\cdot\bm d]\)</span> over the two independent directions, as the total momentum dictates.</p>
+<h2 id="sec:law">The soft-pair law</h2>
+<p>The pair amplitude at low frequency is controlled by the square of the pulse, <span class="math inline">\(h(s)=\chi(s)^2\)</span>, through</p>
+<p><a id="eq:K"></a> <span class="math display">\[\mathcal{K}[\chi]=\int_0^{\infty}\mathrm{d}q\,q^5|\widehat h(q)|^2.
+\tag{18}\]</span></p>
+<p>For fixed <span class="math inline">\(d&gt;0\)</span>, <span class="math inline">\(\Omega&gt;0\)</span> and the profiles above, our main result is</p>
+<p><a id="eq:main"></a> <span class="math display">\[\boxed{\displaystyle
+ v_4(T)=\frac{d^2\mathcal{K}[\chi]}{480\pi^4\Omega^2T^4}+o(T^{-4}).}
+ 
+\tag{19}\]</span></p>
+<p>The coefficient is strictly positive, because <span class="math inline">\(\widehat h(0)=\int\chi^2\,\mathrm{d}s&gt;0\)</span> and <span class="math inline">\(\widehat h\)</span> is continuous. It depends on the pulse shape, and on the spatial profile only through <span class="math inline">\(\widetilde f(0)=1\)</span>. Equation <a href="#eq:main">(19)</a> concerns the fourth-order coefficient; Sec. <a href="#sec:joint">5</a> turns it into a statement about the full visibility.</p>
+<p>To see where it comes from, measure frequencies in units of <span class="math inline">\(1/T\)</span>, setting <span class="math inline">\(k=a/T\)</span> and <span class="math inline">\(p=b/T\)</span> in Eq. <a href="#eq:F">(15)</a>, and rescale both times. The integrand of the half-line integral over <span class="math inline">\(r\)</span> is even at its endpoint <span class="math inline">\(r=0\)</span>, so one integration by parts gives, for fixed <span class="math inline">\(a,b\ge0\)</span>,</p>
+<p><a id="eq:softF"></a> <span class="math display">\[F_T(a/T,b/T)=\frac{\mathrm{i}T}{\Omega}\widehat h(a+b)
+       +O\!\left(\frac{1}{\Omega^3T}\right).
+\tag{20}\]</span></p>
+<p>The would-be <span class="math inline">\(\Omega^{-2}\)</span> term vanishes with the first endpoint derivative. The geometric factor expands as</p>
+<p><a id="eq:softgeometry"></a> <span class="math display">\[T^2[1-\operatorname{sinc}(ad/T)\operatorname{sinc}(bd/T)]
+ \longrightarrow\frac{d^2}{6}(a^2+b^2).
+\tag{21}\]</span></p>
+<p>Substituting both into Eq. <a href="#eq:pairvisibility">(16)</a>,</p>
+<p><a id="eq:limitintegral"></a> <span class="math display">\[\begin{aligned}
+ \lim_{T\to\infty}T^4v_{4,\mathrm{pair}}(T)
+ &amp;=\frac{d^2}{48\pi^4\Omega^2}\\
+
+ &amp;\quad\times\int_0^{\infty}\mathrm{d}a\,\mathrm{d}b\,ab(a^2+b^2)|\widehat h(a+b)|^2,
+ 
+\end{aligned}\tag{22}\]</span></p>
+<p>with the exchange of limit and integral justified in Appendix <a href="#app:bounds">A</a>. With <span class="math inline">\(q=a+b\)</span> and <span class="math inline">\(x=a/q\)</span> the integral separates, and</p>
+<p><span class="math display">\[\int_0^1\mathrm{d}x\,x(1-x)[x^2+(1-x)^2]=\frac{1}{10}
+\tag{23}\]</span></p>
+<p>gives Eq. <a href="#eq:main">(19)</a>.</p>
+<p>The same kernel follows from the effective ground-state interaction</p>
+<p><a id="eq:effective"></a> <span class="math display">\[H^{(g)}_{\mathrm{eff},X}(t)
+ =-\frac{\lambda^2}{\Omega}\chi_T(t)^2:\!\Phi_{\bm x_X}(t)^2\!:\,,
+ 
+\tag{24}\]</span></p>
+<p>obtained by eliminating the virtual excitation at low frequency, up to a common vacuum phase. Quadratic couplings of this kind drive microscopic dynamical Casimir radiation [<a href="#ref-Souza2018">7</a>, <a href="#ref-LoLaw2018">8</a>, <a href="#ref-Farias2019">9</a>], and they explain why <span class="math inline">\(\widehat{\chi^2}\)</span> rather than <span class="math inline">\(\widehat\chi\)</span> appears. We use Eq. <a href="#eq:effective">(24)</a> only as intuition; Eq. <a href="#eq:softF">(20)</a> derives the limit from the original Hamiltonian.</p>
+<h2 id="sec:joint">Visibility without an internal excitation</h2>
+<p>Comparing perturbative coefficients at fixed <span class="math inline">\(T\)</span> leaves an order of limits open, since the remainder <span class="math inline">\(R_6\)</span> may grow with <span class="math inline">\(T\)</span>. We therefore let both parameters move together. For any fixed pulse and profile as above, take <span class="math inline">\(\lambda\to0^+\)</span> and</p>
+<p><a id="eq:jointscale"></a> <span class="math display">\[T(\lambda)=\Omega^{-1}\lambda^{-\beta},
+ \qquad 0&lt;\beta&lt;\frac15.
+\tag{25}\]</span></p>
+<p>Then the full visibility obeys</p>
+<p><a id="eq:joint"></a> <span class="math display">\[\boxed{\displaystyle
+ 1-\mathcal{V}_{T(\lambda)}\sim
+ \frac{\lambda^4d^2\mathcal{K}[\chi]}{480\pi^4\Omega^2T(\lambda)^4}.}
+ 
+\tag{26}\]</span></p>
+<p>The second-order term is <span class="math inline">\(\lambda^2v_2=o(\lambda^4T^{-4})\)</span> once <span class="math inline">\(N&gt;4+2/\beta\)</span> in Eq. <a href="#eq:super">(13)</a>. With <span class="math inline">\(B_f\)</span> the norm of the mode function <span class="math inline">\(b\)</span>, defined in Appendix <a href="#app:bounds">A</a>, the Dyson bound there gives <span class="math inline">\(R_6=O(\lambda^6T^6)\)</span> when <span class="math inline">\(\lambda B_fT\ll1\)</span>, which relative to the pair term is <span class="math inline">\(O(\lambda^2T^{10})=O(\lambda^{2-10\beta})\)</span>. This range of <span class="math inline">\(\beta\)</span> suffices, and we have not tried to optimize it.</p>
+<p>Let <span class="math inline">\(P_e\)</span> be the probability of finding the detector excited after the pulse. Only odd Dyson orders contribute to its amplitude, and the same bound gives</p>
+<p><a id="eq:noexcitation"></a> <span class="math display">\[\begin{aligned}
+ P_e&amp;\leq 2\lambda^2\|\psi_1(T)\|^2+O(\lambda^6T^6),\\
+
+ \frac{P_e}{1-\mathcal{V}_T}&amp;\longrightarrow0
+ \quad\text{along Eq.~(25)}.
+\end{aligned}\tag{27}\]</span></p>
+<p>The rare excitations therefore cannot account for the leading loss of path coherence.</p>
+<p>Measuring the detector at the end isolates the pair channel. Let <span class="math inline">\(\mathcal{V}_g\)</span> be the visibility conditioned on finding <span class="math inline">\(\lvert g\rangle\)</span>. The excited one-particle sector is then absent and <span class="math inline">\(D_{\bm d}\)</span> annihilates the vacuum, so at any fixed <span class="math inline">\(T\)</span></p>
+<p><a id="eq:conditional4"></a> <span class="math display">\[1-\mathcal{V}_g=\lambda^4v_{4,\mathrm{pair}}(T)+O_T(\lambda^6),
+ 
+\tag{28}\]</span></p>
+<p>where normalizing by the ground-state probability enters only at sixth order. For the full conditional observable, split the overlap as <span class="math inline">\(\mathcal{C}_T=\mathcal{C}_g+\mathcal{C}_e\)</span> into ground and excited parts. Both branches have the same <span class="math inline">\(P_e\)</span>, <span class="math inline">\(|\mathcal{C}_e|\le P_e\)</span> and <span class="math inline">\(\mathcal{V}_g=|\mathcal{C}_g|/(1-P_e)\)</span>, so</p>
+<p><a id="eq:conditional"></a> <span class="math display">\[|\mathcal{V}_g-\mathcal{V}_T|\leq\frac{2P_e}{1-P_e},
+ \qquad 1-\mathcal{V}_g\sim1-\mathcal{V}_T.
+\tag{29}\]</span></p>
+<p>A detector found in its ground state still leaves the leading soft-pair record in the field.</p>
+<h2 id="sec:gauss">Gaussian pulse</h2>
+<p>For <span class="math inline">\(\chi(s)=\mathrm{e}^{-s^2/2}\)</span> both time integrals in Eq. <a href="#eq:F">(15)</a> can be done. With the Faddeeva function <span class="math inline">\(w(z)=\mathrm{e}^{-z^2}\operatorname{erfc}(-\mathrm{i}z)\)</span>, <span class="math inline">\(z=\Omega T\)</span> and <span class="math inline">\(\delta=(k-p)T/2\)</span>,</p>
+<p><a id="eq:gaussianF"></a> <span class="math display">\[F_T(k,p)=-\frac{\pi T^2}{2}\mathrm{e}^{-(k+p)^2T^2/4}
+ [w(-z+\delta)+w(-z-\delta)].
+\tag{30}\]</span></p>
+<p>This keeps the full gap dependence and checks the soft expansion directly, for any of the spatial profiles above. Here <span class="math inline">\(\widehat h(q)=\sqrt\pi\mathrm{e}^{-q^2/4}\)</span>, and</p>
+<p><a id="eq:gauss4"></a> <span class="math display">\[\mathcal{K}[\chi]=8\pi,\qquad
+ v_4(T)\sim\frac{d^2}{60\pi^3\Omega^2T^4}.
+\tag{31}\]</span></p>
+<p>Laplace expansion of Eq. <a href="#eq:v2">(12)</a> gives, for comparison,</p>
+<p><a id="eq:gauss2"></a> <span class="math display">\[v_2(T)\sim\frac{d^2}{32\pi\Omega^4T^6}\mathrm{e}^{-\Omega^2T^2}.
+ 
+\tag{32}\]</span></p>
+<p>The one-quantum channel is exponentially suppressed and the pair channel is not. The final pair energy <span class="math inline">\(k+p\)</span> can be arbitrarily small, because <span class="math inline">\(\Omega\)</span> is the energy of an intermediate state and places no lower bound on the energy left in the field.</p>
+<p>For this pulse a slower growth of <span class="math inline">\(T\)</span> also works, <span class="math inline">\(\Omega T=\sqrt{a\log(1/\lambda)}\)</span> with <span class="math inline">\(a&gt;2\)</span>. Then <span class="math inline">\(\|\psi_1(T)\|^2=O(T^{-2}\mathrm{e}^{-\Omega^2T^2})\)</span>, both the excitation bound and the remainder stay negligible against <span class="math inline">\(\lambda^4T^{-4}\)</span>, and the conclusions of Sec. <a href="#sec:joint">5</a> hold unchanged.</p>
+<h2 id="interpretation-and-scope">Interpretation and scope</h2>
+<p>The energy of the pair is paid by the switching. Smooth switching removes high-frequency transients, but a massless field always has modes slower than the pulse, and a virtual detector transition couples them in pairs. Once the coupling is off, their branch-dependent state persists, and common free evolution afterwards leaves the overlap unchanged. An active quantum eraser could still undo it.</p>
+<p>The loss of coherence still tends to zero in the limit <a href="#eq:jointscale">(25)</a>. What changes is its rate and its channel. The excitation probability can be exponentially small while the visibility loss is only algebraically small, so exponentiating the second-order response would miss the effect. A gapped quantum detector does not act like a prescribed linear source, whose radiation would be a coherent state.</p>
+<p>The gap moves the first algebraic contribution to fourth order, where <span class="math inline">\(\widehat{\chi^2}\)</span> takes over from <span class="math inline">\(\widehat\chi\)</span>, and Eq. <a href="#eq:main">(19)</a> needs <span class="math inline">\(\Omega T\gg1\)</span>, so the gapless limit cannot be taken in it. The field is massless, the separation and detector size are fixed, and the whole pulse is stretched as <span class="math inline">\(\chi(t/T)\)</span>. Lengthening a holding time with fixed switching ramps is a different limit, and moving paths, thermal fields, charged particles in quantum electrodynamics and fixed-coupling adiabatic theorems are outside the present analysis. The dependence on <span class="math inline">\(\widetilde f(0)\)</span> alone does not license removing the spatial regulator from higher-order vacuum terms.</p>
+<p>In operational terms, a final internal measurement can find the detector in its ground state while the field carries the leading path record. Equations <a href="#eq:main">(19)</a>, <a href="#eq:joint">(26)</a> and <a href="#eq:conditional">(29)</a> quantify how much.</p>
+<h2 id="app:bounds">Bounds and limits</h2>
+<h3 id="soft-frequency-limit-under-the-integral">Soft-frequency limit under the integral</h3>
+<p>Define</p>
+<p><span class="math display">\[A(q,r)=\int\mathrm{d}s\,\mathrm{e}^{\mathrm{i}qs}\chi(s+r/2)\chi(s-r/2).
+\tag{33}\]</span></p>
+<p>It is a Schwartz function of <span class="math inline">\((q,r)\)</span> and is even in <span class="math inline">\(r\)</span>. Writing <span class="math inline">\(M=\Omega T\)</span>, <span class="math inline">\(q=a+b\)</span>, and <span class="math inline">\(\delta_0=(a-b)/2\)</span>, Eq. <a href="#eq:F">(15)</a> becomes</p>
+<p><a id="eq:rescaledF"></a> <span class="math display">\[F_T(a/T,b/T)=-T^2\int_0^{\infty}\mathrm{d}r\,
+ \mathrm{e}^{-\mathrm{i}Mr}A(q,r)\cos(\delta_0r).
+\tag{34}\]</span></p>
+<p>For fixed <span class="math inline">\(a,b\)</span>, endpoint integration by parts gives Eq. <a href="#eq:softF">(20)</a>, since <span class="math inline">\(A(q,0)=\widehat h(q)\)</span> and <span class="math inline">\(\partial_r A(q,0)=0\)</span>.</p>
+<p>Uniform control follows by splitting at <span class="math inline">\(q=M\)</span>. For <span class="math inline">\(q\leq M\)</span>, the two phases have frequencies <span class="math inline">\(M\pm\delta_0\geq M/2\)</span>. Integration by parts and the Schwartz bounds on <span class="math inline">\(A\)</span> imply</p>
+<p><span class="math display">\[\left|\frac{\Omega}{T}F_T(a/T,b/T)\right|
+ \leq C_N(1+q)^{-N}.
+\tag{35}\]</span></p>
+<p>For <span class="math inline">\(q&gt;M\)</span>, direct integration gives the bound <span class="math inline">\(C_NM(1+q)^{-N}\)</span>. Also,</p>
+<p><span class="math display">\[0\leq T^2[1-\operatorname{sinc}(ad/T)\operatorname{sinc}(bd/T)]
+ \leq\frac{d^2}{6}(a^2+b^2).
+\tag{36}\]</span></p>
+<p>One way to see the last inequality is to average <span class="math inline">\(1-\cos[(a\bm n+b\bm m)\cdot\bm d/T]\leq[(a\bm n+b\bm m)\cdot\bm d/T]^2/2\)</span> over independent unit vectors. Since <span class="math inline">\(\widetilde f\)</span> is bounded, the rescaled integrand is dominated on <span class="math inline">\(q\leq M\)</span> by an integrable function. The <span class="math inline">\(q&gt;M\)</span> tail is bounded by a constant times <span class="math inline">\(M^2\int_M^{\infty}\mathrm{d}q\,q^5(1+q)^{-2N}\)</span> and vanishes for sufficiently large <span class="math inline">\(N\)</span>. This proves Eq. <a href="#eq:limitintegral">(22)</a> without an unregulated exchange of limits.</p>
+<h3 id="higher-order-remainder">Higher-order remainder</h3>
+<p>Let</p>
+<p><span class="math display">\[B_f^2=\int\mathrm{d}^3\bm k\,|b(k)|^2&lt;\infty,
+ \qquad z=2|\lambda|B_fT\|\chi\|_1.
+\tag{37}\]</span></p>
+<p>After <span class="math inline">\(n\)</span> interaction vertices, at most <span class="math inline">\(n\)</span> field quanta are present. The creation and annihilation bounds on each particle sector, followed by the ordered time integrals, give</p>
+<p><a id="eq:dysonbound"></a> <span class="math display">\[\|\lambda^n\psi_n(T)\|\leq\frac{z^n}{\sqrt{n!}}.
+\tag{38}\]</span></p>
+<p>The detector monopole has operator norm one. As <span class="math inline">\(D_{\bm d}\)</span> is bounded by two and only even total orders survive, the terms of total order at least six in Eq. <a href="#eq:momentum">(7)</a> are <span class="math inline">\(O(z^6)\)</span> as <span class="math inline">\(z\to0\)</span>. This also keeps <span class="math inline">\(\mathcal{C}_T\)</span> positive in the regime used in Eq. <a href="#eq:joint">(26)</a>.</p>
+<p>Equation <a href="#eq:dysonbound">(38)</a> gives <span class="math inline">\(\|\psi_3\|=O(T^3)\)</span>. The first-order norm decreases faster than every inverse power by the same Fourier bound as Eq. <a href="#eq:super">(13)</a>. Cauchy-Schwarz then proves Eq. <a href="#eq:pairdominates">(17)</a>. Along Eq. <a href="#eq:jointscale">(25)</a>, <span class="math inline">\(z=O(\lambda^{1-\beta})\to0\)</span> and <span class="math inline">\(\lambda^6T^6=o(\lambda^4T^{-4})\)</span>. For the excited sector, the sum of odd orders starting at three has norm <span class="math inline">\(O(z^3)\)</span>. Applying <span class="math inline">\(\|u+v\|^2\leq2\|u\|^2+2\|v\|^2\)</span> proves Eq. <a href="#eq:noexcitation">(27)</a>.</p>
+<h2 class="unnumbered" id="ai-assistance">AI assistance</h2>
+<p>AI tools assisted with writing, mathematical derivations, literature review, and numerical code. Some claims in this working paper remain to be independently checked.</p>
+<h2 class="unnumbered" id="references">References</h2>
+<ol>
+<li>
+<p><a id="ref-Foo2020"></a> Joshua Foo, Sho Onoe, and Magdalena Zych. <span>Unruh–deWitt</span> detectors in quantum superpositions of trajectories. <span><em>Phys. Rev. D</em></span>, 102(8):085013, 2020.</p>
+</li>
+<li>
+<p><a id="ref-Gooding2026"></a> Cisco Gooding, Taylor Cey, and Robert Mann. Testing superpositions of detector trajectories, 2026.</p>
+</li>
+<li>
+<p><a id="ref-Unruh2000"></a> William G. Unruh. False loss of coherence. In Heinz-Peter Breuer and Francesco Petruccione, editors, <span> <em>Relativistic Quantum Measurement and Decoherence</em></span>, volume 559 of <span><em>Lecture Notes in Physics</em></span>, pages 125–140. Springer, Berlin, Heidelberg, 2000.</p>
+</li>
+<li>
+<p><a id="ref-GundhiBassi2023"></a> Anirudh Gundhi and Angelo Bassi. Motion of an electron through vacuum fluctuations. <span><em>Phys. Rev. A</em></span>, 107(6):062801, 2023.</p>
+</li>
+<li>
+<p><a id="ref-Gundhi2024"></a> Anirudh Gundhi. Decoherence due to the <span>Casimir</span> effect? <span><em>Phys. Rev. D</em></span>, 110(11):116001, 2024.</p>
+</li>
+<li>
+<p><a id="ref-GundhiUlbricht2025"></a> Anirudh Gundhi and Hendrik Ulbricht. Measuring decoherence due to quantum vacuum fluctuations. <span><em>Phys. Rev. Lett.</em></span>, 135(2):020402, 2025.</p>
+</li>
+<li>
+<p><a id="ref-Souza2018"></a> Reinaldo <span>de Melo e Souza</span>, François Impens, and Paulo A. <span>Maia Neto</span>. Microscopic dynamical <span>Casimir</span> effect. <span><em>Phys. Rev. A</em></span>, 97(3):032514, 2018.</p>
+</li>
+<li>
+<p><a id="ref-LoLaw2018"></a> Lezhi Lo and C. K. Law. Quantum radiation from a shaken two-level atom in vacuum. <span><em>Phys. Rev. A</em></span>, 98(6):063807, 2018.</p>
+</li>
+<li>
+<p><a id="ref-Farias2019"></a> M. Belén Farías, C. D. Fosco, Fernando C. Lombardo, and Francisco D. Mazzitelli. Motion induced radiation and quantum friction for a moving atom. <span><em>Phys. Rev. D</em></span>, 100(3):036013, 2019.</p>
+</li>
+<li>
+<p><a id="ref-Dalvit2000"></a> Diego A. R. Dalvit and Paulo A. <span>Maia Neto</span>. Decoherence via the dynamical <span>Casimir</span> effect. <span><em>Phys. Rev. Lett.</em></span>, 84(5):798–801, 2000.</p>
+</li>
+<li>
+<p><a id="ref-Sinha2021"></a> Kanupriya Sinha, Adrián Ezequiel <span>Rubio López</span>, and Yiğit Subaş<span>ı</span>. Dissipative dynamics of a particle coupled to a field via internal degrees of freedom. <span><em>Phys. Rev. D</em></span>, 103(5):056023, 2021.</p>
+</li>
+<li>
+<p><a id="ref-Jakubec2026"></a> Clemens Jakubec, Aaron Bartleson, Peter W. Milonni, and Kanu Sinha. Decoherence of spatial superpositions along stationary worldlines, 2026.</p>
+</li>
+<li>
+<p><a id="ref-Hummer2016"></a> Daniel Hümmer, Eduardo Martín-Martínez, and Achim Kempf. Renormalized <span>Unruh–DeWitt</span> particle detector models for boson and fermion fields. <span><em>Phys. Rev. D</em></span>, 93(2):024019, 2016.</p>
+</li>
+</ol>
+{% endraw %}

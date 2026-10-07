@@ -12,10 +12,17 @@ main_class: home
 
 <nav class="home-nav" aria-label="Primary">
   <a href="/about/">About</a>
-  <a href="https://pervasive.gast.it.uc3m.es/members/francisco-javier-blanco-romero/">Research</a>
+  <a href="{{ '/research/' | relative_url }}">Research</a>
   <a href="https://scholar.google.com/citations?user=YkhPZxkAAAAJ">Publications</a>
   <a href="/notes/">Notes</a>
 </nav>
+
+<section class="home-section research-preview" aria-labelledby="research-heading">
+  <h2 id="research-heading">Research in progress</h2>
+  <p>Working papers on quantum fields, randomness, computation, and cryptography.</p>
+  <p class="research-caveat">Drafts under review.</p>
+  <a class="text-link" href="{{ '/research/' | relative_url }}">Read the working papers <span aria-hidden="true">&rarr;</span></a>
+</section>
 
 <section class="home-section software" aria-labelledby="software-heading">
   <h2 id="software-heading">Software</h2>

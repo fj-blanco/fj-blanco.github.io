@@ -1,0 +1,67 @@
+\documentclass[tikz,border=3pt]{standalone}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,xcolor,booktabs,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,arrows,positioning,calc,automata}
+\usepackage[numbers,sort&compress]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{1pt}
+\usepackage{url}
+\usepackage[colorlinks=true,allcolors=blue!45!black]{hyperref}
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\newcommand{\bits}{\{0,1\}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\I}{\mathbf{1}}
+\newcommand{\ExampleContexts}{65536}
+\newcommand{\ExampleSamples}{8192}
+\newcommand{\ExampleEstimate}{0.1542}
+\newcommand{\ExampleRMSE}{0.0230}
+\newcommand{\ExamplePrediction}{0.5378}
+\newcommand{\ExampleCoverage}{0.5470}
+\newcommand{\RandomOnePower}{0.5556}
+\newcommand{\RandomLearnedSixtyFour}{0.754}
+\newcommand{\RandomKnownSixtyFour}{0.774}
+\newcommand{\ExactSpectrumError}{5.3e-15}
+\newcommand{\TrajectoryRMS}{0.0009}
+\begin{document}
+\begin{tikzpicture}[
+    >={Stealth[length=4pt,width=3.5pt]},
+    cell/.style={draw, minimum width=12.5mm, minimum height=6.5mm, inner sep=1pt, font=\footnotesize},
+    func/.style={draw, rounded corners=1.5pt, minimum height=6mm, inner sep=2pt, font=\footnotesize, fill=black!4},
+    xor/.style={draw, circle, inner sep=0pt, minimum size=4.2mm, path picture={
+        \draw (path picture bounding box.north) -- (path picture bounding box.south)
+              (path picture bounding box.west) -- (path picture bounding box.east);}},
+    lab/.style={font=\scriptsize, inner sep=1.5pt},
+    line width=0.5pt]
+  \node[cell] (c1) at (0,0) {$X_{t-p+1}$};
+  \node[cell, right=0pt of c1] (c2) {$X_{t-p+2}$};
+  \node[cell, right=0pt of c2, minimum width=8mm] (c3) {$\cdots$};
+  \node[cell, right=0pt of c3] (c4) {$X_{t}$};
+  \node[lab, above=1pt of c1.north west, anchor=south west] {context $C_t$};
+  \draw[->, black!55] ($(c4.north east)+(0,0.42)$) -- node[lab, above] {shift} ($(c2.north west)+(0,0.42)$);
+  \node[func, minimum width=29mm] (g) at ($(c2.south west)!0.5!(c4.south east)+(0,-0.85)$) {$g(X_{t-p+2},\ldots,X_t)$};
+  \foreach \c in {c2,c3,c4} { \draw[->] (\c.south) -- (\c.south |- g.north); }
+  \node[xor] (x1) at (c1.south |- g) {};
+  \draw[->] (c1.south) -- (x1.north);
+  \draw[->] (g.west) -- (x1.east);
+  \node[xor] (x2) at ($(c4.east)+(0.85,-1.75)$) {};
+  \draw[->] (x1.south) |- node[lab, below, pos=0.72] {$b_g(C_t)$} (x2.west);
+  \node[lab, below=5mm of x2] (noise) {$E_{t+1}\sim\mathrm{Bernoulli}(\delta)$};
+  \draw[->] (noise.north) -- (x2.south);
+  \draw[->] (x2.north) |- node[lab, above, pos=0.75] {$X_{t+1}$} (c4.east);
+  \draw[->] (x2.east) -- ++(0.55,0) node[lab, right] {out};
+\end{tikzpicture}
+\end{document}

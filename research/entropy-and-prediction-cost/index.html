@@ -1,0 +1,294 @@
+---
+layout: "paper"
+title: "Identical Entropy Profiles, Different Prediction Costs"
+description: "Stationary binary sources with the same entropy profiles can have sharply different prediction costs."
+section: "research"
+main_class: "paper-page"
+math: true
+permalink: "/research/entropy-and-prediction-cost/"
+area: "Information theory · Prediction"
+authors: ["Javier Blanco-Romero", "Florina Almenares Mendoza"]
+---
+{% raw %}
+<h2 class="unnumbered" id="abstract">Abstract</h2>
+<p>Min-entropy tells us how often the best guess of the next bit succeeds. It does not tell us how hard that guess is to compute. We make this gap exact with a family of stationary binary sources driven by an invertible feedback register. All members assign the same list of probabilities to the blocks of every length, so they share every Rényi block entropy, their statistical complexity, and their excess entropy. Yet the optimal next-bit decision ranges from reading a single wire to circuits of exponential size, even when only a fixed fraction of the optimal advantage is required. A companion result separates estimation from learning. For an unknown noisy table on independent contexts, the min-entropy can be estimated from a number of samples growing as the square root of the number of contexts, while useful prediction needs a number proportional to it. The family gives predictor-based entropy tests a target of known entropy and tunable cost.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Predictors are a standard tool for assessing random number generators. An algorithm that guesses the next bit better than chance exposes a departure from independent fair bits. This logic underlies the predictor estimates of NIST SP 800-90B [<a href="#ref-kelsey2015predictive">1</a>, <a href="#ref-sonmez2018recommendation">2</a>] and their machine-learning extensions [<a href="#ref-blanco2025machine">3</a>]. It runs in one direction only. A successful prediction exposes a regularity, but a failed prediction may reflect the predictor as much as the source. Computational notions of entropy make this explicit by defining unpredictability relative to bounded predictors or distinguishers [<a href="#ref-yao1982theory">4</a>, <a href="#ref-barak2003computational">5</a>, <a href="#ref-hsiao2007conditional">6</a>].</p>
+<p>Entropy depends on how probability is distributed over outcomes, not on which outcome carries it. Relabel the faces of a loaded die and every entropy stays the same, while the face worth betting on moves, and if the relabeling is complicated, so is the bet. A noisy binary rule shows the same thing. At each context one output has probability <span class="math inline">\(1-\delta\)</span> and the other <span class="math inline">\(\delta\)</span>, for a fixed noise rate <span class="math inline">\(0&lt;\delta&lt;1/2\)</span>, so the guessing probability is always <span class="math inline">\(1-\delta\)</span>, yet the favored bit may depend on the context through a complicated function. Invertible feedback, borrowed from shift-register theory [<a href="#ref-golomb2014shift">7</a>, <a href="#ref-dabrowski2014searching">8</a>], turns this into a stationary source while preserving the probability spectrum of every block. With memory <span class="math inline">\(p\)</span>, every member has the Rényi block entropies</p>
+<p><span class="math display">\[H_\alpha(X_1^n)=\min(n,p)+\max(n-p,0)\,h_\alpha(\delta)\]</span></p>
+<p>for every order <span class="math inline">\(\alpha\)</span> and block length <span class="math inline">\(n\)</span>, where <span class="math inline">\(h_\alpha(\delta)\)</span> is the entropy of one noisy bit, and the same statistical complexity [<a href="#ref-crutchfield1989inferring">9</a>, <a href="#ref-shalizi2001computational">10</a>] and excess entropy [<a href="#ref-grassberger1986toward">11</a>, <a href="#ref-crutchfield2003regularities">12</a>, <a href="#ref-bialek2001predictability">13</a>]. Their next-bit rules nevertheless range from a wire to circuits of order <span class="math inline">\(2^p/p\)</span> gates, by Shannon's counting argument [<a href="#ref-shannon1949synthesis">14</a>, <a href="#ref-jukna2012boolean">15</a>]. Calibrated benchmarks with known optimal prediction error already exist [<a href="#ref-marzen2024benchmarks">16</a>]; here the predictor is handed the full context, and the whole probability spectrum stays fixed while the decision cost varies.</p>
+<p>Learning the source adds a second gap. Estimating the best achievable performance can take fewer observations than learning a predictor that attains it, as Kong and Valiant showed [<a href="#ref-kong2018learnability">17</a>], and we give a finite-alphabet instance for conditional min-entropy in which coincidences between contexts reveal the noise level long before prediction is possible.</p>
+<p>These questions matter for the certification of physical random number generators, quantum ones included, whose entropy is routinely assessed with predictor-based tests [<a href="#ref-kelsey2015predictive">1</a>, <a href="#ref-sonmez2018recommendation">2</a>]. A source with known entropy and tunable prediction cost lets one check whether such a test measures the source or its own limitations.</p>
+<p>Section <a href="#sec:family">2</a> builds the source family and computes its entropy profile. Section <a href="#sec:hardness">3</a> bounds the circuit cost of the optimal decision and illustrates it with a learner that keeps a limited number of Fourier terms. Section <a href="#sec:estimation">4</a> separates estimation from learning, and Sec. <a href="#sec:conclusion">5</a> discusses what a prediction experiment measures.</p>
+<h2 id="sec:family">Changing the rule without changing the entropy</h2>
+<h3 id="the-source">The source</h3>
+<p>We want a family of sources that look identical to every entropy measure while their optimal predictors differ as much as possible. A feedback shift register is a convenient laboratory. It is a classical model of pseudorandom bit streams, its state is a window of recent bits, and its rule can be as simple or as complicated as we like.</p>
+<p>Let <span class="math inline">\(X_t\in\{0,1\}\)</span> be the bit emitted at integer time <span class="math inline">\(t\)</span>, write <span class="math inline">\(X_a^b=(X_a,\ldots,X_b)\)</span> for a block, and let <span class="math inline">\(\oplus\)</span> denote addition modulo two. Fix a memory length <span class="math inline">\(p\ge2\)</span>, a noise probability <span class="math inline">\(0&lt;\delta&lt;1/2\)</span>, and a Boolean feedback function <span class="math inline">\(g:\{0,1\}^{p-1}\to\{0,1\}\)</span>. Start from a uniformly random block <span class="math inline">\(X_1^p\)</span>, draw noise bits <span class="math inline">\(E_{t+1}\)</span> independently of the past with <span class="math inline">\(\mathbb{P}(E_{t+1}=1)=\delta\)</span>, and let</p>
+<p><a id="eq:source"></a> <span class="math display">\[X_{t+1}=X_{t-p+1}\oplus g(X_{t-p+2},\ldots,X_t)\oplus E_{t+1},
+\qquad t\ge p .
+
+\tag{1}\]</span></p>
+<p>Each new bit is the oldest bit in the window, corrected by an arbitrary function of the other <span class="math inline">\(p-1\)</span> bits, and occasionally flipped by noise (Fig. <a href="#fig:register">1</a>).</p>
+<p>The current context is the window <span class="math inline">\(C_t=X_{t-p+1}^t\)</span>. For a possible context <span class="math inline">\(c=(c_1,\ldots,c_p)\)</span>, define its preferred output <span class="math inline">\(b_g(c)\)</span> and its noiseless successor <span class="math inline">\(T_g(c)\)</span>,</p>
+<p><a id="eq:feedback"></a> <span class="math display">\[b_g(c)=c_1\oplus g(c_2,\ldots,c_p),\qquad
+T_g(c)=(c_2,\ldots,c_p,b_g(c)).
+
+\tag{2}\]</span></p>
+<p>The feature that preserves the entropy profile is that <span class="math inline">\(T_g\)</span> is a permutation of the <span class="math inline">\(2^p\)</span> contexts. A permutation moves probability from one context to another without ever merging two contexts or splitting one, so it rearranges the probabilities without changing their list. The successor keeps the suffix <span class="math inline">\(c_2,\ldots,c_p\)</span>, and the discarded bit can be recovered from the new one as <span class="math inline">\(c_1=b_g(c)\oplus g(c_2,\ldots,c_p)\)</span>. Because the oldest bit enters linearly, <span class="math inline">\(g\)</span> can be as complicated as we like without spoiling invertibility. This is the nonsingular feedback form of shift-register theory [<a href="#ref-golomb2014shift">7</a>, <a href="#ref-dabrowski2014searching">8</a>].</p>
+<p><img src="figures/diagram-1.png" alt="image" /></p>
+<p><strong>Figure 1.</strong> Noisy nonsingular feedback register, Eq. <a href="#eq:source">(1)</a>. The oldest bit enters the output linearly, so the noiseless update <span class="math inline">\(T_g\)</span> is invertible for every feedback function <span class="math inline">\(g\)</span>. The preferred output <span class="math inline">\(b_g(C_t)\)</span> is the Bayes decision for the next bit.</p>
+<p><a id="fig:register"></a></p>
+<h3 id="what-stays-fixed">What stays fixed</h3>
+<p>We compare the sources through three kinds of quantities. Logarithms are base two unless written as <span class="math inline">\(\ln\)</span>. A finite random variable <span class="math inline">\(W\)</span> with probabilities <span class="math inline">\(q_w=\mathbb{P}(W=w)\)</span> has Rényi entropy of order <span class="math inline">\(\alpha\)</span>,</p>
+<p><a id="eq:renyi"></a> <span class="math display">\[H_\alpha(W)=\frac{1}{1-\alpha}\log\sum_w q_w^\alpha,
+\qquad 0&lt;\alpha&lt;\infty,\quad\alpha\ne1,
+
+\tag{3}\]</span></p>
+<p>with the limits <span class="math inline">\(\alpha\to1\)</span>, <span class="math inline">\(\alpha\to\infty\)</span>, and <span class="math inline">\(\alpha\to0\)</span> giving the Shannon entropy <span class="math inline">\(H_1(W)=-\sum_w q_w\log q_w\)</span>, the min-entropy <span class="math inline">\(H_\infty(W)=-\log\max_w q_w\)</span>, and the logarithm <span class="math inline">\(H_0\)</span> of the support size [<a href="#ref-renyi1961measures">18</a>]. We write <span class="math inline">\(h_\alpha(\delta)\)</span> for the Rényi entropy of a Bernoulli variable with parameter <span class="math inline">\(\delta\)</span>. The full list of block probabilities determines every Rényi entropy at that length, so fixing the list fixes all of them at once.</p>
+<p>Predictive memory is measured on the two-sided stationary extension of the source. Two pasts are equivalent when they induce the same law of the entire future; the equivalence class is the causal state, and its Shannon entropy <span class="math inline">\(C_\mu\)</span> is the statistical complexity of computational mechanics [<a href="#ref-crutchfield1989inferring">9</a>, <a href="#ref-shalizi2001computational">10</a>]. It counts how much a minimal optimal predictor must remember. The excess entropy <span class="math inline">\(\mathcal E\)</span> is the mutual information <span class="math inline">\(I(\cdot;\cdot)\)</span> between the infinite past and the infinite future [<a href="#ref-grassberger1986toward">11</a>, <a href="#ref-crutchfield2003regularities">12</a>, <a href="#ref-bialek2001predictability">13</a>], the total amount of the future that the past can explain.</p>
+<p>Invertibility suggests how the calculation will work. Specify the initial context and then the independent noise bits; these data determine the emitted word uniquely. Changing <span class="math inline">\(g\)</span> changes that word, while its probability remains the product of the same context and noise probabilities. We also need to check that the context law is stationary and that different contexts carry different predictive information.</p>
+<p><strong>Theorem 1 (Common entropy profile).</strong> <a id="thm:profile"></a> For every feedback rule <span class="math inline">\(g\)</span>, the context chain is irreducible and aperiodic, with the uniform stationary distribution on <span class="math inline">\(\{0,1\}^p\)</span>. At block length <span class="math inline">\(n\le p\)</span> every word has probability <span class="math inline">\(2^{-n}\)</span>. At length <span class="math inline">\(n\ge p\)</span>, the words whose realized noise string has <span class="math inline">\(j\)</span> ones have probability and multiplicity</p>
+<p><a id="eq:spectrum"></a> <span class="math display">\[2^{-p}\delta^j(1-\delta)^{n-p-j},
+\qquad
+2^p\binom{n-p}{j},
+\qquad j=0,\ldots,n-p.
+
+\tag{4}\]</span></p>
+<p>Consequently, for every order <span class="math inline">\(\alpha\in[0,\infty]\)</span>,</p>
+<p><a id="eq:profile"></a> <span class="math display">\[H_\alpha(X_1^n)=\min(n,p)+\max(n-p,0)\,h_\alpha(\delta).
+
+\tag{5}\]</span></p>
+<p>All <span class="math inline">\(2^p\)</span> contexts are distinct causal states, and</p>
+<p><a id="eq:memory"></a> <span class="math display">\[C_\mu=p,\qquad
+\mathcal E=I(X_{-\infty}^{0};X_1^\infty)=p[1-h_1(\delta)].
+
+\tag{6}\]</span></p>
+<p>The three steps below establish stationarity, the block spectrum, and the minimal predictive memory.</p>
+<p><em>Proof.</em> <em>Stationarity.</em> Both next bits have positive probability, so any context reaches any other in <span class="math inline">\(p\)</span> steps, and the all-zero context has a self-loop. A destination context <span class="math inline">\((u,y)\)</span>, with suffix <span class="math inline">\(u\in\{0,1\}^{p-1}\)</span> and appended bit <span class="math inline">\(y\)</span>, has exactly two predecessors, <span class="math inline">\((0,u)\)</span> and <span class="math inline">\((1,u)\)</span>. Their preferred outputs are opposite, so one reaches <span class="math inline">\((u,y)\)</span> with probability <span class="math inline">\(1-\delta\)</span> and the other with probability <span class="math inline">\(\delta\)</span>. The incoming probabilities sum to one, and the uniform law is stationary. Equivalently, the noisy update mixes two permutations, the preferred successor and the successor with its last bit flipped; each preserves the uniform law.</p>
+<p><em>Words are noise strings.</em> A word <span class="math inline">\(x_1^n\)</span> with <span class="math inline">\(n\ge p\)</span> determines its initial context and its noise bits through <span class="math display">\[e_{t+1}=x_{t+1}\oplus x_{t-p+1}\oplus g(x_{t-p+2},\ldots,x_t),
+\qquad p\le t&lt;n,\]</span> and conversely the initial context and noise bits determine the word. This bijection carries the uniform context law and the independent noise to Eq. <a href="#eq:spectrum">(4)</a>, whatever <span class="math inline">\(g\)</span> is. Only the map from noise strings to words depends on the rule. Summing powers of the probabilities gives Eq. <a href="#eq:profile">(5)</a>, and shorter words are marginals of the uniform context.</p>
+<p><em>Distinct futures.</em> From a context <span class="math inline">\(c\)</span>, the unique most likely continuation of length <span class="math inline">\(p\)</span> is the noiseless one, <span class="math inline">\(T_g^p(c)\)</span>, with probability <span class="math inline">\((1-\delta)^p\)</span>. Since <span class="math inline">\(T_g^p\)</span> is a permutation, distinct contexts have distinct modal futures and hence distinct future laws. The contexts are therefore exactly the causal states, and uniformity gives <span class="math inline">\(C_\mu=p\)</span>. Each new bit has conditional Shannon entropy <span class="math inline">\(h_1(\delta)\)</span> given the past, so <span class="math inline">\(I(X_{-\infty}^{0};X_1^n)=H_1(X_1^n)-n h_1(\delta)\)</span>, and the limit of Eq. <a href="#eq:profile">(5)</a> gives Eq. <a href="#eq:memory">(6)</a>.</p>
+<p>Changing <span class="math inline">\(g\)</span> changes which words carry the large probabilities and leaves the list of probabilities intact. Figure <a href="#fig:profiles">2</a> shows this for delayed copy (<span class="math inline">\(g=0\)</span>), the parity of three suffix bits, and a random feedback table. Direct enumeration through length 16 agrees with Eq. <a href="#eq:profile">(5)</a> to within <span class="math inline">\(5.3e-15\)</span> bits. For all 276 rules with <span class="math inline">\(2\le p\le4\)</span>, independent checks confirm Eq. <a href="#eq:spectrum">(4)</a> in exact rational arithmetic, the distinctness of the <span class="math inline">\(2^p\)</span> future laws, and Eq. <a href="#eq:memory">(6)</a> to within <span class="math inline">\(3\times10^{-14}\)</span> bits.</p>
+<p><img src="figures/fig_entropy_profiles.png" alt="image" /></p>
+<p><strong>Figure 2.</strong> The probabilities move; their spectrum does not. For memory <span class="math inline">\(p=5\)</span> and noise <span class="math inline">\(\delta=0.1\)</span>, panels (a)–(c) show the probabilities of ten-bit words under three feedback rules. Rows index the first five bits and columns the next five. (d) Sorting the 1024 probabilities gives coincident curves. (e) Block Rényi entropies: lines are Eq. <a href="#eq:profile">(5)</a>, and open markers are independent enumerations of the three sources, interleaved so that coincident points remain visible.</p>
+<p><a id="fig:profiles"></a></p>
+<p>Two further features matter for entropy estimation. First, the asymptotic min-entropy rate is set by the preferred edges. Weight each edge of the context graph by minus the logarithm of its transition probability. No edge weighs less than <span class="math inline">\(-\log(1-\delta)\)</span>, and the preferred edges form the cycles of the permutation <span class="math inline">\(T_g\)</span>, all at that weight. The minimum mean cycle weight, which governs min-entropy asymptotics on context graphs [<a href="#ref-blanco2026contextgraphs">19</a>], therefore equals the block min-entropy rate,</p>
+<p><a id="eq:rate"></a> <span class="math display">\[\lim_{n\to\infty}\frac{H_\infty(X_1^n)}{n}=h_\infty(\delta)=-\log(1-\delta).
+
+\tag{7}\]</span></p>
+<p>Second, every window of at most <span class="math inline">\(p\)</span> bits is exactly uniform. A predictor whose only observation is a consecutive suffix of fewer than <span class="math inline">\(p\)</span> bits succeeds with probability exactly <span class="math inline">\(1/2\)</span>, even if it knows the rule. The suffix and the next bit form a uniform block of length at most <span class="math inline">\(p\)</span>. This behavior of short windows is that of the two-faced processes of Ryabko and Monarev [<a href="#ref-ryabko2005testing">20</a>]; here it coexists with an arbitrary feedback rule.</p>
+<h2 id="sec:hardness">The cost of the best guess</h2>
+<p>We now supply the entire context and assume the source law is known. This removes uncertainty about the model and isolates the computation needed to choose the next bit. Let <span class="math inline">\(C\)</span> be a stationary context and <span class="math inline">\(Y\)</span> the bit that follows it. A deterministic predictor <span class="math inline">\(f:\{0,1\}^p\to\{0,1\}\)</span> has success probability <span class="math inline">\(G(f)=\mathbb{P}(f(C)=Y)\)</span>. The Bayes rule, which picks the more likely next bit given the context, is <span class="math inline">\(b_g\)</span>, and its success <span class="math inline">\(G^\star\)</span> is the operational meaning of the average conditional min-entropy [<a href="#ref-dodis2004fuzzy">21</a>, <a href="#ref-konig2009operational">22</a>],</p>
+<p><a id="eq:guessing"></a> <span class="math display">\[\begin{aligned}
+G^\star&amp;=\mathbb{E}_C\max_{y\in\{0,1\}}\mathbb{P}(Y=y\mid C)=1-\delta,\\
+\widetilde H_\infty(Y\mid C)&amp;=-\log G^\star=h_\infty(\delta).
+\end{aligned}
+
+\tag{8}\]</span></p>
+<p>Every context has the same conditional guessing probability, so average and worst-case conditional min-entropies coincide. We call <span class="math inline">\(-\log G(f)\)</span> the predictor's attack score. It can never fall below the ideal value <a href="#eq:guessing">(8)</a>, so its gap above the ideal value measures the predictor's failure to recover available bias. A high attack score by itself supplies no lower bound on the source's min-entropy.</p>
+<p>How much computation does the Bayes decision take? We need a measure of computation that does not depend on a particular algorithm or machine. Boolean circuit size is the classical choice. It counts the elementary logical operations needed to compute a function of a fixed number of bits, and it is the measure for which Shannon first showed that most functions are hard [<a href="#ref-shannon1949synthesis">14</a>]. Let <span class="math inline">\(\gamma=G^\star-1/2=1/2-\delta\)</span> be the Bayes advantage over a fair coin. Achieving a fraction <span class="math inline">\(0&lt;\rho\le1\)</span> of it means <span class="math inline">\(G(f)\ge1/2+\rho\gamma\)</span>. Fix a finite basis of Boolean gates that can compute every Boolean function, with each gate taking at most two inputs, let <span class="math inline">\(\mathsf{size}(f)\)</span> be the smallest number of gates computing <span class="math inline">\(f\)</span>, and define the decision cost</p>
+<p><a id="eq:cost"></a> <span class="math display">\[K_g(\rho)=\min\{\mathsf{size}(f):G(f)\ge1/2+\rho\gamma\}.
+
+\tag{9}\]</span></p>
+<p>The <span class="math inline">\(p\)</span> context bits are supplied as inputs, and lookup tables must be built from gates. For a gate budget <span class="math inline">\(s\)</span>, the quantity <span class="math inline">\(-\log\sup_{\mathsf{size}(f)\le s}G(f)\)</span> is an instance of unpredictability entropy [<a href="#ref-hsiao2007conditional">6</a>]; restricted predictors also define usable information [<a href="#ref-xu2020usable">23</a>], with logarithmic loss. Our question is how far <span class="math inline">\(K_g\)</span> can vary across the common profile of Theorem <a href="#thm:profile">1</a>.</p>
+<p>At one extreme, <span class="math inline">\(g=0\)</span> makes the decision read the oldest bit, a single wire. Parity feedback needs at most linearly many gates. At the other extreme sits a typical table.</p>
+<p><strong>Theorem 2 (Decision cost at fixed entropy).</strong> <a id="thm:hardness"></a> Fix <span class="math inline">\(0&lt;\rho\le1\)</span> and draw <span class="math inline">\(g\)</span> uniformly from all Boolean functions on <span class="math inline">\(p-1\)</span> bits; <span class="math inline">\(\mathbb{P}_g\)</span> denotes probability over this choice. There is a constant <span class="math inline">\(a\ge1\)</span>, depending only on the gate basis, such that for every integer gate budget <span class="math inline">\(s\ge p\)</span>,</p>
+<p><a id="eq:counting-bound"></a> <span class="math display">\[\mathbb{P}_g[K_g(\rho)\le s]
+\le\exp\!\left(a s\ln s-\rho^2 2^{p-2}\right).
+
+\tag{10}\]</span></p>
+<p>For each fixed <span class="math inline">\(0&lt;\rho\le1\)</span>, a random rule therefore has</p>
+<p><a id="eq:exponential-cost"></a> <span class="math display">\[K_g(\rho)=\Theta(2^p/p)
+
+\tag{11}\]</span></p>
+<p>with probability tending to one as <span class="math inline">\(p\to\infty\)</span>. The upper bound holds for every rule; the lower bound fails with probability at most <span class="math inline">\(\exp(-c_\rho2^p)\)</span> for a constant <span class="math inline">\(c_\rho&gt;0\)</span> depending only on <span class="math inline">\(\rho\)</span>.</p>
+<p>The proof counts circuits that recover a prescribed amount of bias. For any fixed circuit, the entries of a random feedback table make its agreements fluctuate independently across suffixes. Concentration bounds the chance of unusually good agreement; counting circuits then bounds the chance that any small circuit performs well.</p>
+<p><em>Proof.</em> <em>Agreement of one circuit.</em> Let <span class="math inline">\(m=2^{p-1}\)</span> be the number of suffixes, and let <span class="math inline">\(A_g(f)\)</span> be the fraction of contexts, under the uniform law, on which a circuit <span class="math inline">\(f\)</span> agrees with the Bayes rule. Grouping the two contexts that share each suffix <span class="math inline">\(u\in\{0,1\}^{p-1}\)</span>, <span class="math display">\[\begin{aligned}
+A_g(f)&amp;=\frac1m\sum_u V_u,\\
+V_u&amp;=\tfrac12\bigl[\mathbf{1}\{f(0,u)=g(u)\}+\mathbf{1}\{f(1,u)=1\oplus g(u)\}\bigr],
+\end{aligned}\]</span> where <span class="math inline">\(\mathbf{1}\{\cdot\}\)</span> is the indicator of an event. Over random <span class="math inline">\(g\)</span> the pair agreements <span class="math inline">\(V_u\)</span> are independent, lie in <span class="math inline">\([0,1]\)</span>, and have mean <span class="math inline">\(1/2\)</span>, so Hoeffding's inequality [<a href="#ref-hoeffding1963inequalities">24</a>] gives <span class="math display">\[\mathbb{P}_g\!\left[A_g(f)\ge\tfrac12+\tfrac\rho2\right]\le\exp(-m\rho^2/2).\]</span> Fresh noise converts agreement into success,</p>
+<p><a id="eq:agreement"></a> <span class="math display">\[G(f)=\delta+(1-2\delta)A_g(f)
+=\tfrac12+2\gamma\!\left[A_g(f)-\tfrac12\right],
+
+\tag{12}\]</span></p>
+<p>so reaching <span class="math inline">\(G(f)\ge1/2+\rho\gamma\)</span> requires <span class="math inline">\(A_g(f)\ge1/2+\rho/2\)</span>.</p>
+<p><em>Count circuits.</em> A circuit with at most <span class="math inline">\(s\)</span> gates on <span class="math inline">\(p\le s\)</span> inputs is specified by each gate's type and its two incoming wires, so there are at most <span class="math inline">\(\exp(a s\ln s)\)</span> of them [<a href="#ref-shannon1949synthesis">14</a>, <a href="#ref-jukna2012boolean">15</a>]. Enlarging <span class="math inline">\(a\)</span> only weakens the bound, so we may take <span class="math inline">\(a\ge1\)</span>. A union bound over circuits proves Eq. <a href="#eq:counting-bound">(10)</a>.</p>
+<p><em>Lower bound.</em> Choose <span class="math inline">\(d_\rho=\rho^2/(8a\ln2)\)</span> and <span class="math inline">\(s=\lfloor d_\rho2^p/p\rfloor\)</span>. For large <span class="math inline">\(p\)</span>, <span class="math inline">\(s\ge p\)</span> and <span class="math inline">\(\ln s&lt;p\ln2\)</span>, so the exponent in Eq. <a href="#eq:counting-bound">(10)</a> is at most <span class="math inline">\(-\rho^22^p/8\)</span>, and <span class="math inline">\(c_\rho=\rho^2/8\)</span> works.</p>
+<p><em>Upper bound.</em> Lupanov's construction computes any Boolean function of <span class="math inline">\(p-1\)</span> variables with <span class="math inline">\(O(2^p/p)\)</span> gates [<a href="#ref-jukna2012boolean">15</a>], and changing between complete bases costs a constant factor. Computing <span class="math inline">\(g\)</span> and adding the oldest bit gives <span class="math inline">\(b_g\)</span> within the same bound.</p>
+<p>For <span class="math inline">\(\rho&lt;1\)</span> the lower bound tolerates errors on a positive fraction of contexts, so approximate prediction is as hard as exact prediction up to constants. In the units of an entropy test, an attack score within <span class="math inline">\(\varepsilon\)</span> bits of the ideal value demands the advantage fraction <span class="math display">\[\rho_\varepsilon=\frac{(1-\delta)2^{-\varepsilon}-1/2}{1/2-\delta}&gt;0,
+\qquad 0\le\varepsilon&lt;1-h_\infty(\delta).\]</span> The hard rule is a typical random table, and it stays hard even when the table is known. The cost lies in representing the known decision rule by gates. Typical random tables already require long descriptions; the result makes no computational hardness assumption.</p>
+<p><img src="figures/fig_prediction_cost.png" alt="image" /></p>
+<p><strong>Figure 3.</strong> The same entropy profile admits different prediction costs. The horizontal axis is the number <span class="math inline">\(q\)</span> of retained Walsh terms; the vertical axis is the attack score <span class="math inline">\(-\log\overline G\)</span>, where <span class="math inline">\(\overline G\)</span> is the mean population success over 30 trials. Bands (narrower than the markers for most points) transform pointwise 95% Monte Carlo intervals for that mean. Copy and parity coincide at the Bayes value. The dashed curve truncates the exact spectrum of the same random rules. Memory <span class="math inline">\(p=10\)</span>, noise <span class="math inline">\(\delta=0.1\)</span>, and 8192 stationary training transitions.</p>
+<p><a id="fig:capacity"></a></p>
+<p>The common statistical complexity counts the information stored in the predictive state. The circuit cost counts the gates needed to turn that state into a decision. Predictive rate-distortion instead studies how much state information can be discarded at a given loss [<a href="#ref-marzen2016circumventing">25</a>]; here all <span class="math inline">\(p\)</span> context bits are supplied. Grouping contexts by their immediate optimal decision, as in decisional states [<a href="#ref-brodu2011decisional">26</a>], leaves just the balanced bit <span class="math inline">\(b_g(C)\)</span>. Maintaining an exact predictor through subsequent updates still requires all <span class="math inline">\(2^p\)</span> causal states, because their future laws differ.</p>
+<p>Equation <a href="#eq:cost">(9)</a> fixes the natural context encoding so that the work of computing the decision cannot be hidden in a relabeling of the input. The description length of <span class="math inline">\(g\)</span> also varies across the family, and minimum description length [<a href="#ref-rissanen1978modeling">27</a>] or Kolmogorov complexity [<a href="#ref-li2008introduction">28</a>] would register that variation. The quantities held fixed here describe the process probabilities and its predictive memory.</p>
+<p>The theorem concerns minimal circuits, which are hard to find. A concrete learner shows a similar effect at finite size. After the oldest bit is removed, learning the source means learning <span class="math inline">\(g\)</span> from noisy samples, and the natural coordinates for a Boolean function are its Walsh coefficients, the Fourier expansion on bit strings. Simple rules concentrate on a few coefficients, while a random table spreads its weight over all of them. A learner that keeps only the largest few coefficients is a reasonable proxy for a predictor of limited size. We take <span class="math inline">\(p=10\)</span>, <span class="math inline">\(\delta=0.1\)</span>, and 8192 consecutive stationary training transitions. Subtracting the oldest context bit from each label modulo two leaves a noisy observation of <span class="math inline">\(g\)</span> on the nine-bit suffix. Expand the sign <span class="math inline">\((-1)^{g(u)}\)</span> in Walsh functions [<a href="#ref-odonnell2014analysis">29</a>], estimate the coefficients from the training data, and keep the <span class="math inline">\(q\)</span> largest in absolute value, where the integer <span class="math inline">\(q\)</span> is the term budget. The sign of the truncated sum estimates <span class="math inline">\(g(u)\)</span> (a nonnegative sum gives zero), and adding back the oldest bit gives the prediction. Selection and orientation use training data alone. The budget counts retained terms in the Walsh representation, and fitting uses the entire suffix domain.</p>
+<p>Figure <a href="#fig:capacity">3</a> reports 30 trials per rule family, with success integrated exactly over the stationary context law and fresh noise. Copy and parity are single Walsh terms and reach success <span class="math inline">\(0.9\)</span> with one term. Random feedback reaches only 0.5556 at that budget, and its reconstruction with the full budget is majority voting on each suffix. An independent trajectory of 32768 contexts per trial, with label noise averaged analytically, reproduces the population calculation with root mean square discrepancy 0.0009. Truncating the exact spectrum of each random rule gives nearly the same curve. At <span class="math inline">\(q=64\)</span>, mean success is 0.754 when learned and 0.774 when the rule is known. Finite data are thus not the main source of error. The gap from the Bayes value persists with exact coefficients, because a random rule spreads its weight over many Walsh terms. The numerical comparison therefore illustrates the cost within a specific representation; Theorem <a href="#thm:hardness">2</a> gives the separate lower bound over all circuits.</p>
+<h2 id="sec:estimation">Estimating the value before learning the rule</h2>
+<p><img src="figures/fig_estimation_gap.png" alt="image" /></p>
+<p><strong>Figure 4.</strong> Estimating a value before learning its maximizing action, for <span class="math inline">\(\delta=0.1\)</span>. (a) Entropy estimate <span class="math inline">\(\widehat h_\infty\)</span> and majority attack score <span class="math inline">\(-\log\overline G\)</span> for <span class="math inline">\(M=2^{16}\)</span> contexts. The dotted line is the true min-entropy; the dashed curve is minus the logarithm of the coverage bound, Eq. <a href="#eq:coverage">(17)</a>, which bounds success averaged over the uniform table prior for every learner. Bands are pointwise 95% Monte Carlo intervals for means over 200 trials, not intervals for individual estimates. (b) Root mean square error of <span class="math inline">\(\widehat h_\infty\)</span> against <span class="math inline">\(N/\sqrt M\)</span>, restricted to <span class="math inline">\(N\le M\)</span>. (c) Recovered advantage <span class="math inline">\((\overline G-1/2)/\gamma\)</span> against <span class="math inline">\(N/M\)</span>, with the exact majority reference, Eq. <a href="#eq:majority">(18)</a>, for the largest <span class="math inline">\(M\)</span>.</p>
+<p><a id="fig:estimation"></a></p>
+<p>The circuit bound assumes the source law is known. When it must be learned from data, a different separation appears, because the value of the best guess can be learned before the guess itself [<a href="#ref-kong2018learnability">17</a>]. An independent-context model makes this explicit for min-entropy.</p>
+<h3 id="model-and-estimator">Model and estimator</h3>
+<p>Let <span class="math inline">\(M\ge2\)</span> be the number of contexts, <span class="math inline">\([M]=\{1,\ldots,M\}\)</span>, and <span class="math inline">\(b:[M]\to\{0,1\}\)</span> an unknown table. A sample of size <span class="math inline">\(N\)</span> is <span class="math inline">\(\mathcal D_N=((C_i,Y_i))_{i=1}^N\)</span>, with</p>
+<p><a id="eq:iid-table"></a> <span class="math display">\[\begin{gathered}
+C_i\overset{\mathrm{iid}}{\sim}\mathrm{Uniform}([M]),\qquad
+E_i\overset{\mathrm{iid}}{\sim}\mathrm{Bernoulli}(\delta),\\
+Y_i=b(C_i)\oplus E_i,
+\end{gathered}
+
+\tag{13}\]</span></p>
+<p>where iid means independent and identically distributed, the noise is independent of the contexts, and <span class="math inline">\(0&lt;\delta&lt;1/2\)</span>. The estimator knows <span class="math inline">\(M\)</span> and the form of the model but neither <span class="math inline">\(b\)</span> nor <span class="math inline">\(\delta\)</span>, and its target is again <span class="math inline">\(h_\infty(\delta)\)</span>. Independence of these contexts lets us isolate the role of repeated observations; the stationary source of Eq. <a href="#eq:source">(1)</a> has dependent contexts.</p>
+<p>How can one learn <span class="math inline">\(\delta\)</span> without learning <span class="math inline">\(b\)</span>? Encode labels as signs, <span class="math inline">\(Z_i=(-1)^{Y_i}\)</span>. For two observations of the same context the unknown table bit cancels in the product, <span class="math inline">\(Z_iZ_j=(-1)^{E_i\oplus E_j}\)</span>, leaving pure noise with mean <span class="math inline">\(\theta=(1-2\delta)^2\)</span>, the squared conditional bias. Every coincidence is thus a measurement of the noise level, regardless of the table. Averaging over all pairs, for <span class="math inline">\(N\ge2\)</span>,</p>
+<p><a id="eq:moment"></a> <span class="math display">\[U_N=\frac{M}{\binom N2}\sum_{1\le i&lt;j\le N}\mathbf{1}\{C_i=C_j\}Z_iZ_j
+
+\tag{14}\]</span></p>
+<p>is an unbiased estimator of <span class="math inline">\(\theta\)</span>, a second-order U-statistic, that is, an average of a symmetric function over all pairs of observations [<a href="#ref-hoeffding1948statistics">30</a>]; the factor <span class="math inline">\(M\)</span> compensates the collision probability <span class="math inline">\(1/M\)</span>. Coincidences are likewise the basis of sparse uniformity tests and collision-entropy estimators [<a href="#ref-paninski2008coincidence">31</a>, <a href="#ref-skorski2023renyi">32</a>]. Since <span class="math inline">\(G^\star=(1+\sqrt\theta)/2\)</span>, clipping the moment to <span class="math inline">\(\widehat\theta=\min(1,\max(0,U_N))\)</span> gives the entropy estimate</p>
+<p><a id="eq:estimator"></a> <span class="math display">\[\widehat h_\infty=\psi(\widehat\theta),
+\qquad
+\psi(u)=-\log\frac{1+\sqrt u}{2},\quad 0\le u\le1,
+
+\tag{15}\]</span></p>
+<p>which need not be unbiased even though <span class="math inline">\(U_N\)</span> is.</p>
+<p>A sample of size <span class="math inline">\(N\)</span> contains an expected <span class="math inline">\(N(N-1)/(2M)\)</span> coincident pairs. Their number becomes of order one at the birthday scale <span class="math inline">\(N\sim\sqrt M\)</span>; a sufficiently large constant multiple gives fixed precision and confidence. These pairs can estimate the common noise level even while almost every table entry remains unseen. Recovering a fixed fraction of the available prediction advantage requires learning a fixed fraction of the table, which takes <span class="math inline">\(N\sim M\)</span>.</p>
+<h3 id="two-sample-scales">Two sample scales</h3>
+<p><strong>Proposition 1 (Two sample scales).</strong> <a id="prop:samples"></a> For every fixed table <span class="math inline">\(b\)</span> and <span class="math inline">\(N\ge2\)</span>,</p>
+<p><a id="eq:variance"></a> <span class="math display">\[\mathbb{E}U_N=\theta,\quad
+\operatorname{Var}(U_N)=
+\frac{2(M-\theta^2)+4(N-2)(\theta-\theta^2)}{N(N-1)}.
+
+\tag{16}\]</span></p>
+<p>Fix noise bounds <span class="math inline">\(0&lt;\delta_-&lt;\delta_+&lt;1/2\)</span>, an entropy tolerance <span class="math inline">\(0&lt;\varepsilon&lt;[h_\infty(\delta_+)-h_\infty(\delta_-)]/2\)</span>, and a confidence <span class="math inline">\(1/2&lt;\eta&lt;1\)</span>. The sample size needed to estimate <span class="math inline">\(h_\infty(\delta)\)</span> within <span class="math inline">\(\varepsilon\)</span> with probability at least <span class="math inline">\(\eta\)</span>, uniformly over all tables and <span class="math inline">\(\delta\in[\delta_-,\delta_+]\)</span>, is <span class="math inline">\(\Theta(\sqrt M)\)</span> as <span class="math inline">\(M\to\infty\)</span>.</p>
+<p>For prediction, draw <span class="math inline">\(b\)</span> uniformly once and let <span class="math inline">\(A\)</span> be any learner chosen independently of it. On a fresh test pair <span class="math inline">\((C,Y)\)</span>, independent of the training data given <span class="math inline">\(b\)</span>, its average success satisfies</p>
+<p><a id="eq:coverage"></a> <span class="math display">\[\mathbb{E}_b\mathbb{P}[A(\mathcal D_N,C)=Y\mid b]
+\le\frac12+\gamma\left[1-\left(1-\frac1M\right)^{\!N}\right],
+
+\tag{17}\]</span></p>
+<p>with <span class="math inline">\(\gamma=1/2-\delta\)</span>, where the probability averages over training data, test data, and any randomness of <span class="math inline">\(A\)</span>. Even if <span class="math inline">\(\delta\)</span> is given, average success <span class="math inline">\(1/2+\rho\gamma\)</span> for fixed <span class="math inline">\(\delta\)</span> and <span class="math inline">\(0&lt;\rho&lt;1\)</span> requires <span class="math inline">\(\Theta(M)\)</span> samples, attained by majority voting.</p>
+<p><em>Proof.</em> <em>Variance.</em> For distinct indices put <span class="math inline">\(W_{ij}=M\mathbf{1}\{C_i=C_j\}Z_iZ_j\)</span>. Then <span class="math display">\[\mathbb{E}W_{12}=\theta,\qquad
+\mathbb{E}W_{12}^2=M,\qquad
+\mathbb{E}[W_{12}W_{13}]=\theta,\]</span> the last used only for <span class="math inline">\(N\ge3\)</span>, and pairs with disjoint indices are independent. The variance of the pair average has <span class="math inline">\(\binom N2\)</span> diagonal terms and <span class="math inline">\(6\binom N3\)</span> ordered overlapping-pair terms, which gives Eq. <a href="#eq:variance">(16)</a>. The large diagonal term <span class="math inline">\(2M/N^2\)</span> reflects the birthday effect, since each pair collides only rarely and its rescaled contribution is correspondingly noisy.</p>
+<p><em>Estimation upper bound.</em> Since <span class="math inline">\(\theta(1-\theta)\le1/4\)</span>, <span class="math display">\[\operatorname{Var}(U_N)\le\frac{2M+N-2}{N(N-1)}.\]</span> On the prescribed noise interval <span class="math inline">\(\theta\)</span> stays away from zero, <span class="math inline">\(\psi\)</span> is Lipschitz near that interval, and clipping cannot increase the error. Chebyshev's inequality gives the required precision and confidence with <span class="math inline">\(N=O(\sqrt M)\)</span>.</p>
+<p><em>Estimation lower bound.</em> Compare the two endpoint noise levels, each averaged over a uniform random table. Until some context repeats, the labels are independent fair bits under either noise level, so the two experiments differ in total variation, the largest difference in the probability they assign to any event, by at most the collision probability, itself at most <span class="math inline">\(\binom N2/M\)</span>. An estimate within <span class="math inline">\(\varepsilon\)</span> would distinguish the endpoints with success at least <span class="math inline">\(\eta\)</span>, which requires total variation at least <span class="math inline">\(2\eta-1\)</span>. Hence <span class="math inline">\(N(N-1)\ge2(2\eta-1)M\)</span>.</p>
+<p><em>Prediction.</em> An unseen test context carries a fair table bit independent of the data, and even a seen context cannot be predicted beyond <span class="math inline">\(1-\delta\)</span>. The test context is unseen with probability <span class="math inline">\((1-1/M)^N\)</span>, which gives Eq. <a href="#eq:coverage">(17)</a>, and for fixed <span class="math inline">\(\rho&gt;0\)</span> this forces <span class="math inline">\(N\ge\ln[1/(1-\rho)]/[-\ln(1-1/M)]=\Omega(M)\)</span>. Conversely, let the learner output the majority label at each context, with any fixed tie rule. After <span class="math inline">\(r\)</span> visits its table-bit error is at most <span class="math inline">\(e^{-2r\gamma^2}\)</span> by Hoeffding's inequality. The number <span class="math inline">\(R\)</span> of visits to a fresh uniform context is binomial with parameters <span class="math inline">\(N\)</span> and <span class="math inline">\(1/M\)</span>, so the average error is at most <span class="math display">\[\mathbb{E}e^{-2R\gamma^2}
+=\left[1-\frac{1-e^{-2\gamma^2}}{M}\right]^N.\]</span> A sufficiently large constant multiple of <span class="math inline">\(M\)</span> makes this at most <span class="math inline">\((1-\rho)/2\)</span>, which by Eq. <a href="#eq:agreement">(12)</a> gives the required success.</p>
+<p>The noise interval, precision, and confidence affect only the constants in these sample bounds. The estimator does rely on a common noise rate across contexts. With context-dependent biases the pair statistic estimates the mean squared bias, while guessing depends on the mean absolute bias, and the statistic no longer determines min-entropy.</p>
+<h3 id="numerical-comparison">Numerical comparison</h3>
+<p>We use <span class="math inline">\(\delta=0.1\)</span>, context counts <span class="math inline">\(M=2^8,2^{10},\ldots,2^{16}\)</span>, and 200 independent trials per count, each with a fresh table and fresh data. Within a trial, sample sizes follow a fixed half-octave grid from 16 to <span class="math inline">\(8M\)</span>, using nested prefixes, and the collision estimator and the majority learner receive the same observations. Ties and unobserved contexts predict zero, and test success is integrated exactly over the hidden table and fresh noise.</p>
+<p>The majority learner has an exact reference curve. Let <span class="math inline">\(B_r\)</span> be binomial with parameters <span class="math inline">\(r\)</span> and <span class="math inline">\(\delta\)</span>, the number of flipped labels among <span class="math inline">\(r\)</span> visits to one context. Under the uniform table prior, the majority vote recovers that table bit incorrectly with probability <span class="math display">\[e_r=\mathbb{P}(B_r&gt;r/2)+\tfrac12\mathbb{P}(B_r=r/2),\]</span> where the half weight accounts for ties, including unseen contexts. Averaging over the visit count <span class="math inline">\(R\sim\mathrm{Binomial}(N,1/M)\)</span> gives the mean next-bit success</p>
+<p><a id="eq:majority"></a> <span class="math display">\[G_N^{\rm maj}=1-\delta-(1-2\delta)\mathbb{E}e_R.
+
+\tag{18}\]</span></p>
+<p>Figure <a href="#fig:estimation">4</a> shows the two scales directly. At <span class="math inline">\(M=65536\)</span> and <span class="math inline">\(N=8192\)</span>, the mean entropy estimate is 0.1542 bits, with root mean square error 0.0230 bits around the true value <span class="math inline">\(0.1520\)</span>. At the same sample size majority prediction succeeds with probability 0.5378, and even the coverage bound for any learner is only 0.5470, far from the optimum <span class="math inline">\(0.9\)</span>. Rescaling the sample axis by <span class="math inline">\(\sqrt M\)</span> for estimation and by <span class="math inline">\(M\)</span> for prediction collapses the curves for different <span class="math inline">\(M\)</span>. The residual finite-size correction in estimation comes from the <span class="math inline">\(O(1/N)\)</span> term in Eq. <a href="#eq:variance">(16)</a>.</p>
+<h2 id="sec:conclusion">What a prediction experiment measures</h2>
+<p>Entropy specifies how often the best guess succeeds; it does not specify the work needed to make it. In the feedback family, the complete block entropy profile and the information in a minimal predictive state stay fixed while the next-bit decision ranges from a wire to <span class="math inline">\(\Theta(2^p/p)\)</span> gates. Invertibility makes this possible, because the feedback rule relabels which continuation is likely without touching how likely it is.</p>
+<p>For entropy assessment this gives a controlled experiment. The independent noise fixes the min-entropy rate exactly, and the invertible feedback rule changes the decision cost while preserving the full entropy profile. A predictor that falls short on such a source reveals the limits of its context, representation, or data, and the gap between its score and the known target measures their combined effect. The independent-context result adds the statistical version of the same lesson. The best success probability can be estimated from far fewer observations than are needed to achieve it. That result relies on independent uniform contexts and a common noise rate, and its sample bounds do not transfer automatically to dependent trajectories. The two constructions isolate complementary obstacles, namely computing a known decision rule and learning enough of an unknown rule to act on it.</p>
+<h2 class="unnumbered" id="data-availability">Data availability</h2>
+<p>The accompanying code generates the experimental data, figures, and numerical values. From <code>code/</code>, run the tests and regenerate the data and figures with</p><pre><code>python3 -m unittest discover -s tests
+python3 -m predictive_complexity.run_paper
+python3 -m predictive_complexity.plot_paper</code></pre>
+<p>The data generator records the master seed, package versions, and source hashes in <code>paper/data/config.json</code>. Plotted bands are approximate pointwise 95% intervals, using trial means plus or minus 1.96 standard errors and transforming where appropriate. The scripts <code>validate_profile.py</code>, <code>validate_decision_cost.py</code>, and <code>validate_estimation.py</code> in <code>code/scripts/</code> check the proof ingredients independently of the package: rational block probabilities for all rules with <span class="math inline">\(2\le p\le4\)</span>, binomial agreement tails, enumerated moments and total variation in small sample spaces, and Monte Carlo diagnostics for Eq. <a href="#eq:variance">(16)</a>. These finite checks supplement the proofs; they do not establish the asymptotic bounds.</p>
+<h2 class="unnumbered" id="acknowledgments">Acknowledgments</h2>
+<p>This work was supported by the Spanish Government under grant PID2023-148716OB-C33, funded by MICIU/AEI/10.13039/501100011033, as part of the DISCOVERY project (“DIstributed Smart Communications with Verifiable EneRgy-optimal Yields”). The Community of Madrid provided further support through the RAMONES-CM project (TEC-2024/COM-504), awarded by Order 5696/2024 of the General Directorate of Research and Technological Innovation.</p>
+<h2 class="unnumbered" id="ai-assistance">AI assistance</h2>
+<p>AI tools assisted with writing, mathematical derivations, literature review, and numerical code. Some claims in this working paper remain to be independently checked.</p>
+<h2 class="unnumbered" id="references">References</h2>
+<ol>
+<li>
+<p><a id="ref-kelsey2015predictive"></a> John Kelsey, Kerry A. McKay, and Meltem S<span>ö</span>nmez Turan. Predictive models for min-entropy estimation. In <span><em>Cryptographic Hardware and Embedded Systems – <span>CHES</span> 2015</em></span>, volume 9293 of <span><em>Lecture Notes in Computer Science</em></span>, pages 373–392, Berlin, 2015. Springer.</p>
+</li>
+<li>
+<p><a id="ref-sonmez2018recommendation"></a> Meltem S<span>ö</span>nmez Turan, Elaine Barker, John Kelsey, Kerry A. McKay, Mary L. Baish, and Mike Boyle. Recommendation for the entropy sources used for random bit generation. NIST Special Publication 800-90B, National Institute of Standards and Technology, Gaithersburg, MD, 2018.</p>
+</li>
+<li>
+<p><a id="ref-blanco2025machine"></a> Javier Blanco-Romero, Vicente Lorenzo, Florina Almenares Mendoza, and Daniel D<span>í</span>az-S<span>á</span>nchez. Machine learning predictors for min-entropy estimation. <span><em>Entropy</em></span>, 27(2):156, 2025.</p>
+</li>
+<li>
+<p><a id="ref-yao1982theory"></a> Andrew C. Yao. Theory and application of trapdoor functions. In <span><em>23rd Annual Symposium on Foundations of Computer Science (<span>SFCS</span> 1982)</em></span>, pages 80–91. IEEE, 1982.</p>
+</li>
+<li>
+<p><a id="ref-barak2003computational"></a> Boaz Barak, Ronen Shaltiel, and Avi Wigderson. Computational analogues of entropy. In <span><em>Approximation, Randomization, and Combinatorial Optimization: Algorithms and Techniques (<span>RANDOM-APPROX</span> 2003)</em></span>, volume 2764 of <span> <em>Lecture Notes in Computer Science</em></span>, pages 200–215, Berlin, 2003. Springer.</p>
+</li>
+<li>
+<p><a id="ref-hsiao2007conditional"></a> Chun-Yuan Hsiao, Chi-Jen Lu, and Leonid Reyzin. Conditional computational entropy, or toward separating pseudoentropy from compressibility. In <span><em>Advances in Cryptology – <span>EUROCRYPT</span> 2007</em></span>, volume 4515 of <span><em>Lecture Notes in Computer Science</em></span>, pages 169–186, Berlin, 2007. Springer.</p>
+</li>
+<li>
+<p><a id="ref-golomb2014shift"></a> Solomon W. Golomb. <span><em>Shift Register Sequences</em></span>. World Scientific, Singapore, 3rd edition, 2014.</p>
+</li>
+<li>
+<p><a id="ref-dabrowski2014searching"></a> Przemys<span>ł</span>aw D<span>ą</span>browski, Grzegorz <span>Ł</span>abuzek, Tomasz Rachwalik, and Janusz Szmidt. Searching for nonlinear feedback shift registers with parallel computing. <span><em>Information Processing Letters</em></span>, 114(5):268–272, 2014.</p>
+</li>
+<li>
+<p><a id="ref-crutchfield1989inferring"></a> James P. Crutchfield and Karl Young. Inferring statistical complexity. <span><em>Physical Review Letters</em></span>, 63(2):105–108, 1989.</p>
+</li>
+<li>
+<p><a id="ref-shalizi2001computational"></a> Cosma Rohilla Shalizi and James P. Crutchfield. Computational mechanics: Pattern and prediction, structure and simplicity. <span><em>Journal of Statistical Physics</em></span>, 104(3-4):817–879, 2001.</p>
+</li>
+<li>
+<p><a id="ref-grassberger1986toward"></a> Peter Grassberger. Toward a quantitative theory of self-generated complexity. <span><em>International Journal of Theoretical Physics</em></span>, 25(9):907–938, 1986.</p>
+</li>
+<li>
+<p><a id="ref-crutchfield2003regularities"></a> James P. Crutchfield and David P. Feldman. Regularities unseen, randomness observed: Levels of entropy convergence. <span><em>Chaos</em></span>, 13(1):25–54, 2003.</p>
+</li>
+<li>
+<p><a id="ref-bialek2001predictability"></a> William Bialek, Ilya Nemenman, and Naftali Tishby. Predictability, complexity, and learning. <span><em>Neural Computation</em></span>, 13(11):2409–2463, 2001.</p>
+</li>
+<li>
+<p><a id="ref-shannon1949synthesis"></a> Claude E. Shannon. The synthesis of two-terminal switching circuits. <span><em>Bell System Technical Journal</em></span>, 28(1):59–98, 1949.</p>
+</li>
+<li>
+<p><a id="ref-jukna2012boolean"></a> Stasys Jukna. <span><em>Boolean Function Complexity: Advances and Frontiers</em></span>, volume 27 of <span><em>Algorithms and Combinatorics</em></span>. Springer, Berlin, 2012.</p>
+</li>
+<li>
+<p><a id="ref-marzen2024benchmarks"></a> Sarah E. Marzen, Paul M. Riechers, and James P. Crutchfield. Complexity-calibrated benchmarks for machine learning reveal when prediction algorithms succeed and mislead. <span><em>Scientific Reports</em></span>, 14(1):8727, 2024.</p>
+</li>
+<li>
+<p><a id="ref-kong2018learnability"></a> Weihao Kong and Gregory Valiant. Estimating learnability in the sublinear data regime. In <span><em>Advances in Neural Information Processing Systems 31 (<span>NeurIPS</span> 2018)</em></span>, 2018.</p>
+</li>
+<li>
+<p><a id="ref-renyi1961measures"></a> Alfr<span>é</span>d R<span>é</span>nyi. On measures of entropy and information. In <span><em>Proceedings of the Fourth <span>B</span>erkeley Symposium on Mathematical Statistics and Probability</em></span>, volume 1, pages 547–561, Berkeley, 1961. University of California Press.</p>
+</li>
+<li>
+<p><a id="ref-blanco2026contextgraphs"></a> Javier Blanco-Romero. On the min-entropy asymptotics of binary context graphs. Manuscript in preparation, 2026.</p>
+</li>
+<li>
+<p><a id="ref-ryabko2005testing"></a> B. Ya. Ryabko and V. A. Monarev. Using information theory approach to randomness testing. <span><em>Journal of Statistical Planning and Inference</em></span>, 133(1):95–110, 2005.</p>
+</li>
+<li>
+<p><a id="ref-dodis2004fuzzy"></a> Yevgeniy Dodis, Leonid Reyzin, and Adam Smith. Fuzzy extractors: How to generate strong keys from biometrics and other noisy data. In <span><em>Advances in Cryptology – <span>EUROCRYPT</span> 2004</em></span>, volume 3027 of <span><em>Lecture Notes in Computer Science</em></span>, pages 523–540, Berlin, 2004. Springer.</p>
+</li>
+<li>
+<p><a id="ref-konig2009operational"></a> Robert K<span>ö</span>nig, Renato Renner, and Christian Schaffner. The operational meaning of min- and max-entropy. <span><em>IEEE Transactions on Information Theory</em></span>, 55(9):4337–4347, 2009.</p>
+</li>
+<li>
+<p><a id="ref-xu2020usable"></a> Yilun Xu, Shengjia Zhao, Jiaming Song, Russell Stewart, and Stefano Ermon. A theory of usable information under computational constraints. In <span><em>International Conference on Learning Representations (<span>ICLR</span>)</em></span>, 2020.</p>
+</li>
+<li>
+<p><a id="ref-hoeffding1963inequalities"></a> Wassily Hoeffding. Probability inequalities for sums of bounded random variables. <span><em>Journal of the American Statistical Association</em></span>, 58(301):13–30, 1963.</p>
+</li>
+<li>
+<p><a id="ref-marzen2016circumventing"></a> Sarah E. Marzen and James P. Crutchfield. Predictive rate-distortion for infinite-order <span>Markov</span> processes. <span><em>Journal of Statistical Physics</em></span>, 163(6):1312–1338, 2016.</p>
+</li>
+<li>
+<p><a id="ref-brodu2011decisional"></a> Nicolas Brodu. Reconstruction of epsilon-machines in predictive frameworks and decisional states. <span><em>Advances in Complex Systems</em></span>, 14(5):761–794, 2011.</p>
+</li>
+<li>
+<p><a id="ref-rissanen1978modeling"></a> Jorma Rissanen. Modeling by shortest data description. <span><em>Automatica</em></span>, 14(5):465–471, 1978.</p>
+</li>
+<li>
+<p><a id="ref-li2008introduction"></a> Ming Li and Paul Vit<span>á</span>nyi. <span><em>An Introduction to <span>Kolmogorov</span> Complexity and Its Applications</em></span>. Texts in Computer Science. Springer, New York, 3rd edition, 2008.</p>
+</li>
+<li>
+<p><a id="ref-odonnell2014analysis"></a> Ryan O'Donnell. <span><em>Analysis of <span>B</span>oolean Functions</em></span>. Cambridge University Press, Cambridge, 2014.</p>
+</li>
+<li>
+<p><a id="ref-hoeffding1948statistics"></a> Wassily Hoeffding. A class of statistics with asymptotically normal distribution. <span><em>Annals of Mathematical Statistics</em></span>, 19(3):293–325, 1948.</p>
+</li>
+<li>
+<p><a id="ref-paninski2008coincidence"></a> Liam Paninski. A coincidence-based test for uniformity given very sparsely sampled discrete data. <span><em>IEEE Transactions on Information Theory</em></span>, 54(10):4750–4755, 2008.</p>
+</li>
+<li>
+<p><a id="ref-skorski2023renyi"></a> Maciej Skorski. Towards more efficient <span>Rényi</span> entropy estimation. <span><em>Entropy</em></span>, 25(2):185, 2023.</p>
+</li>
+</ol>
+{% endraw %}

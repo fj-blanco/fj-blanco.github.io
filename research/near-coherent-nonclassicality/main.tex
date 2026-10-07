@@ -1,0 +1,315 @@
+\documentclass[11pt,a4paper]{article}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,xcolor,booktabs,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,arrows,positioning,calc,automata}
+\usepackage[numbers,sort&compress]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{1pt}
+\usepackage{url}
+\usepackage[colorlinks=true,allcolors=blue!45!black]{hyperref}
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+\newcommand{\ket}[1]{|#1\rangle}
+\newcommand{\bra}[1]{\langle#1|}
+\newcommand{\ev}[1]{\langle#1\rangle}
+\newcommand{\NW}{\mathcal N_W}
+\newcommand{\M}{\mathcal M}
+\newcommand{\loss}{\mathcal L}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\hypersetup{pdftitle={Two scales of nonclassicality near coherent states},pdfauthor={Javier Blanco-Romero}}
+\title{Two scales of nonclassicality near coherent states}
+\author{Javier Blanco-Romero\\\small Department of Telematic Engineering, Universidad Carlos III de Madrid,\\Legan\'es, Madrid, Spain}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Nudge a coherent state slightly toward the number states and ask how the change shows up. A field moment can respond linearly in the size of the nudge, while the negative part of the Wigner function is exponentially small. We compute both scales for a fixed finite superposition of displaced number states. The lowest occupied level sets the first moment that responds linearly, and the highest occupied level sets the logarithmic rate of the negative Wigner volume, including its dependence on optical loss. The negativity sits near zeros of the Bargmann polynomial, which drift into the Gaussian tail as the nudge shrinks. A moment criterion detects the same states at an algebraic order and keeps its sign under any nonzero transmission, even after the Wigner function has become nonnegative.
+\end{abstract}
+
+\section{Introduction}
+
+A coherent state is the most classical state of light, and its Wigner function, the quasiprobability distribution of the two field quadratures, is a positive Gaussian. Mix in a little of the number states and the state becomes nonclassical. How visible is that change? A field moment such as $\ev{a^3}$, with $a$ the annihilation operator, responds in proportion to the admixed amplitude $\epsilon$, because it measures interference between the coherent component and the admixture. The negative part of the Wigner function, the textbook signature of nonclassicality, can be far smaller, because it appears where the Gaussian envelope has almost died out.
+
+The geometry of coherent states tells us how to organize the admixture~\cite{field1999geometry,brody2010coherent}. Moving along the family of coherent states and taking successive derivatives generates the displaced number states, level by level. The level-zero state is the coherent state itself and level one is its tangent direction, so the genuinely new directions start at level two. For a fixed finite superposition of these normal directions, let $\nu$ be the lowest occupied level, $d$ the highest, and $c_n$ the amplitude of level $n$. We show that a moment of order $\nu$ responds linearly, $\ev{a^\nu}\propto\epsilon c_\nu$, while the negative Wigner volume $\NW$ obeys
+\begin{equation*}
+ \log\NW\simeq-\frac{(d!)^{1/d}}{2\tau|c_d|^{2/d}}\,\epsilon^{-2/d},
+\end{equation*}
+where $\tau>1/2$ is the intensity transmission of the optical loss. The reason is simple. The Bargmann polynomial, the wave function of the state in the coherent-state basis, is $1+\epsilon c_dz^d/\sqrt{d!}$ plus lower terms, and its zeros sit at $|z|\propto\epsilon^{-1/d}$. Negativity lives in small pockets around these zeros, so it pays the Gaussian envelope evaluated there. The two integers $\nu$ and $d$ coincide for a single occupied level, which hides the distinction.
+
+The ingredients are known. Moment criteria and their homodyne sampling are standard~\cite{shchukin2005nonclassical,richter1996correlation}, zeros of the Husimi function constrain nonclassical depth~\cite{lutkenhaus1995} and define the stellar hierarchy~\cite{chabaud2020stellar}, negative Wigner volume is a common diagnostic~\cite{kenfack2004negativity}, and binary Fock superpositions appear in studies of complex Wigner entropy~\cite{cerf2024}. He finds a logarithmic Gaussian tail of the same kind for the noise that removes the negativity of a superposition of vacuum and three photons~\cite{he2026}. What we add is the general rate for any finite normal direction under pure loss, and its separation from the lowest moment response.
+
+Section~\ref{sec:normal} builds the normal directions, Sec.~\ref{sec:theorem} states and proves the two scales, Sec.~\ref{sec:moments} turns the first moment into a loss-resistant witness, and Sec.~\ref{sec:numerics} checks the rate numerically.
+
+\section{Normal directions to the coherent curve}
+\label{sec:normal}
+
+Let $a$ and $a^\dagger$ be the annihilation and creation operators of one optical mode, $[a,a^\dagger]=1$, with number states $\ket n$. The displacement operator $D(\alpha)=\exp(\alpha a^\dagger-\alpha^*a)$ creates the coherent state $\ket\alpha=D(\alpha)\ket0$. It is convenient to drop the normalization and use $\ket{\widetilde\alpha}=e^{\alpha a^\dagger}\ket0$, which depends holomorphically on $\alpha$. Differentiating this curve $p$ times produces nothing beyond the first $p$ displaced number states,
+\begin{equation}
+ \operatorname{span}\{\partial_\alpha^j\ket{\widetilde\alpha}:0\le j\le p\}
+ =D(\alpha)\operatorname{span}\{\ket0,\ldots,\ket p\}.
+ \label{eq:flag}
+\end{equation}
+Indeed, $\partial_\alpha^j\ket{\widetilde\alpha}=(a^\dagger)^j\ket{\widetilde\alpha}$, and conjugation by $D(\alpha)$ turns $a^\dagger$ into $a^\dagger+\alpha^*$, so the two bases are related by a triangular matrix with nonzero diagonal. Level $0$ is the coherent ray, level $1$ is the tangent to the coherent curve, and the levels $n\ge2$ point in directions orthogonal to both. These are the normal directions.
+
+Displacement shifts the Wigner function rigidly without changing its negative volume, so we sit at $\alpha=0$ and consider
+\begin{equation}
+ \ket{\psi_\epsilon}
+ =\frac{\ket0+\epsilon\sum_{n=2}^d c_n\ket n}{\sqrt{Z_\epsilon}},
+ \qquad Z_\epsilon=1+\epsilon^2\sum_{n=2}^d|c_n|^2,
+ \qquad \nu=\min\{n:c_n\ne0\},
+ \label{eq:ray}
+\end{equation}
+with small $\epsilon>0$, fixed complex amplitudes $c_n$, and $c_d\ne0$. We call this a finite normal ray. All asymptotic statements below are for $\epsilon\downarrow0$ with $d$ and the $c_n$ held fixed.
+
+Pure loss with intensity transmission $0\le\tau\le1$ is a beam splitter that mixes the mode with vacuum, $a_{\rm out}=\sqrt\tau\,a+\sqrt{1-\tau}\,v$, where $v$ annihilates the vacuum input. We write $\loss_\tau$ for the resulting channel and $\rho_{\epsilon,\tau}=\loss_\tau(\ket{\psi_\epsilon}\bra{\psi_\epsilon})$. Because $v$ annihilates the vacuum, every normally ordered moment is simply rescaled,
+\begin{equation}
+ \ev{(a^\dagger)^r a^s}_{\rm out}
+ =\tau^{(r+s)/2}\ev{(a^\dagger)^r a^s}_{\rm in}.
+ \label{eq:loss}
+\end{equation}
+Loss also maps a coherent amplitude $\alpha$ to $\sqrt\tau\alpha$, so the reduction to $\alpha=0$ survives it.
+
+\section{Two asymptotic scales}
+\label{sec:theorem}
+
+We normalize the Wigner function so that the vacuum has $W_0(\beta)=2e^{-2|\beta|^2}/\pi$, with $\beta$ the complex phase-space coordinate, and measure nonclassicality by the negative volume
+\begin{equation}
+ \NW(\rho)=\int_{\mathbb C}[-W_\rho(\beta)]_+\,d^2\beta,
+ \qquad [x]_+=\max\{x,0\}.
+ \label{eq:negativity}
+\end{equation}
+Since $W_\rho$ integrates to one, $\int|W_\rho|\,d^2\beta=1+2\NW$.
+
+\begin{theorem}
+\label{thm:scales}
+For the finite normal ray \eqref{eq:ray}, the expectation of every polynomial in $a,a^\dagger$ of total degree below $\nu$ has zero derivative in $\epsilon$ at $\epsilon=0$. For fixed $\tau>0$, the normalized moment of order $\nu$ satisfies
+\begin{equation}
+ \M_\nu(\rho_{\epsilon,\tau})
+ :=\frac{\ev{a^\nu}_{\rho_{\epsilon,\tau}}}{\sqrt{\nu!}}
+ =\tau^{\nu/2}\epsilon c_\nu+O(\epsilon^2).
+ \label{eq:first}
+\end{equation}
+For every fixed $1/2<\tau\le1$,
+\begin{equation}
+ \lim_{\epsilon\downarrow0}\epsilon^{2/d}
+ \log\NW(\rho_{\epsilon,\tau})
+ =-\frac{(d!)^{1/d}}{2\tau|c_d|^{2/d}}.
+ \label{eq:rate}
+\end{equation}
+For $0\le\tau\le1/2$ the Wigner function is nonnegative and $\NW=0$.
+\end{theorem}
+
+The moment statement counts ladder operators, since a polynomial of degree below $\nu$ cannot connect the vacuum to an occupied level. The negativity statement comes from a balance between the constant term of the Bargmann polynomial and its highest power, which the next tool makes visible.
+
+\subsection{The Wigner function as a polynomial kernel}
+
+Expanding a pure state in unnormalized coherent states, $\ket\psi=\sum_n\psi_n\ket n$ is represented by its Bargmann polynomial $f(z)=\sum_n\psi_nz^n/\sqrt{n!}$, which equals $\langle\widetilde{z^*}|\psi\rangle$. For our ray, up to normalization,
+\begin{equation}
+ f_\epsilon(z)=1+\epsilon\sum_{n=2}^d\frac{c_n z^n}{\sqrt{n!}} .
+ \label{eq:bargmann}
+\end{equation}
+Its zeros are the stellar zeros of the state. They are also the zeros of the Husimi function, and for $\epsilon>0$ there are $d$ of them, which places the state at stellar rank $d$~\cite{chabaud2020stellar}. The Wigner function of the lossy state is a Gaussian times a positive combination of the derivatives of $f_\epsilon$, with weights set by the transmission~\cite{parisio2008}. Define the real kernel
+\begin{equation}
+ B_{\epsilon,\tau}(z)=\sum_{j=0}^d\frac{(1-2\tau)^j}{j!}
+                  |f_\epsilon^{(j)}(z)|^2 .
+ \label{eq:B}
+\end{equation}
+
+\begin{lemma}
+\label{lem:kernel}
+The lossy state has Wigner function
+\begin{equation}
+ W_{\epsilon,\tau}(\beta)
+ =\frac{2e^{-2|\beta|^2}}{\pi Z_\epsilon}
+ B_{\epsilon,\tau}(2\sqrt\tau\,\beta^*).
+ \label{eq:kernel}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Coherent dyads $\ket{\widetilde u}\bra{\widetilde v}$ generate all operators, and pure loss maps them to
+$e^{(1-\tau)uv^*}\ket{\widetilde{\sqrt\tau u}}\bra{\widetilde{\sqrt\tau v}}$.
+The Wigner function of this image is
+\begin{equation}
+ \frac2\pi e^{-2|\beta|^2}
+ \exp\!\left[(1-2\tau)uv^*+
+             2\sqrt\tau(\beta^*u+\beta v^*)\right].
+\end{equation}
+Expanding the term $(1-2\tau)uv^*$ in the exponential and matching the coefficients of $u^mv^{*n}$ with those of the state gives \eqref{eq:kernel}.
+\end{proof}
+
+The sign of $B$ is the sign of $W$. For $\tau\le1/2$ every term in \eqref{eq:B} is nonnegative, and at $\tau=1/2$ only $j=0$ survives, which is the Husimi function in disguise. Above one half the derivative terms come with alternating signs, and the kernel can turn negative near a zero of $f_\epsilon$, where the leading term vanishes and the $j=1$ term enters with the negative weight $1-2\tau$.
+
+\subsection{Proof of theorem \ref{thm:scales}}
+
+\emph{Moments.} Normal ordering does not raise the total degree, and a normally ordered monomial of degree below $\nu$ has no matrix element between the vacuum and an occupied level. This proves the first statement without loss, and \eqref{eq:loss} carries it through loss. Explicitly,
+\begin{equation}
+ \ev{a^k}_{\psi_\epsilon}
+ =\frac{1}{Z_\epsilon}\left[
+ \epsilon\sqrt{k!}\,c_k+\epsilon^2
+ \sum_{n=2}^{d-k}\sqrt{\frac{(n+k)!}{n!}}\,c_n^*c_{n+k}\right],
+ \label{eq:moment}
+\end{equation}
+with absent coefficients and empty sums set to zero. Taking $k=\nu$ gives \eqref{eq:first}.
+
+\emph{Where the zeros are.} The constant term of $f_\epsilon$ and its top term $\epsilon c_dz^d/\sqrt{d!}$ have equal size at the radius
+\begin{equation}
+ R=\left(\frac{\sqrt{d!}}{\epsilon|c_d|}\right)^{1/d},
+ \qquad\text{and we set}\qquad q=2\tau-1>0.
+ \label{eq:R}
+\end{equation}
+In the rescaled variable $w=z/R$, the lower powers are suppressed by powers of $R^{-1}$, so on compact sets
+\begin{equation}
+ f_\epsilon(Rw)=F(w)+O(R^{-1}),
+ \qquad F(w)=1+e^{i\arg c_d}w^d,
+ \label{eq:F}
+\end{equation}
+with the same estimate for all derivatives in $w$. The $d$ zeros $w_\ell$ of $F$ are simple and lie on the unit circle, so $f_\epsilon$ has zeros
+\begin{equation}
+ z_{\ell,\epsilon}=Rw_\ell+O(1),\qquad
+ f_\epsilon'(z_{\ell,\epsilon})=R^{-1}F'(w_\ell)+O(R^{-2}),
+ \label{eq:roots}
+\end{equation}
+and its $j$th derivative is $O(R^{-j})$ in any fixed neighborhood of a zero.
+
+\emph{Negative pockets.} Near a zero, $f_\epsilon$ is linear to leading order and the higher derivatives are negligible, so Taylor expansion gives, uniformly for bounded $u$,
+\begin{equation}
+ \frac{B_{\epsilon,\tau}(z_{\ell,\epsilon}+u)}
+ {|f_\epsilon'(z_{\ell,\epsilon})|^2}
+ =|u|^2-q+O(R^{-1}).
+ \label{eq:pocket}
+\end{equation}
+The kernel is therefore negative on the disk $|u|\le\sqrt q/2$ once $R$ is large, with $-B_{\epsilon,\tau}\ge CR^{-2}$ there. In the variable $z=2\sqrt\tau\beta^*$ the negative volume reads
+\begin{equation}
+ \NW=\frac{1}{2\pi\tau Z_\epsilon}
+ \int_{\mathbb C}[-B_{\epsilon,\tau}(z)]_+
+             e^{-|z|^2/(2\tau)}\,d^2z,
+ \label{eq:integral}
+\end{equation}
+and integrating over one pocket, where $|z|^2=R^2+O(R)$, gives
+\begin{equation}
+ \log\NW\ge-\frac{R^2}{2\tau}-O(R)-O(\log R).
+ \label{eq:lower}
+\end{equation}
+
+\emph{No negativity closer in.} Choose $0<\delta<1$. On $|z|\le(1-\delta)R$ the limiting polynomial obeys $|F(z/R)|\ge1-(1-\delta)^d>0$, and \eqref{eq:F} with its derivative estimates makes $B_{\epsilon,\tau}$ positive throughout this disk for large $R$. Outside it, the coefficients of $B_{\epsilon,\tau}$ stay bounded as $\epsilon\downarrow0$, so $|B_{\epsilon,\tau}|\le C(1+|z|^{2d})$, and the Gaussian in \eqref{eq:integral} gives
+\begin{equation}
+ \log\NW\le-\frac{(1-\delta)^2R^2}{2\tau}+O(\log R).
+ \label{eq:upper}
+\end{equation}
+Dividing both bounds by $R^2$, letting $\epsilon\downarrow0$ and then $\delta\downarrow0$, and using $\epsilon^{2/d}R^2=(d!)^{1/d}|c_d|^{-2/d}$ proves \eqref{eq:rate}. The case $\tau\le1/2$ follows from lemma~\ref{lem:kernel}.\hfill$\square$
+
+In the physical phase plane, Eq.~\eqref{eq:pocket} gives each negative pocket a limiting radius and a receding center,
+\begin{equation}
+ r_{\rm pocket}=\frac{\sqrt{2\tau-1}}{2\sqrt\tau},
+ \qquad |\beta_{\ell,\epsilon}|=\frac{R}{2\sqrt\tau}+O(1).
+ \label{eq:physical}
+\end{equation}
+The pockets keep a finite size while they drift into the tail. More loss shrinks them and pushes them farther out.
+
+\section{Moment detection under loss}
+\label{sec:moments}
+
+A nonzero $\ev{a^\nu}$ does not by itself certify nonclassicality, since a mixture of coherent states can have one too. We need a criterion that every classical state obeys. Call a state classical if it is a positive mixture of coherent states $\ket\gamma$, and define the factorial moments $F_j=\ev{(a^\dagger)^ja^j}$ and
+\begin{equation}
+ \mathcal W_k=F_1F_{k-1}-|\ev{a^k}|^2,\qquad k\ge2.
+ \label{eq:witness}
+\end{equation}
+For a classical state the moments are averages of $|\gamma|^2$, $|\gamma|^{2(k-1)}$ and $\gamma^k$ over the mixture, and Cauchy-Schwarz applied to $\gamma^*$ and $\gamma^{k-1}$ gives $\mathcal W_k\ge0$. This is one of the moment inequalities of Ref.~\cite{shchukin2005nonclassical}.
+
+\begin{proposition}
+For the ray \eqref{eq:ray} and fixed $\tau>0$,
+\begin{equation}
+ \mathcal W_\nu(\rho_{\epsilon,\tau})
+ =-\tau^\nu\nu!|c_\nu|^2\epsilon^2+O(\epsilon^3).
+ \label{eq:witnessray}
+\end{equation}
+The output is therefore nonclassical for all sufficiently small nonzero $\epsilon$, including when $\tau\le1/2$.
+\end{proposition}
+\begin{proof}
+For $j\ge1$, $F_j=O(\epsilon^2)$ on the ray, so $F_1F_{\nu-1}=O(\epsilon^4)$, while Eq.~\eqref{eq:first} gives $|\ev{a^\nu}|^2=\tau^\nu\nu!|c_\nu|^2\epsilon^2+O(\epsilon^3)$. Loss acts by the exact identity $\mathcal W_k(\loss_\tau\rho)=\tau^k\mathcal W_k(\rho)$, which follows from \eqref{eq:loss}.
+\end{proof}
+
+For a single level, $(\ket0+\epsilon\ket k)/\sqrt{1+\epsilon^2}$, the witness is explicit,
+\begin{equation}
+ \mathcal W_k(\rho_{\epsilon,\tau})
+ =\tau^k k!\,\frac{\epsilon^2(k\epsilon^2-1)}{(1+\epsilon^2)^2},
+ \label{eq:seedwitness}
+\end{equation}
+and detects the state whenever $0<\epsilon^2<1/k$. Loss never flips the sign, but it does shrink the signal by $\tau^k$, so the number of measurements needed grows as $\tau$ decreases.
+
+The responding moment can be measured with a homodyne detector, which records the rotated quadrature $q_\theta=(e^{-i\theta}a+e^{i\theta}a^\dagger)/\sqrt2$ at a chosen phase $\theta$~\cite{richter1996correlation}. With the physicists' Hermite polynomials $H_k$ and $h_k(q)=H_k(q)/\sqrt{2^k k!}$,
+\begin{equation}
+ \M_k=\int_0^{2\pi}\frac{d\theta}{2\pi}\,
+ e^{ik\theta}\ev{h_k(q_\theta)},
+ \label{eq:homodyne}
+\end{equation}
+because normal ordering of $H_k(q_\theta)$ and the phase average keep only the term $a^k$. With $M$ shots at uniformly random phases, the sample mean of $e^{ik\theta}h_k(q)$ is an unbiased estimator of $\M_k$ with complex mean-square error $1/M$ near vacuum. Correcting for a known loss multiplies this error by $\tau^{-k}$. Testing \eqref{eq:witness} also requires the factorial moments and their uncertainties.
+
+\section{Examples and numerical checks}
+\label{sec:numerics}
+
+Two rays make the separation of scales concrete,
+\begin{equation}
+ \ket{\psi_3}=\frac{\ket0+\epsilon\ket3}{\sqrt{1+\epsilon^2}},
+ \qquad
+ \ket{\psi_{3,5}}=\frac{\ket0+\epsilon(\ket3+\ket5)}{\sqrt{1+2\epsilon^2}}.
+ \label{eq:examples}
+\end{equation}
+Both have $\nu=3$ and the same moment response $\M_3=\tau^{3/2}\epsilon+O(\epsilon^3)$, yet $-\log\NW$ grows as $\epsilon^{-2/3}$ for the first and only as $\epsilon^{-2/5}$ for the second. Adding a little of $\ket5$ leaves the moment untouched and makes the negativity much larger. Figure~\ref{fig:rates} shows both rates and checks Eq.~\eqref{eq:rate} through the scaled quantity $-2\tau\log\NW/R^2$, whose limit is one. Figure~\ref{fig:pockets} shows the local profile that produces the pockets.
+
+\begin{figure}[tbp]
+ \centering
+ \includegraphics[width=\textwidth]{figures/fig_rates.png}
+ \caption{Negative Wigner volume for the two rays in \eqref{eq:examples}. (a) The same linear moment response accompanies different growth rates of $-\log\NW$ as $\epsilon$ decreases. (b) The scaled rates approach the limit one predicted by \eqref{eq:rate}; each point uses the amplitude that corresponds to its $R$ in \eqref{eq:R}. Symbols distinguish degree and transmission, and curves join numerical quadrature results.}
+ \label{fig:rates}
+\end{figure}
+
+\begin{figure}[tbp]
+ \centering
+ \includegraphics[width=0.94\textwidth]{figures/fig_pockets.png}
+ \caption{Local Wigner kernel near a stellar zero of $\ket{\psi_{3,5}}$ at $R=14$. The plotted quantity is $B_{\epsilon,\tau}(z_*+e^{i\arg z_*}u)/|f_\epsilon'(z_*)|^2$, with $z_*$ a zero of smallest modulus, so the horizontal coordinate points radially outward in the $z$ plane. Both panels share one color scale. Solid curves mark the exact zero contour, and dashed circles have the radius $\sqrt{2\tau-1}$ predicted by \eqref{eq:pocket}. The Gaussian envelope is divided out to show the sign structure, so the colors are not Wigner densities.}
+ \label{fig:pockets}
+\end{figure}
+
+The negative volumes lie far below floating-point underflow, so we evaluate \eqref{eq:integral} around each separated stellar zero with logarithmic Gaussian weights, bisection for the sign boundary along angular rays, and Gauss-Legendre quadrature in angle and radius. The routine checks that the zeros are separated and samples for extra radial sign changes, so it applies only to isolated simple pockets. Refining from 64 radial and 192 angular nodes to 96 and 384 changes $\log\NW$ by less than $10^{-7}$ on the plotted points. At $R=8$, an independent Cartesian integration agrees within $8\times10^{-4}$ in relative negative volume for three test directions, including complex coefficients. A separate density-matrix calculation applies the loss channel in the number basis and evaluates the Wigner function through associated Laguerre polynomials; it agrees with \eqref{eq:kernel} to within $2\times10^{-12}$ for random states of degrees $3$, $5$ and $8$ at transmissions $0.1$, $0.5$, $0.7$ and $1$. These checks support the implementation, while the bounds \eqref{eq:lower} and \eqref{eq:upper} establish the result.
+
+\section{Scope}
+
+Theorem~\ref{thm:scales} holds coefficients, degree and transmission fixed, and its limit need not be uniform as $c_d\to0$, $d\to\infty$ or $\tau\downarrow1/2$. The power also depends on how the state approaches the coherent curve, and not only on its tangent. The normalized path proportional to
+\begin{equation}
+ \ket0+\epsilon\ket3+\epsilon^2\ket8
+ \label{eq:curved}
+\end{equation}
+leaves the coherent state in the same direction as $\ket{\psi_3}$. Its Bargmann polynomial, rescaled by $R=(8!)^{1/16}\epsilon^{-1/4}$, tends to $1+w^8$, because the cubic term is now $O(\epsilon^{1/4})$. The same proof gives
+\begin{equation}
+ \lim_{\epsilon\downarrow0}\epsilon^{1/2}\log\NW
+ =-\frac{(8!)^{1/8}}{2\tau},\qquad \tau>1/2,
+\end{equation}
+set by the eighth level that the path reaches at second order.
+
+For fixed finite normal rays the picture is clean. The first occupied level sets the lowest moment that responds linearly and its loss factor $\tau^{\nu/2}$. The last occupied level sets how far out the stellar zeros sit, and with it the exponential rate of the negative Wigner volume. A moment witness therefore sees the perturbation at order $\epsilon^2$ while the negative volume is smaller than any power of $\epsilon$.
+
+\section*{Acknowledgments}
+Part of the underlying geometric work was carried out during a research internship at the Department of Optics, Universidad Complutense de Madrid, in 2017 and 2018, supported by the Spanish Ministerio de Educaci\'on, Cultura y Deporte Collaboration Grant for the academic year 2017 to 2018.
+
+\section*{Data availability}
+The accompanying code generates the figures and numerical data and runs the validation checks.
+
+\section*{AI assistance}
+AI tools assisted with the finite-ray extension, algebraic derivations, literature review, numerical code, and manuscript preparation. The checks of the formulas and numerical outputs are described in section~\ref{sec:numerics} and supplied with the code. Some claims in this working paper remain to be independently checked.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+\end{document}
