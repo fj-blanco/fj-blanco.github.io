@@ -1,0 +1,317 @@
+---
+layout: "paper"
+title: "Boolean Oracles by Waiting"
+description: "A fixed two-body Hamiltonian implements Boolean oracles through its stopping time, with bounds on the required action."
+section: "research"
+main_class: "paper-page"
+math: true
+permalink: "/research/boolean-oracles-by-waiting/"
+area: "Quantum computation"
+---
+{% raw %}
+<p><a id="abstract"></a></p>
+<h2>Abstract</h2>
+<p>Can a fixed local Hamiltonian implement every Boolean oracle when only its stopping time is changed? We construct such a Hamiltonian on <span class="math inline">\(n\)</span> input qubits, one output qubit, and one auxiliary qubit. Its couplings have power-of-two denominators in a fixed energy unit, its spectral width is bounded, and its evolution approximates each oracle tensored with the auxiliary identity. For <span class="math inline">\(n\ge3\)</span>, one auxiliary qubit is minimal: without it, universality by waiting requires interactions of order <span class="math inline">\(n\)</span>. We then bound the number of Boolean functions evaluable within a budget of spectral width times duration. The bound includes independent heralded retries with no lower bound on success probability. For any fixed Hamiltonian, almost every truth table requires doubly exponential expected action, whereas controlled two-body evolution implements every oracle with single exponential action. Thus a compact physical device can realize every Boolean oracle, but selecting the computation through its duration has a large physical cost.</p>
+<p><a id="introduction"></a></p>
+<h2>Introduction</h2>
+<p><a id="sec:intro"></a></p>
+<p>A Hamiltonian solver accepts an input, evolves, and returns an answer. The existence of such a solver and its cost within a physical resource budget are distinct questions. This distinction is familiar in analog computation [<a href="#ref-Bournez2021">1</a>]. In quantum mechanics, energy alone does not bound computational speed [<a href="#ref-Jordan2017">2</a>]; a bound depends on which physical resources and controls are available [<a href="#ref-Russell2017">3</a>].</p>
+<p>For a positive integer <span class="math inline">\(n\)</span>, consider a Boolean function <span class="math inline">\(f:\{0,1\}^n\to\{0,1\}\)</span>. Its quantum oracle acts as</p>
+<p><a id="eq:oracle"></a></p>
+<p><span class="math display">\[
+U_f\lvert x\rangle_{\mathrm{in}}\lvert \beta\rangle_b
+=\lvert x\rangle_{\mathrm{in}}\lvert \beta\oplus f(x)\rangle_b,\tag{1}
+\]</span></p>
+<p>where <span class="math inline">\(x=(x_1,\ldots,x_n)\)</span> is an input string, <span class="math inline">\(\beta\in\{0,1\}\)</span> is the output bit value, and <span class="math inline">\(\oplus\)</span> is addition modulo two. The subscript <span class="math inline">\(b\)</span> labels the output qubit; it is not a bit value. Since <span class="math inline">\(U_f^2=\mathbf{1}\)</span>, with <span class="math inline">\(\mathbf{1}\)</span> the identity operator, the Hamiltonian <span class="math inline">\(H_f=(\pi\hbar/2T)(\mathbf{1}-U_f)\)</span> implements this oracle in any chosen duration <span class="math inline">\(T&gt;0\)</span>. Here <span class="math inline">\(\hbar\)</span> is the reduced Planck constant. Such function-dependent Hamiltonian representations are well established [<a href="#ref-Hadfield2021">4</a>]. In this representation, the function is encoded in the interaction itself, which can involve the full register.</p>
+<p>Known approaches to Hamiltonian computation [<a href="#ref-Feynman1986">5</a>] select a computation through, for example, an encoded initial program [<a href="#ref-Bohdanowicz2017">6</a>], controlled ancilla interactions [<a href="#ref-Proctor2013">7</a>, <a href="#ref-Proctor2014">8</a>], local controls supplementing a fixed Hamiltonian [<a href="#ref-Junge2026">9</a>], or a circuit-dependent impurity Hamiltonian [<a href="#ref-Pham2026">10</a>]. Recurrence offers another mechanism: rationally independent frequencies can approach prescribed phases, as in universal quantum state transfer [<a href="#ref-Cameron2014">11</a>]. The underlying number theory is classical [<a href="#ref-Besicovitch1940">12</a>, <a href="#ref-Weyl1916">13</a>]. These precedents motivate a more restricted question: can one fixed two-body Hamiltonian approximate every Boolean oracle when only its duration changes, and what physical cost does this impose?</p>
+<p>We answer this question with three results. First, we construct a fixed Hamiltonian with one auxiliary qubit, labeled <span class="math inline">\(a\)</span>, whose evolution approximates <span class="math inline">\(U_f\otimes\mathbf{1}_a\)</span>, where <span class="math inline">\(\mathbf{1}_a\)</span> is the identity on that auxiliary qubit. Thus the same device implements every oracle while approximately preserving any auxiliary state. Its couplings, expressed in a fixed energy unit, are dyadic rationals: integers divided by powers of two. Second, we prove the auxiliary-qubit threshold. Without auxiliary qubits, universality by waiting requires interaction order at least <span class="math inline">\(n\)</span> for <span class="math inline">\(n\ge2\)</span>, and that order suffices. One auxiliary qubit is therefore minimal for a two-body device when <span class="math inline">\(n\ge3\)</span>.</p>
+<p>Third, we bound the number of Boolean functions accessible with a given expected action, defined as spectral width times duration divided by <span class="math inline">\(\hbar\)</span>, summed over all attempts. We allow <em>heralding</em>: an additional measurement flags a run as accepted or rejected, and rejected runs are reset and repeated. The flag selects an accepted outcome; its output must still satisfy the prescribed error bound. Charging for discarded outcomes is an established operational principle [<a href="#ref-Combes2015">14</a>]. Our counting bound permits acceptance probabilities arbitrarily close to zero. For any fixed Hamiltonian, it implies doubly exponential expected action for almost every truth table, meaning all but a vanishing fraction of the <span class="math inline">\(2^{2^n}\)</span> Boolean functions as <span class="math inline">\(n\)</span> grows.</p>
+<p>The counting method builds on bounds for circuits and reachable quantum evolutions [<a href="#ref-Shannon1949">15</a>, <a href="#ref-Poulin2011">16</a>, <a href="#ref-Caro2022">17</a>]; the additional step is a rescaling that handles arbitrarily rare acceptance. For comparison, standard two-body circuit synthesis implements every oracle with <span class="math inline">\(O(n2^n)\)</span> action and control intervals [<a href="#ref-Barenco1995">18</a>], with sharper circuit bounds also available [<a href="#ref-Nie2026">19</a>]. Combined with our lower bound, this gives a separation between programming by duration and programming through a sequence of controls. The result concerns typical truth tables, not an explicit hard function. It also differs from the no-programming theorem [<a href="#ref-Nielsen1997">20</a>]: changing the duration changes the processor unitary, whereas that theorem varies the program state of a fixed processor. Our targets are commuting Boolean oracles.</p>
+<p><a id="one-fixed-hamiltonian"></a></p>
+<h2>One fixed Hamiltonian</h2>
+<p><a id="sec:existence"></a></p>
+<p>The device contains <span class="math inline">\(n\)</span> input qubits, one output qubit <span class="math inline">\(b\)</span>, and one auxiliary qubit <span class="math inline">\(a\)</span>. The <span class="math inline">\(n\)</span> inputs and the output form the logical register of <span class="math inline">\(m=n+1\)</span> qubits. Including the auxiliary, the Hilbert space is</p>
+<p><span class="math display">\[
+\mathcal H=\mathcal H_{\mathrm{in}}\otimes\mathcal H_b\otimes\mathcal H_a,
+\qquad \dim\mathcal H=2^{n+2},\tag{2}
+\]</span></p>
+<p>with <span class="math inline">\(\mathcal H_{\mathrm{in}}=(\mathbb C^2)^{\otimes n}\)</span> and <span class="math inline">\(\mathcal H_b=\mathcal H_a=\mathbb C^2\)</span>. The input qubits have integer labels <span class="math inline">\(i\in\{1,\ldots,n\}\)</span>; <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are distinct labels for the auxiliary and output qubits.</p>
+<p>We write operators without hats. The symbols <span class="math inline">\(X,Y,Z\)</span> denote the Pauli operators, and a subscript specifies the qubit on which they act. Identity factors on the other qubits are implicit. An identity with a subscript, such as <span class="math inline">\(\mathbf{1}_a\)</span>, acts on the named register; without a subscript its space follows from the expression. The norm <span class="math inline">\(\lVert \cdot\rVert\)</span> is the operator norm for operators and the Euclidean norm for state vectors. A Pauli string is a tensor product of single-qubit Pauli operators and identities; its weight is the number of nonidentity factors. A Hamiltonian is <span class="math inline">\(k\)</span>-local if it is a sum of terms supported on at most <span class="math inline">\(k\)</span> qubits. This bounds interaction order, not spatial range.</p>
+<p>For any Hermitian Hamiltonian <span class="math inline">\(H\)</span>, define its spectral width by</p>
+<p><span class="math display">\[
+W(H)=\lambda_{\max}(H)-\lambda_{\min}(H),\tag{3}
+\]</span></p>
+<p>where <span class="math inline">\(\lambda_{\max}\)</span> and <span class="math inline">\(\lambda_{\min}\)</span> are its largest and smallest eigenvalues. Evolution for time <span class="math inline">\(t\ge0\)</span> has dimensionless action <span class="math inline">\(tW(H)/\hbar\)</span>. An additive scalar multiple of the identity changes only a global phase and leaves this action unchanged.</p>
+<p>To construct the device, define the commuting logical projectors</p>
+<p><span class="math display">\[
+P_i=\tfrac12(\mathbf{1}-Z_i)\quad (i=1,\ldots,n),\qquad
+P_m=\tfrac12(\mathbf{1}-X_b).\tag{4}
+\]</span></p>
+<p>For an input qubit, <span class="math inline">\(P_i\)</span> projects onto <span class="math inline">\(\lvert 1\rangle_i\)</span>. For the output, <span class="math inline">\(P_m\)</span> projects onto <span class="math inline">\(\lvert -\rangle_b=(\lvert 0\rangle_b-\lvert 1\rangle_b)/\sqrt2\)</span>, the state that changes sign under a bit flip. Thus <span class="math inline">\(i=m\)</span> in a sum over projectors refers to the output projector, not to an additional input.</p>
+<p>Set the integer <span class="math inline">\(M=4^m\)</span>. Choose a positive real scalar <span class="math inline">\(J\)</span> with units of energy, fixing the overall energy scale, and take</p>
+<p><a id="eq:hamiltonian"></a></p>
+<p><span class="math display">\[
+H_n=J\Bigl(X_a+\frac{Z_a}{M}\sum_{i=1}^{m}2^{i-1}P_i\Bigr).\tag{5}
+\]</span></p>
+<p>This operator acts on all <span class="math inline">\(n+2\)</span> qubits. Each term <span class="math inline">\(Z_aP_i\)</span> couples the auxiliary to a single logical qubit, giving the star in Fig. <a href="#fig:device">1</a>. The <span class="math inline">\(O(n)\)</span> coefficients of the dimensionless operator <span class="math inline">\(H_n/J\)</span> are dyadic rationals with <span class="math inline">\(O(n^2)\)</span> binary digits in total. They depend on <span class="math inline">\(n\)</span>, but neither on <span class="math inline">\(f\)</span> nor on the requested accuracy. Multiplying <span class="math inline">\(J\)</span> by a constant simply rescales all evolution times by its inverse.</p>
+<p><a id="fig:device"></a></p>
+<p><img src="figures/diagram-1.png" alt="image" /></p>
+<p><strong>Figure 1.</strong> The fixed oracle device on <span class="math inline">\(n+2\)</span> qubits. The input node <span class="math inline">\(i\)</span> carries the bit <span class="math inline">\(x_i\)</span>, <span class="math inline">\(b\)</span> is the output qubit, and <span class="math inline">\(a\)</span> is the auxiliary. A field <span class="math inline">\(JX_a\)</span> drives the auxiliary, which couples to each logical qubit through <span class="math inline">\(Z_aP_i\)</span> with strength <span class="math inline">\(2^{i-1}J/M\)</span>. The couplings never change; the Boolean function is selected by the integer <span class="math inline">\(q\)</span> that fixes the stopping time.</p>
+<p><strong>Theorem 1 (Universality by waiting).</strong> <a id="thm:existence"></a> The Hamiltonian <span class="math inline">\(H_n\)</span> on <span class="math inline">\(\mathcal H\)</span> has spectral width <span class="math inline">\(2J&lt;W(H_n)&lt;2J(1+4^{-m})\)</span>. For every Boolean function <span class="math inline">\(f\)</span> and every operator-norm tolerance <span class="math inline">\(\eta&gt;0\)</span> there is a positive integer <span class="math inline">\(q\)</span> such that, at <span class="math inline">\(t=2\pi q\hbar/J\)</span>,</p>
+<p><a id="eq:full"></a></p>
+<p><span class="math display">\[
+\lVert e^{-itH_n/\hbar}-U_f\otimes\mathbf{1}_a\rVert&lt;\eta .\tag{6}
+\]</span></p>
+<p>The target <span class="math inline">\(U_f\otimes\mathbf{1}_a\)</span> acts as the oracle on the <span class="math inline">\(n+1\)</span> logical qubits and as the identity on the auxiliary qubit. The norm bound is uniform over all initial states, including states entangled with an external reference that does not interact with the device.</p>
+<p><em>Proof.</em> First resolve the logical register into sectors that remain invariant under <span class="math inline">\(H_n\)</span>. The projectors <span class="math inline">\(P_i\)</span> are diagonal in the basis <span class="math inline">\(\lvert x\rangle_{\mathrm{in}}\lvert \chi_y\rangle_b\)</span>, where <span class="math inline">\(y\in\{0,1\}\)</span> and <span class="math inline">\(\lvert \chi_y\rangle=(\lvert 0\rangle+(-1)^y\lvert 1\rangle)/\sqrt2\)</span> has <span class="math inline">\(X_b\)</span> eigenvalue <span class="math inline">\((-1)^y\)</span>. Label this basis by <span class="math inline">\(z=(x,y)\in\{0,1\}^m\)</span> and by the integer <span class="math inline">\(s_z=\sum_i2^{i-1}z_i\in\{0,\dots,2^m-1\}\)</span>. Once <span class="math inline">\(z\)</span> is fixed, only the auxiliary qubit evolves. Its two-dimensional block is</p>
+<p><a id="eq:block"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+H_z&amp;=J\Bigl(X+\frac{s_z}{M}Z\Bigr),\qquad H_z^2=J^2r_z^2\mathbf{1},\\
+r_z&amp;=\frac{\sqrt{M^2+s_z^2}}{M},
+\end{aligned}\tag{7}
+\]</span></p>
+<p>where <span class="math inline">\(r_z\)</span> is a dimensionless frequency factor and <span class="math inline">\(X,Z\)</span> now act on the auxiliary. The eigenvalues of this block are <span class="math inline">\(\pm Jr_z\)</span> and <span class="math inline">\(W(H_n)=2J\max_zr_z\)</span>. Since <span class="math inline">\(s_z&lt;2^m\)</span>, <span class="math inline">\(1&lt;\max_zr_z&lt;1+4^{-m}\)</span>.</p>
+<p>Next identify the phases that implement the oracle. It is diagonal in the same logical basis. A flip of the output multiplies <span class="math inline">\(\lvert \chi_y\rangle\)</span> by <span class="math inline">\((-1)^y\)</span>, so <span class="math inline">\(U_f\)</span> assigns the sign <span class="math inline">\((-1)^{g(z)}\)</span> to sector <span class="math inline">\(z\)</span>, with the Boolean phase function <span class="math inline">\(g(x,y)=yf(x)\)</span>. At the all-zero label <span class="math inline">\(z=0\)</span>, <span class="math inline">\(g(0)=0\)</span>. At <span class="math inline">\(t=2\pi q\hbar/J\)</span> the block evolution is <span class="math inline">\(\cos(2\pi qr_z)\mathbf{1}-i\sin(2\pi qr_z)H_z/(Jr_z)\)</span>, whose distance to <span class="math inline">\((-1)^{g(z)}\mathbf{1}\)</span> is</p>
+<p><a id="eq:blockerror"></a></p>
+<p><span class="math display">\[
+\lVert e^{-2\pi iqH_z/J}-(-1)^{g(z)}\mathbf{1}\rVert=2\bigl|\sin(e_z/2)\bigr| ,\tag{8}
+\]</span></p>
+<p>where <span class="math inline">\(e_z\in(-\pi,\pi]\)</span> is <span class="math inline">\(2\pi qr_z-\pi g(z)\)</span> reduced modulo <span class="math inline">\(2\pi\)</span>. Both auxiliary eigenvalues give the same error, which is why the auxiliary state does not matter.</p>
+<p>Finally, we show that one choice of time can align all these phases. The integers <span class="math inline">\(M^2+s_z^2\)</span> are distinct and lie in <span class="math inline">\([M^2,M^2+M)\)</span>, because <span class="math inline">\(s_z^2&lt;4^m=M\)</span>. The squarefree part of a positive integer is the integer left after removing all square factors. These integers have distinct squarefree parts: otherwise two would be <span class="math inline">\(du^2&lt;dv^2\)</span>, with the same squarefree integer <span class="math inline">\(d\)</span> and positive integers <span class="math inline">\(u&lt;v\)</span>, and since <span class="math inline">\(\sqrt d\,u\ge M\)</span> their gap would be <span class="math inline">\(d(v^2-u^2)\ge2du+d\ge2M+1\)</span>, larger than the interval. Square roots with distinct squarefree parts are linearly independent over the rationals [<a href="#ref-Besicovitch1940">12</a>], so <span class="math inline">\(1=r_0\)</span> and the remaining <span class="math inline">\(r_z\)</span> have no nonzero rational linear relation. Kronecker's theorem in its discrete form [<a href="#ref-Weyl1916">13</a>, <a href="#ref-Cameron2014">11</a>] gives integers <span class="math inline">\(q\)</span> for which every <span class="math inline">\(qr_z\)</span> lies arbitrarily close to <span class="math inline">\(g(z)/2\)</span> modulo one, and <span class="math inline">\(e_0=0\)</span> always. Taking the maximum of Eq. <a href="#eq:blockerror">(8)</a> over sectors proves Eq. <a href="#eq:full">(6)</a>, and tensoring with a reference identity does not change the norm.</p>
+<p>The auxiliary supplies the nonlinear relation between the local field and the spectrum. The two-body field it sees is linear in <span class="math inline">\(s_z\)</span>, but its dimensionless frequency factor is <span class="math inline">\(r_z=\sqrt{1+(s_z/M)^2}\)</span>, and the resulting frequencies are rationally independent. Waiting then drives <span class="math inline">\(2^m-1\)</span> independent phases toward any pattern of signs.</p>
+<p><a id="the-auxiliary-qubit-threshold"></a></p>
+<h2>The auxiliary-qubit threshold</h2>
+<p><a id="sec:aux"></a></p>
+<p>Could the logical register do the same alone? Only with interactions of order <span class="math inline">\(n\)</span>.</p>
+<p><strong>Proposition 2 (Locality threshold).</strong> <a id="prop:aux"></a> Let <span class="math inline">\(n\ge2\)</span>. There is a fixed <span class="math inline">\(k\)</span>-local Hamiltonian on the <span class="math inline">\(n+1\)</span> logical qubits, with no auxiliary qubit, that approximates every oracle up to a global phase by varying the evolution time if and only if <span class="math inline">\(k\ge n\)</span>. In particular, for <span class="math inline">\(n\ge3\)</span> one auxiliary qubit is necessary and sufficient for universality by waiting with two-body interactions.</p>
+<p><em>Proof.</em> We first show why interactions of order below <span class="math inline">\(n\)</span> cannot suffice. Every evolution generated by <span class="math inline">\(H\)</span> commutes with <span class="math inline">\(H\)</span>. If such evolutions approach <span class="math inline">\(U_f\)</span> up to a global phase, then <span class="math inline">\(U_f\)</span> also commutes with <span class="math inline">\(H\)</span>. Apply this to the function that is one at just one input string <span class="math inline">\(x\)</span>. Its oracle is</p>
+<p><span class="math display">\[
+U_f=\mathbf{1}-2\lvert x,-\rangle\langle x,-\rvert,\qquad
+\lvert x,-\rangle=\lvert x\rangle_{\mathrm{in}}\lvert -\rangle_b.\tag{9}
+\]</span></p>
+<p>Commutation with this rank-one projector makes each <span class="math inline">\(\lvert x,-\rangle\)</span> an eigenvector of <span class="math inline">\(H\)</span>. Write its eigenvalue as <span class="math inline">\(h_x=\langle x,-\rvert H\lvert x,-\rangle\)</span>.</p>
+<p>If <span class="math inline">\(H\)</span> is <span class="math inline">\(k\)</span>-local, then <span class="math inline">\(h_x\)</span> is a polynomial of degree at most <span class="math inline">\(k\)</span> in the signs <span class="math inline">\((-1)^{x_i}\)</span>. To see this, expand <span class="math inline">\(H\)</span> in Pauli strings. An input factor <span class="math inline">\(X_i\)</span> or <span class="math inline">\(Y_i\)</span> has zero diagonal expectation in <span class="math inline">\(\lvert x\rangle\)</span>, while <span class="math inline">\(Z_i\)</span> contributes <span class="math inline">\((-1)^{x_i}\)</span>. At most <span class="math inline">\(k\)</span> input factors can occur. For <span class="math inline">\(k&lt;n\)</span>, the coefficient of the product of all <span class="math inline">\(n\)</span> signs therefore vanishes:</p>
+<p><span class="math display">\[
+\sum_{x\in\{0,1\}^n}(-1)^{|x|}h_x=0,\tag{10}
+\]</span></p>
+<p>where <span class="math inline">\(|x|=\sum_i x_i\)</span> is the Hamming weight. Equivalently, the phases obey</p>
+<p><a id="eq:parity"></a></p>
+<p><span class="math display">\[
+\prod_{x\in\{0,1\}^n}\bigl(e^{-ith_x/\hbar}\bigr)^{(-1)^{|x|}}=1\tag{11}
+\]</span></p>
+<p>at every time. This constraint survives limits. It is also unchanged by a common global phase because <span class="math inline">\(\sum_x(-1)^{|x|}=0\)</span>. A single-string oracle has exactly one negative phase on these eigenvectors, so the product in Eq. <a href="#eq:parity">(11)</a> is <span class="math inline">\(-1\)</span>. This proves the obstruction.</p>
+<p>For attainability, we construct an <span class="math inline">\(n\)</span>-local Hamiltonian whose output-minus sector has independently tunable eigenvalues and whose output-plus sector has a common return time. Let <span class="math inline">\([n]=\{1,\ldots,n\}\)</span>. Choose real numbers <span class="math inline">\(h_x\)</span> and expand the diagonal input operator as</p>
+<p><span class="math display">\[
+\sum_xh_x\lvert x\rangle\langle x\rvert=\sum_{B\subseteq[n]}c_BZ_B,
+\qquad Z_B=\prod_{i\in B}Z_i,\tag{12}
+\]</span></p>
+<p>with <span class="math inline">\(Z_\varnothing=\mathbf{1}\)</span>. Here <span class="math inline">\(c_B\)</span> are the real coefficients in the diagonal Pauli expansion. Define the output projectors <span class="math inline">\(\Pi_\pm=(\mathbf{1}_b\pm X_b)/2\)</span> and set</p>
+<p><span class="math display">\[
+\begin{aligned}
+H={}&amp;\sum_{\substack{B\subseteq[n]\\ |B|&lt;n}}c_BZ_B\otimes\Pi_-
++c_{[n]}Z_{[n]}\otimes\mathbf{1}_b\\
+&amp;+\kappa X_1\otimes\Pi_+,
+\end{aligned}\tag{13}
+\]</span></p>
+<p>where <span class="math inline">\(\lambda&gt;|c_{[n]}|\)</span> is a positive energy and <span class="math inline">\(\kappa=\sqrt{\lambda^2-c_{[n]}^2}\)</span>. Every term has weight at most <span class="math inline">\(n\)</span>: the first sum has at most <span class="math inline">\(n-1\)</span> input factors plus the output, the parity term has <span class="math inline">\(n\)</span> input factors, and the final term is two-body.</p>
+<p>On the output-minus sector, <span class="math inline">\(H\)</span> has eigenvalues <span class="math inline">\(h_x\)</span>. On the output-plus sector it reduces to <span class="math inline">\(c_{[n]}Z_{[n]}+\kappa X_1\)</span>. The two terms anticommute, so this block squares to <span class="math inline">\(\lambda^2\mathbf{1}\)</span>. At times <span class="math inline">\(t=2\pi q\hbar/\lambda\)</span>, for positive integers <span class="math inline">\(q\)</span>, the plus sector returns exactly to the identity. Meanwhile, the minus sector acquires phases <span class="math inline">\(e^{-2\pi iqh_x/\lambda}\)</span>.</p>
+<p>Choose <span class="math inline">\(1\)</span> and all <span class="math inline">\(h_x/\lambda\)</span> rationally independent. For example, in fixed energy units take <span class="math inline">\(h_x=\sqrt{\ell_x}\)</span> for distinct primes <span class="math inline">\(\ell_x\)</span>, then choose an integer <span class="math inline">\(\lambda&gt;|c_{[n]}|\)</span>. Kronecker's theorem makes the minus-sector phases approach any prescribed signs <span class="math inline">\((-1)^{f(x)}\)</span>, while the plus sector remains the identity. Thus <span class="math inline">\(n\)</span>-local interactions suffice. For <span class="math inline">\(n\ge3\)</span>, two-body locality lies below this threshold; Theorem <a href="#thm:existence">1</a> shows that one auxiliary qubit suffices to overcome it.</p>
+<p>One auxiliary qubit thus lowers the interaction order needed for universality by waiting from <span class="math inline">\(n\)</span> to two. The obstruction is a parity constraint, and the auxiliary qubit escapes it by making the sector frequencies nonlinear functions of a two-body field. The zero-auxiliary construction above also contains a hidden two-level system, the anticommuting pair on the <span class="math inline">\(\Pi_+\)</span> sector, but it pays for it with an <span class="math inline">\(n\)</span>-body parity term.</p>
+<p><a id="recurrence-density-and-first-arrival"></a></p>
+<h2>Recurrence density and first arrival</h2>
+<p><a id="sec:density"></a></p>
+<p>Theorem <a href="#thm:existence">1</a> guarantees that good stopping times exist but says nothing about when they occur. For this device their frequency can be computed exactly.</p>
+<p><strong>Proposition 3 (Frequency of good stopping times).</strong> <a id="prop:density"></a> Fix <span class="math inline">\(f\)</span> and <span class="math inline">\(0&lt;\eta&lt;2\)</span>, and let <span class="math inline">\(\varphi=2\arcsin(\eta/2)\)</span>. The positive integers <span class="math inline">\(q\)</span> for which Eq. <a href="#eq:full">(6)</a> holds at <span class="math inline">\(t=2\pi q\hbar/J\)</span> have natural density</p>
+<p><a id="eq:density"></a></p>
+<p><span class="math display">\[
+\rho_\eta=\Bigl(\frac{\varphi}{\pi}\Bigr)^{2^{n+1}-1},\tag{14}
+\]</span></p>
+<p>the same for every Boolean function. Natural density means the limiting fraction of good integers among <span class="math inline">\(1,\ldots,L\)</span> as <span class="math inline">\(L\to\infty\)</span>.</p>
+<p><em>Proof.</em> By Eq. <a href="#eq:blockerror">(8)</a>, Eq. <a href="#eq:full">(6)</a> holds exactly when <span class="math inline">\(|e_z|&lt;\varphi\)</span> for all <span class="math inline">\(2^m-1\)</span> sectors <span class="math inline">\(z\ne0\)</span>, that is, when each <span class="math inline">\(qr_z\)</span> lies modulo one in an open interval of length <span class="math inline">\(\varphi/\pi\)</span> centered at <span class="math inline">\(g(z)/2\)</span>. Since <span class="math inline">\(1\)</span> and the <span class="math inline">\(r_z\)</span> are rationally independent, Weyl's theorem [<a href="#ref-Weyl1916">13</a>] makes the fractional parts <span class="math inline">\((qr_z\bmod1)_{z\ne0}\)</span> uniformly distributed over the unit cube in <span class="math inline">\(2^m-1\)</span> dimensions. Intervals that cross an endpoint are read modulo one. The density of <span class="math inline">\(q\)</span> landing in a box equals its volume, <span class="math inline">\((\varphi/\pi)^{2^m-1}\)</span>, whatever the center of the box.</p>
+<p>If <span class="math inline">\(q_1&lt;q_2&lt;\cdots\)</span> are the good integers, their positive density implies <span class="math inline">\(q_j/j\to\rho_\eta^{-1}\)</span>. Hence the asymptotic average of the gaps <span class="math inline">\(q_{j+1}-q_j\)</span> is <span class="math inline">\(\rho_\eta^{-1}\)</span>. For fixed <span class="math inline">\(\eta\)</span>, this average grows doubly exponentially with <span class="math inline">\(n\)</span>.</p>
+<p>This is a long-run density statement, not a first-arrival estimate or a bound on the effort needed to find a suitable integer. For example, at <span class="math inline">\(n=2\)</span> and <span class="math inline">\(\eta=0.1\)</span>, the identity oracle already satisfies Eq. <a href="#eq:full">(6)</a> at <span class="math inline">\(q=1\)</span>, with error approximately <span class="math inline">\(0.03747\)</span>, although <span class="math inline">\(\rho_\eta^{-1}\simeq3.01\times10^{10}\)</span>. Different oracles have equal recurrence density but can have very different first good times. The lower bound on the time needed for most functions will instead follow from a separate counting argument.</p>
+<p><a id="expected-action-and-the-number-of-accessible-functions"></a></p>
+<h2>Expected action and the number of accessible functions</h2>
+<p><a id="sec:capacity"></a></p>
+<p>The construction shows that every oracle can eventually be reached. We now ask how many functions any device can evaluate within a fixed physical budget. The key observation is that nearby choices of Hamiltonians and durations produce nearby states, whereas two different Boolean functions must give distinguishable answers on at least one input. A finite budget therefore limits how many distinct answers can fit into the available control space. Heralding complicates this argument because the accepted part of the state can be arbitrarily small; accounting for repeated attempts restores a bound.</p>
+<p>The model allows more auxiliaries than the single qubit <span class="math inline">\(a\)</span> used in the construction. Fix a total of <span class="math inline">\(N\ge n+1\)</span> qubits, split into the input register, the output qubit <span class="math inline">\(b\)</span>, a work register <span class="math inline">\(\mathrm w\)</span>, and a flag register <span class="math inline">\(\mathrm h\)</span>. The last two contain <span class="math inline">\(N_{\mathrm w}\)</span> and <span class="math inline">\(N_{\mathrm h}\)</span> qubits, respectively, with <span class="math inline">\(N_{\mathrm w}+N_{\mathrm h}=N-n-1\)</span>. Either may be empty. Each run starts in</p>
+<p><span class="math display">\[
+\lvert \psi_x\rangle=\lvert x\rangle_{\mathrm{in}}\lvert 0\rangle_b
+\lvert 0^{N_{\mathrm w}}\rangle_{\mathrm w}
+\lvert 0^{N_{\mathrm h}}\rangle_{\mathrm h}.\tag{15}
+\]</span></p>
+<p>The notation <span class="math inline">\(\lvert 0^r\rangle\)</span> means <span class="math inline">\(r\)</span> qubits initialized to zero. A fixed projector <span class="math inline">\(P_{\mathrm h}\)</span> on the flag register specifies the accepted measurement outcome. Its action on the full device is</p>
+<p><span class="math display">\[
+\Pi=\mathbf{1}_{\mathrm{in}}\otimes\mathbf{1}_b\otimes\mathbf{1}_{\mathrm w}\otimes P_{\mathrm h}.\tag{16}
+\]</span></p>
+<p>For example, one flag qubit can signal acceptance by ending in <span class="math inline">\(\lvert 1\rangle\)</span>, with <span class="math inline">\(P_{\mathrm h}=\lvert 1\rangle\langle 1\rvert\)</span>. Taking <span class="math inline">\(\Pi=\mathbf{1}\)</span> gives a procedure that always accepts and needs no flag qubits. The work qubits may be discarded at the end. The output is read in the computational basis after acceptance. Preparation, register labels, and both measurements are fixed for all functions.</p>
+<p>Fix a locality order <span class="math inline">\(k\ge1\)</span> and a positive integer <span class="math inline">\(S\)</span>, the maximum number of successive constant-Hamiltonian intervals in a run. For <span class="math inline">\(j=1,\ldots,S\)</span>, let <span class="math inline">\(H_j\)</span> be a <span class="math inline">\(k\)</span>-local Hamiltonian acting for a time <span class="math inline">\(t_j\ge0\)</span>. Zero durations allow fewer than <span class="math inline">\(S\)</span> intervals. The evolution <span class="math inline">\(U\)</span> and its dimensionless run action <span class="math inline">\(A\)</span> are</p>
+<p><span class="math display">\[
+U=e^{-it_SH_S/\hbar}\cdots e^{-it_1H_1/\hbar},\qquad
+A=\sum_{j=1}^{S}t_jW(H_j)/\hbar.\tag{17}
+\]</span></p>
+<p>The times and couplings may depend on <span class="math inline">\(f\)</span>, but not on the input <span class="math inline">\(x\)</span>. The success probability is <span class="math inline">\(p_x=\lVert \Pi U\lvert \psi_x\rangle\rVert^2&gt;0\)</span>. Conditioned on success, the normalized state is <span class="math inline">\(\Pi U\lvert \psi_x\rangle/\sqrt{p_x}\)</span>, and measuring <span class="math inline">\(b\)</span> must return <span class="math inline">\(f(x)\)</span> with error probability at most <span class="math inline">\(\epsilon\)</span>, where <span class="math inline">\(0\le\epsilon&lt;1/2\)</span>. This classical-output requirement is weaker than coherent oracle implementation, so a lower bound here also applies to the construction.</p>
+<p>Independent repetitions until acceptance take <span class="math inline">\(1/p_x\)</span> runs on average. Their worst-case expected action is therefore</p>
+<p><span class="math display">\[
+C=\max_x\frac{A}{p_x}.\tag{18}
+\]</span></p>
+<p>We count resets and readout as free; charging for them can only increase the cost [<a href="#ref-Combes2015">14</a>]. For a budget <span class="math inline">\(R\ge0\)</span>, let <span class="math inline">\(\mathcal F(R)\)</span> be the set of functions admitting an implementation with <span class="math inline">\(C\le R\)</span>. Write <span class="math inline">\(\delta=1-2\epsilon&gt;0\)</span> for the required output bias. Finally, define</p>
+<p><span class="math display">\[
+K(N,k)=\sum_{r=1}^{\min(k,N)}3^r\binom Nr.\tag{19}
+\]</span></p>
+<p>This counts the nonidentity Pauli strings of weight at most <span class="math inline">\(k\)</span>: choose the <span class="math inline">\(r\)</span> qubits, then one of <span class="math inline">\(X,Y,Z\)</span> on each. Thus one <span class="math inline">\(k\)</span>-local generator has <span class="math inline">\(K(N,k)\)</span> real coefficients after removing its scalar identity term, and <span class="math inline">\(S\)</span> intervals have <span class="math inline">\(d=K(N,k)S\)</span> coefficients.</p>
+<p><strong>Theorem 4 (Capacity).</strong> <a id="thm:capacity"></a> For fixed <span class="math inline">\(N,k,S,\epsilon\)</span> in the model above,</p>
+<p><a id="eq:capacity"></a></p>
+<p><span class="math display">\[
+|\mathcal F(R)|\le\Bigl(1+\frac{2R}{\delta}\Bigr)^{d},\qquad d=K(N,k)\,S .\tag{20}
+\]</span></p>
+<p>The bound holds even when success probabilities approach zero. If the allowed generator tuples lie in a real linear space of dimension <span class="math inline">\(d&#39;\)</span> modulo scalars, <span class="math inline">\(d\)</span> may be replaced by <span class="math inline">\(d&#39;\)</span>.</p>
+<p><em>Proof.</em> <em>Describe the controls.</em> Adding a scalar to a Hamiltonian changes only a global phase, so write <span class="math inline">\([Q]\)</span> for a Hermitian operator <span class="math inline">\(Q\)</span> with such scalar shifts identified. A run is represented by its integrated generators</p>
+<p><span class="math display">\[
+G=([t_jH_j/\hbar])_{j=1}^S.\tag{21}
+\]</span></p>
+<p>Their real parameter space has dimension <span class="math inline">\(d\)</span>. Give it the norm</p>
+<p><span class="math display">\[
+\lVert G\rVert_*=\sum_{j=1}^S\inf_{c\in\mathbb R}\lVert t_jH_j/\hbar-c\mathbf{1}\rVert=A/2.\tag{22}
+\]</span></p>
+<p>The equality follows by centering each spectrum between its largest and smallest eigenvalues. If <span class="math inline">\(R=0\)</span>, or the allowed space has dimension zero, the evolution is fixed up to phase and at most one function is possible. Assume otherwise. Let <span class="math inline">\(U_G\)</span> denote the evolution specified by <span class="math inline">\(G\)</span>. For two runs <span class="math inline">\(G,G&#39;\)</span>, Duhamel's formula bounds the difference of each interval's evolutions by the difference of its integrated generators. Adding these bounds over the ordered product gives</p>
+<p><a id="eq:control-distance"></a></p>
+<p><span class="math display">\[
+\inf_{\theta\in\mathbb R}\lVert U_G-e^{i\theta}U_{G&#39;}\rVert\le\lVert G-G&#39;\rVert_*.\tag{23}
+\]</span></p>
+<p><em>Separate different answers.</em> Choose two distinct functions and one implementation of each, with actions <span class="math inline">\(A,A&#39;\)</span>. They differ on some input <span class="math inline">\(x\)</span>. The unnormalized accepted states are <span class="math inline">\(u=\Pi U_G\lvert \psi_x\rangle\)</span> and <span class="math inline">\(v=\Pi U_{G&#39;}\lvert \psi_x\rangle\)</span>, with probabilities <span class="math inline">\(p=\lVert u\rVert^2\)</span> and <span class="math inline">\(p&#39;=\lVert v\rVert^2\)</span>. The output observable <span class="math inline">\(Z_b\)</span> commutes with <span class="math inline">\(\Pi\)</span>, since the output and flag occupy different qubits. Conditional correctness gives <span class="math inline">\(\langle u\rvert Z_b\lvert u\rangle\)</span> and <span class="math inline">\(\langle v\rvert Z_b\lvert v\rangle\)</span> opposite signs, with magnitudes at least <span class="math inline">\(\delta p\)</span> and <span class="math inline">\(\delta p&#39;\)</span>. For every phase <span class="math inline">\(\theta\)</span>,</p>
+<p><span class="math display">\[
+\begin{aligned}
+\delta(p+p&#39;)&amp;\le\bigl|\langle u\rvert Z_b\lvert u\rangle-\langle v\rvert Z_b\lvert v\rangle\bigr|\\
+&amp;\le(\sqrt p+\sqrt{p&#39;})\lVert u-e^{i\theta}v\rVert.
+\end{aligned}\tag{24}
+\]</span></p>
+<p>The last step expands the difference of the two quadratic forms and uses <span class="math inline">\(\lVert Z_b\rVert=1\)</span>. Projection cannot increase norm, so Eq. <a href="#eq:control-distance">(23)</a> also bounds the distance between these accepted states. Moreover, <span class="math inline">\(C\le R\)</span> implies <span class="math inline">\(p\ge A/R\)</span> and <span class="math inline">\(p&#39;\ge A&#39;/R\)</span>. Using <span class="math inline">\((\sqrt p+\sqrt{p&#39;})^2\le2(p+p&#39;)\)</span> gives</p>
+<p><a id="eq:run-separation"></a></p>
+<p><span class="math display">\[
+\lVert G-G&#39;\rVert_*\ge\delta\sqrt{(A+A&#39;)/(2R)}.\tag{25}
+\]</span></p>
+<p><em>Include rare acceptance.</em> The separation in Eq. <a href="#eq:run-separation">(25)</a> becomes small when the runs have small action. Rescale each point to <span class="math inline">\(V=G/\sqrt A\)</span>, taking <span class="math inline">\(V=0\)</span> for <span class="math inline">\(A=0\)</span>. Put <span class="math inline">\(\alpha=\sqrt A\ge\alpha&#39;=\sqrt{A&#39;}\)</span>. Since <span class="math inline">\(\lVert V\rVert_*=\alpha/2\)</span> and <span class="math inline">\(\lVert V&#39;\rVert_*=\alpha&#39;/2\)</span>, the reverse triangle inequality gives <span class="math inline">\(\alpha-\alpha&#39;\le2\lVert V-V&#39;\rVert_*\)</span>. Hence</p>
+<p><span class="math display">\[
+\begin{aligned}
+\lVert G-G&#39;\rVert_*&amp;=\lVert \alpha(V-V&#39;)+(\alpha-\alpha&#39;)V&#39;\rVert_*\\
+&amp;\le\alpha\lVert V-V&#39;\rVert_*+(\alpha-\alpha&#39;)\alpha&#39;/2\\
+&amp;\le(\alpha+\alpha&#39;)\lVert V-V&#39;\rVert_*.
+\end{aligned}\tag{26}
+\]</span></p>
+<p>Combining this with Eq. <a href="#eq:run-separation">(25)</a> and <span class="math inline">\(\alpha+\alpha&#39;\le\sqrt{2(A+A&#39;)}\)</span> shows that different functions give rescaled points at least <span class="math inline">\(\delta/(2\sqrt R)\)</span> apart. Two distinct functions cannot both have zero action. Since <span class="math inline">\(p_x\le1\)</span>, the budget also gives <span class="math inline">\(A\le R\)</span>, so every rescaled point satisfies <span class="math inline">\(\lVert V\rVert_*\le\sqrt R/2\)</span>.</p>
+<p><em>Count the points.</em> Select one such point per function and surround it by an open ball of radius <span class="math inline">\(\delta/(4\sqrt R)\)</span> in the norm <span class="math inline">\(\lVert \cdot\rVert_*\)</span>. The separation makes these balls disjoint. They all fit inside the ball of radius <span class="math inline">\(\sqrt R/2+\delta/(4\sqrt R)\)</span> centered at the origin. In a <span class="math inline">\(d\)</span>-dimensional normed space, ball volume scales as the <span class="math inline">\(d\)</span>th power of radius. Comparing these volumes gives <span class="math inline">\((1+2R/\delta)^d\)</span>, as claimed. The same argument takes place in dimension <span class="math inline">\(d&#39;\)</span> when the allowed tuples lie in that smaller linear space.</p>
+<p>The rescaling by <span class="math inline">\(\sqrt A\)</span> is what lets the bound tolerate success probabilities that approach zero: a cheap run must succeed often enough to fit the budget, and a rare success must be paid for with retries. Adaptive reuse of failed states is a different model, not covered here.</p>
+<p><strong>Corollary 5 (A fixed Hamiltonian).</strong> <a id="cor:fixed"></a> If <span class="math inline">\(H\)</span> is fixed and only its nonnegative duration depends on <span class="math inline">\(f\)</span>, then, under the same preparation, readout and retry rules, at most <span class="math inline">\(1+R/\delta\)</span> functions are evaluable with expected action at most <span class="math inline">\(R\)</span>, whatever the dimension or locality of <span class="math inline">\(H\)</span>. Consequently all but a fraction <span class="math inline">\(2^{-2^{n-1}}\)</span> of Boolean functions require</p>
+<p><a id="eq:fixedlower"></a></p>
+<p><span class="math display">\[
+C&gt;\delta\bigl(2^{2^{n-1}}-1\bigr) .\tag{27}
+\]</span></p>
+<p><em>Proof.</em> If <span class="math inline">\(W(H)=0\)</span>, the evolution is scalar and at most one function is possible. Otherwise, varying only the nonnegative duration makes all integrated generators proportional to the same fixed operator. The rescaled tuples therefore lie on one ray at distances <span class="math inline">\(\sqrt A/2\in[0,\sqrt R/2]\)</span> from the origin and are at least <span class="math inline">\(\delta/(2\sqrt R)\)</span> apart, so there are at most <span class="math inline">\(1+R/\delta\)</span> of them. Setting <span class="math inline">\(R=\delta(2^{2^{n-1}}-1)\)</span> allows at most <span class="math inline">\(2^{2^{n-1}}\)</span> of the <span class="math inline">\(2^{2^n}\)</span> functions.</p>
+<p>For the construction, an operator-norm error <span class="math inline">\(\eta\)</span> gives decision error at most <span class="math inline">\(\eta^2\)</span>: the ideal output has no amplitude in the wrong-output subspace. Thus any fixed <span class="math inline">\(0&lt;\eta&lt;1/\sqrt2\)</span> permits application of Corollary <a href="#cor:fixed">5</a> with <span class="math inline">\(\epsilon=\eta^2\)</span> and no heralding. Since <span class="math inline">\(W(H_n)/J\)</span> is bounded above and below, almost every oracle needs a doubly exponential physical waiting time in units <span class="math inline">\(\hbar/J\)</span>. This conclusion holds at all nonnegative times, not only at the integer sampling times of Proposition <a href="#prop:density">3</a>. It does not supply a matching first-arrival upper bound.</p>
+<p>The bound also says where the program can be stored. Its logarithm reads <span class="math inline">\(\log_2|\mathcal F(R)|\le d\log_2(1+2R/\delta)\)</span>, so a scheme with <span class="math inline">\(d\)</span> real control parameters and budget <span class="math inline">\(R\)</span> can address at most <span class="math inline">\(d\log_2(1+2R/\delta)\)</span> bits of truth table.</p>
+<p><strong>Corollary 6 (Action and control intervals).</strong> <a id="cor:exchange"></a> Fix <span class="math inline">\(N,k,S\)</span> and <span class="math inline">\(0\le\epsilon&lt;1/2\)</span>, with the preparation and readout of Theorem <a href="#thm:capacity">4</a>. All but a fraction <span class="math inline">\(2^{-2^{n-1}}\)</span> of Boolean functions have the following property: every implementation using at most <span class="math inline">\(S\)</span> intervals has expected action <span class="math inline">\(C\)</span> satisfying</p>
+<p><a id="eq:exchange"></a></p>
+<p><span class="math display">\[
+K(N,k)\,S\,\log_2\Bigl(1+\frac{2C}{\delta}\Bigr)&gt;2^{n-1}.\tag{28}
+\]</span></p>
+<p>The exceptional set may depend on these fixed parameters. Conversely, controlled two-body evolution implements every oracle exactly, up to a global phase, with <span class="math inline">\(O(n2^n)\)</span> intervals and action, without auxiliary qubits.</p>
+<p><em>Proof.</em> Set <span class="math inline">\(R=(\delta/2)(2^{2^{n-1}/[K(N,k)S]}-1)\)</span> in Theorem <a href="#thm:capacity">4</a>. At most <span class="math inline">\(2^{2^{n-1}}\)</span> functions admit an implementation with <span class="math inline">\(C\le R\)</span>, proving Eq. <a href="#eq:exchange">(28)</a>.</p>
+<p>For the upper bound, change the output to its <span class="math inline">\(X\)</span> basis. The oracle is then diagonal with signs <span class="math inline">\((-1)^{g(z)}\)</span>. Use the phase function <span class="math inline">\(g(x,y)=yf(x)\)</span> defined in Sec. <a href="#sec:existence">2</a>, with <span class="math inline">\(z=(x,y)\in\{0,1\}^m\)</span>. For each subset <span class="math inline">\(B\subseteq\{1,\ldots,m\}\)</span>, the Walsh character <span class="math inline">\(w_B(z)=\prod_{i\in B}(-1)^{z_i}\)</span> is a product of bit signs. The Walsh expansion is the Fourier expansion on bit strings, with coefficients <span class="math inline">\(\widehat g_B\)</span> given by</p>
+<p><span class="math display">\[
+\begin{aligned}
+\widehat g_B&amp;=2^{-m}\sum_zg(z)w_B(z),\\
+(-1)^{g(z)}&amp;=\prod_Be^{-i\pi\widehat g_Bw_B(z)}.
+\end{aligned}\tag{29}
+\]</span></p>
+<p>Here the hat denotes a scalar Fourier coefficient, not an operator. In the computational basis after the output basis change, let <span class="math inline">\(Z_B=\prod_{i\in B}Z_i\)</span>, where index <span class="math inline">\(m\)</span> denotes the output. Each nonempty <span class="math inline">\(B\)</span> gives a rotation <span class="math inline">\(e^{-i\pi\widehat g_BZ_B}\)</span>. A chain of controlled-NOT gates computes the parity on one qubit; a single-qubit rotation and the reverse chain implement the rotation [<a href="#ref-Barenco1995">18</a>]. This uses <span class="math inline">\(O(m)\)</span> one- and two-qubit gates per subset and no scratch qubits. The empty subset contributes only a global phase. Each gate has a Hermitian logarithm of spectral width at most <span class="math inline">\(2\pi\)</span> and hence costs at most <span class="math inline">\(2\pi\)</span> action. Summing over <span class="math inline">\(2^m\)</span> subsets and including the output basis changes gives <span class="math inline">\(O(n2^n)\)</span> intervals and action.</p>
+<p>For fixed error and <span class="math inline">\(N=n+2\)</span>, two-body interactions have <span class="math inline">\(K(N,2)=O(n^2)\)</span>. With <span class="math inline">\(S=1\)</span>, Eq. <a href="#eq:exchange">(28)</a> gives <span class="math inline">\(C=2^{\Omega(2^n/n^2)}\)</span> for almost every function, even if the constant Hamiltonian is chosen separately for each function. A single fixed Hamiltonian has only its duration available and obeys the stronger Corollary <a href="#cor:fixed">5</a>.</p>
+<p>For comparison, fix any budget <span class="math inline">\(R(n)\le2^{cn}\)</span> with constant <span class="math inline">\(c&gt;0\)</span>. The fraction of functions attainable with at most <span class="math inline">\(S(n)\)</span> intervals is bounded by</p>
+<p><span class="math display">\[
+\frac{\bigl(1+2R(n)/\delta\bigr)^{K(N,2)S(n)}}{2^{2^n}}.\tag{30}
+\]</span></p>
+<p>Consequently, achieving this action budget for even half of all truth tables requires <span class="math inline">\(S(n)=\Omega(2^n/n^3)\)</span>. The elementary controlled construction is within polynomial factors of this interval count; sharper oracle synthesis is available [<a href="#ref-Nie2026">19</a>]. The logarithm of Eq. <a href="#eq:capacity">(20)</a> expresses the common principle: accessible truth tables are limited jointly by the number of real control parameters and the logarithm of the action budget.</p>
+<p><a id="precision"></a></p>
+<h2>Precision</h2>
+<p><a id="sec:precision"></a></p>
+<p>Long waits also demand precise devices. Let <span class="math inline">\(H\)</span> be the ideal Hamiltonian, such as <span class="math inline">\(H_n\)</span>, and let <span class="math inline">\(E\)</span> be a Hermitian error in the Hamiltonian and <span class="math inline">\(\Delta t\)</span> an error in the stopping time. If the ideal evolution approximates <span class="math inline">\(U_f\otimes\mathbf{1}_a\)</span> within <span class="math inline">\(\eta\)</span>, Duhamel's formula bounds the actual error, up to a global phase, by</p>
+<p><a id="eq:stability"></a></p>
+<p><span class="math display">\[
+\eta+\frac{t}{\hbar}\inf_{c\in\mathbb R}\lVert E-c\mathbf{1}\rVert+\frac{|\Delta t|}{2\hbar}W(H+E) .\tag{31}
+\]</span></p>
+<p>This gives a sufficient worst-case calibration condition, not a necessary error tolerance for every perturbation. For a fixed additional error allowance <span class="math inline">\(\xi\)</span>, it suffices to make the centered Hamiltonian error <span class="math inline">\(O(\hbar\xi/t)\)</span> and the timing error <span class="math inline">\(O(\hbar\xi/W(H+E))\)</span>. In relative units the required coupling precision therefore scales as <span class="math inline">\(\xi/(tJ/\hbar)\)</span>, corresponding to <span class="math inline">\(O(\log_2(tJ/\hbar)+\log_2(1/\xi))\)</span> binary digits. Absolute clock resolution can stay constant at fixed width and accuracy; the range of times the clock must represent grows with <span class="math inline">\(t\)</span>. These are distinct requirements. Equidistribution alone gives no upper bound on either requirement for the first implementation of a chosen oracle.</p>
+<p><a id="conclusion"></a></p>
+<h2>Conclusion</h2>
+<p><a id="sec:discussion"></a></p>
+<p>A fixed rational two-body Hamiltonian approximates every Boolean oracle using one auxiliary qubit. For <span class="math inline">\(n\ge3\)</span>, the auxiliary qubit is necessary under two-body locality. The device is compact, but the duration is its program: for any fixed Hamiltonian, almost every truth table requires doubly exponential expected action. Independent heralded retries cannot remove this cost, even when success probabilities approach zero. Allowing a sequence of two-body controls reduces the action needed for every oracle to a single exponential upper bound. The distinction is therefore between realizing a computation and providing an efficient physical way to select it.</p>
+<p>The scope of the result is specific. Interaction order is bounded, but the star has unbounded degree and imposes no spatial propagation constraint. The stopping clock is external. Failed runs are reset, and adaptive reuse of failed states is outside the capacity theorem. The lower bounds concern almost all truth tables at each input size, rather than an explicit family. Natural next questions are quantitative first-arrival bounds for the construction, bounded-degree realizations, and expected-action bounds for adaptive protocols. Establishing a comparable obstruction for an explicit, efficiently described function family would require additional structure beyond counting.</p>
+<p><a id="data-availability."></a></p>
+<h5 id="data-availability">Data availability.</h5>
+<p>The accompanying code runs the finite numerical checks and records their outputs.</p>
+<p><a id="ai-assistance"></a></p>
+<h2>AI assistance</h2>
+<p>The research vision and original ideas are the author's. The author used OpenAI's GPT models, including Astra, and Anthropic's Claude Opus models for writing, theorem proving, and literature review. GPT models were used most often, and Astra was the most useful overall. This work is in progress. Not all claims have been verified by a human.</p>
+<p><a id="references"></a></p>
+<h2>References</h2>
+<p><a id="ref-Bournez2021"></a></p>
+<p>[1]</p>
+<p>Olivier Bournez and Amaury Pouly. A Survey on Analog Models of Computation. In Vasco Brattka and Peter Hertling, editors, <em>Handbook of Computability and Complexity in Analysis</em>, Theory and Applications of Computability, pages 173–226. Springer, Cham, 2021.</p>
+<p><a id="ref-Jordan2017"></a></p>
+<p>[2]</p>
+<p>Stephen P. Jordan. Fast quantum computation at arbitrarily low energy. <em>Physical Review A</em>, 95(3):032305, 2017.</p>
+<p><a id="ref-Russell2017"></a></p>
+<p>[3]</p>
+<p>Benjamin Russell and Susan Stepney. The Geometry of Speed Limiting Resources in Physical Models of Computation. <em>International Journal of Foundations of Computer Science</em>, 28(4):321–333, 2017.</p>
+<p><a id="ref-Hadfield2021"></a></p>
+<p>[4]</p>
+<p>Stuart Hadfield. On the Representation of Boolean and Real Functions as Hamiltonians for Quantum Computing. <em>ACM Transactions on Quantum Computing</em>, 2(4):1–21, 2021. Article 18.</p>
+<p><a id="ref-Feynman1986"></a></p>
+<p>[5]</p>
+<p>Richard P. Feynman. Quantum mechanical computers. <em>Foundations of Physics</em>, 16(6):507–531, 1986.</p>
+<p><a id="ref-Bohdanowicz2017"></a></p>
+<p>[6]</p>
+<p>Thomas C. Bohdanowicz and Fernando G. S. L. Brandão. Universal Hamiltonians for Exponentially Long Simulation, 2017.</p>
+<p><a id="ref-Proctor2013"></a></p>
+<p>[7]</p>
+<p>Timothy J. Proctor, Erika Andersson, and Viv Kendon. Universal quantum computation by the unitary control of ancilla qubits and using a fixed ancilla-register interaction. <em>Physical Review A</em>, 88(4):042330, 2013.</p>
+<p><a id="ref-Proctor2014"></a></p>
+<p>[8]</p>
+<p>Timothy J Proctor and Viv Kendon. Minimal ancilla mediated quantum computation. <em>EPJ Quantum Technology</em>, 1(1):13, 2014.</p>
+<p><a id="ref-Junge2026"></a></p>
+<p>[9]</p>
+<p>Marius Junge, Jason Pollack, and Luke Visser. Universal computation with magic Hamiltonians, 2026.</p>
+<p><a id="ref-Pham2026"></a></p>
+<p>[10]</p>
+<p>N. C. Mai Pham and Raul A. Santos. Time evolution of impurity models and their universality for quantum computation, 2026.</p>
+<p><a id="ref-Cameron2014"></a></p>
+<p>[11]</p>
+<p>Stephen Cameron, Shannon Fehrenbach, Leah Granger, Oliver Hennigh, Sunrose Shrestha, and Christino Tamon. Universal state transfer on graphs. <em>Linear Algebra and its Applications</em>, 455:115–142, 2014.</p>
+<p><a id="ref-Besicovitch1940"></a></p>
+<p>[12]</p>
+<p>A. S. Besicovitch. On the Linear Independence of Fractional Powers of Integers. <em>Journal of the London Mathematical Society</em>, s1-15(1):3–6, 1940.</p>
+<p><a id="ref-Weyl1916"></a></p>
+<p>[13]</p>
+<p>Hermann Weyl. Über die Gleichverteilung von Zahlen mod. Eins. <em>Mathematische Annalen</em>, 77(3):313–352, 1916.</p>
+<p><a id="ref-Combes2015"></a></p>
+<p>[14]</p>
+<p>Joshua Combes and Christopher Ferrie. Cost of postselection in decision theory. <em>Physical Review A</em>, 92(2):022117, 2015.</p>
+<p><a id="ref-Shannon1949"></a></p>
+<p>[15]</p>
+<p>Claude E. Shannon. The Synthesis of Two-Terminal Switching Circuits. <em>Bell System Technical Journal</em>, 28(1):59–98, 1949.</p>
+<p><a id="ref-Poulin2011"></a></p>
+<p>[16]</p>
+<p>David Poulin, Angie Qarry, Rolando Somma, and Frank Verstraete. Quantum Simulation of Time-Dependent Hamiltonians and the Convenient Illusion of Hilbert Space. <em>Physical Review Letters</em>, 106(17):170501, 2011.</p>
+<p><a id="ref-Caro2022"></a></p>
+<p>[17]</p>
+<p>Matthias C. Caro, Hsin-Yuan Huang, M. Cerezo, Kunal Sharma, Andrew Sornborger, Lukasz Cincio, and Patrick J. Coles. Generalization in quantum machine learning from few training data. <em>Nature Communications</em>, 13(1):4919, 2022.</p>
+<p><a id="ref-Barenco1995"></a></p>
+<p>[18]</p>
+<p>Adriano Barenco, Charles H. Bennett, Richard Cleve, David P. DiVincenzo, Norman Margolus, Peter Shor, Tycho Sleator, John A. Smolin, and Harald Weinfurter. Elementary gates for quantum computation. <em>Physical Review A</em>, 52(5):3457–3467, 1995.</p>
+<p><a id="ref-Nie2026"></a></p>
+<p>[19]</p>
+<p>Junhong Nie and Wei Zi. Nearly optimal quantum circuits for Boolean oracles, 2026.</p>
+<p><a id="ref-Nielsen1997"></a></p>
+<p>[20]</p>
+<p>M. A. Nielsen and Isaac L. Chuang. Programmable Quantum Gate Arrays. <em>Physical Review Letters</em>, 79(2):321–324, 1997.</p>
+{% endraw %}

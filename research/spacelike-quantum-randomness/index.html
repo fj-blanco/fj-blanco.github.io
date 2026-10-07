@@ -1,0 +1,382 @@
+---
+layout: "paper"
+title: "Spacelike Guessing of Quantum Randomness"
+description: "Bounds on guessing a vacuum-generated bit from a spacelike region."
+section: "research"
+main_class: "paper-page"
+math: true
+permalink: "/research/spacelike-quantum-randomness/"
+area: "Quantum fields · Randomness"
+---
+{% raw %}
+<p><a id="abstract"></a></p>
+<h2>Abstract</h2>
+<p>How private is a random bit against an observer confined to a spacelike region? For a binary measurement of the quantum vacuum, we identify an overlap that both quantifies an explicit guessing attack and bounds every measurement in the opposite wedge. The attack uses the modular reflection of the source readout; its advantage is half the overlap, while the universal upper bound is half its square root. The bounds hold for general von Neumann algebras and recover known discrimination bounds in finite dimensions. For a free scalar field, the overlap is an ordinary Gaussian correlation. A Hermite expansion then shows how the readout controls leakage. For compact massless sources, replacing a sign threshold by a balanced magnitude threshold improves the whole-wedge privacy bound from inverse distance to inverse distance squared. Spacetime access and the choice of readout thus determine a quantitative privacy guarantee for a single vacuum-generated bit.</p>
+<p><a id="introduction"></a></p>
+<h2>Introduction</h2>
+<p><a id="sec:intro"></a></p>
+<p>A random number generator is secure only relative to a description of what an adversary may hold. Security proofs for quantum random number generators describe this side information as a quantum system correlated with the source [<a href="#ref-herrero2017quantum">1</a>], and the conditional min-entropy turns it into a guessing probability [<a href="#ref-koenig2009operational">2</a>]. Relativity suggests a more concrete description. An adversary is a laboratory, and a laboratory occupies a region of spacetime. The question then becomes geometric. If a bit is produced by measuring a quantum field in a bounded region, how well can someone confined to a spacelike separated region predict it?</p>
+<p>Microcausality settles part of the answer. Spacelike observers cannot influence the bit, and the source cannot signal to them. It does not make the bit independent of their records. The vacuum is entangled across spacelike regions [<a href="#ref-summers1987maximal">3</a>, <a href="#ref-reznik2003entanglement">4</a>, <a href="#ref-pozas2015harvesting">5</a>], and conditioning on a local measurement outcome changes the state assigned to spacelike observables even though the unconditioned state does not change [<a href="#ref-fewster2020quantum">6</a>]. A spacelike laboratory can therefore hold information about a bit that nobody sent to it. Relativistic analyses of randomness generation have quantified how a detector exchanges information with a field [<a href="#ref-thinh2016certified">7</a>, <a href="#ref-lopp2018light">8</a>]. Here we ask how much the field itself reveals to a spacelike region, and which measurement there reveals it.</p>
+<p>For a source inside a wedge, Tomita–Takesaki theory provides an explicit receiver. Its modular conjugation <span class="math inline">\(J\)</span> maps the source contrast <span class="math inline">\(Z\)</span>, the difference of its two measurement effects, to a commuting contrast <span class="math inline">\(JZJ\)</span>. Under the Bisognano–Wichmann property this map is geometric: the receiver can act in a reflected copy of the source region (Fig. <a href="#fig:geometry">1</a>). Its guessing advantage is <span class="math inline">\(C_Z/2\)</span>, where <span class="math inline">\(C_Z\)</span> is a positive modular overlap. The advantage of any receiver in the opposite wedge is at most <span class="math inline">\(\sqrt{C_Z}/2\)</span>. Thus a quantity determined by the source and the vacuum supplies both an achievable attack and a privacy bound for an entire spacetime region.</p>
+<p>For a free scalar field, this overlap is the correlation of two ordinary Gaussian variables passed through the same readout. Expanding the readout in Hermite polynomials reveals a simple way to reduce leakage. A sign threshold retains the linear correlation. A fair threshold on the field magnitude removes it, improving the bound for every receiver in the opposite wedge. We calculate both bounds for a smooth compact source profile. Appendix <a href="#sec:cost">A</a> relates the overlap to modular energy and explains why that coarser estimate can miss the leakage of sharp readouts.</p>
+<p>The ingredients have established precedents. Positivity of modularly reflected correlations follows from standard-form theory [<a href="#ref-araki1974some">9</a>]. Summers and Werner used wedge modular theory to study maximal Bell violations [<a href="#ref-summers1987maximal">3</a>]; scalar-field and detector constructions likewise use reflected observables [<a href="#ref-guedes2024unruh">10</a>, <a href="#ref-caribe2026modular">11</a>]. In finite dimensions our mirror receiver is the pretty good measurement [<a href="#ref-hausladen1994pretty">12</a>, <a href="#ref-barnum2002reversing">13</a>], and the upper bound is the binary case of Renes's discrimination inequality [<a href="#ref-renes2017better">14</a>]. We give a direct modular proof valid without a tensor-factor description of the laboratories. The contribution is its use as a regional privacy bound, together with a localized receiver and explicit readout-dependent suppression in a field theory.</p>
+<p>We use units with <span class="math inline">\(\hbar=c=1\)</span>. Logarithms <span class="math inline">\(\ln\)</span> are natural; entropies of bits use <span class="math inline">\(\log_2\)</span>.</p>
+<p><a id="a-bit-and-its-spacelike-receiver"></a></p>
+<h2>A bit and its spacelike receiver</h2>
+<p><a id="sec:setup"></a></p>
+<p>Let <span class="math inline">\(\mathcal M\)</span> be a von Neumann algebra acting on a Hilbert space <span class="math inline">\(\mathcal H\)</span> with a cyclic and separating unit vector <span class="math inline">\(\Omega\)</span>, and write <span class="math inline">\(\omega(A)=\langle\Omega,A\Omega\rangle\)</span>. In field theory <span class="math inline">\(\mathcal M\)</span> is the algebra of a region and <span class="math inline">\(\Omega\)</span> the vacuum, which is cyclic and separating by the Reeh–Schlieder theorem [<a href="#ref-haag1996local">15</a>]. A source measures two effects in <span class="math inline">\(\mathcal M\)</span>,</p>
+<p><a id="eq:effects"></a></p>
+<p><span class="math display">\[
+E_\pm=\tfrac12(\mathbf{1}\pm Z),\qquad Z=Z^*,\quad \|Z\|\le1,\quad \omega(Z)=0 .\tag{1}
+\]</span></p>
+<p>We call <span class="math inline">\(Z\)</span> the measurement contrast. The last condition makes the bit fair. The vacuum variance <span class="math inline">\(q=\omega(Z^2)\in(0,1]\)</span> measures how strongly the bit is drawn from the field. A sharp measurement has <span class="math inline">\(Z^2=\mathbf{1}\)</span> and <span class="math inline">\(q=1\)</span>, while an independent fair coin tossed with a trusted ancilla has <span class="math inline">\(Z=0\)</span>. The latter case has zero leakage to the field and is excluded below by taking <span class="math inline">\(Z\ne0\)</span>.</p>
+<p>A receiver holds an algebra <span class="math inline">\(\mathcal N\subseteq\mathcal M&#39;\)</span>, the commutant of <span class="math inline">\(\mathcal M\)</span>; a spacelike laboratory provides such an algebra by microcausality. If the source uses an instrument with Kraus operators <span class="math inline">\(L_{\pm a}\in\mathcal M\)</span> and <span class="math inline">\(\sum_aL_{\pm a}^*L_{\pm a}=E_\pm\)</span>, the receiver's subnormalized conditional functionals are</p>
+<p><a id="eq:conditional"></a></p>
+<p><span class="math display">\[
+\omega_\pm(B)=\sum_a\omega(L_{\pm a}^*BL_{\pm a})=\omega(E_\pm B),\qquad B\in\mathcal N,\tag{2}
+\]</span></p>
+<p>The equality uses commutation of each <span class="math inline">\(L_{\pm a}\)</span> with <span class="math inline">\(B\)</span>. Every effect pair admits such a local instrument, for example <span class="math inline">\(L_\pm=\sqrt{E_\pm}\)</span>. Summing the two functionals recovers <span class="math inline">\(\omega|_\mathcal N\)</span>, which expresses the absence of signalling. A receiver with effects <span class="math inline">\(F_\pm\in\mathcal N\)</span> succeeds with probability <span class="math inline">\(\sum_x\omega(E_xF_x)\)</span>. Its optimum defines the conditional min-entropy,</p>
+<p><span class="math display">\[
+H_{\min}(X|\mathcal N)=-\log_2P_{\rm guess}(X|\mathcal N),
+\]</span></p>
+<p>with the same operational meaning for von Neumann algebras [<a href="#ref-koenig2009operational">2</a>, <a href="#ref-berta2016smooth">16</a>].</p>
+<p>Binary discrimination [<a href="#ref-helstrom1969quantum">17</a>] reduces the optimum to one norm. With <span class="math inline">\(\ell_Z(B)=\omega(ZB)\)</span> for <span class="math inline">\(B\in\mathcal N\)</span>, writing <span class="math inline">\(F_\pm=\tfrac12(\mathbf{1}\pm B)\)</span> and optimizing over Hermitian contractions <span class="math inline">\(B\)</span> gives <span class="math inline">\(P_{\rm guess}=\tfrac12(1+\|\ell_Z\|_{\mathcal N_*})\)</span>, where <span class="math inline">\(\|\cdot\|_{\mathcal N_*}\)</span> is the norm of normal functionals. The natural cryptographic figure of merit is the distance from an ideal bit. If <span class="math inline">\(\omega_{X\mathcal N}\)</span> is the classical-quantum state with components <span class="math inline">\(\omega_\pm\)</span> and <span class="math inline">\(u_X\)</span> is a uniform bit, then <span class="math inline">\(\omega_\pm-\tfrac12\omega=\pm\tfrac12\ell_Z\)</span> and</p>
+<p><a id="eq:privacy"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+d(X|\mathcal N)&amp;:=\tfrac12\bigl\|\omega_{X\mathcal N}-u_X\otimes\omega|_\mathcal N\bigr\|\\
+&amp;=\tfrac12\|\ell_Z\|_{\mathcal N_*}=P_{\rm guess}(X|\mathcal N)-\tfrac12 .
+\end{aligned}\tag{3}
+\]</span></p>
+<p>We call the bit <span class="math inline">\(\varepsilon\)</span>-private against <span class="math inline">\(\mathcal N\)</span> when <span class="math inline">\(d(X|\mathcal N)\le\varepsilon\)</span>, and refer to <span class="math inline">\(d\)</span> as the privacy error.</p>
+<p><a id="the-modular-overlap"></a></p>
+<h2>The modular overlap</h2>
+<p><a id="sec:overlap"></a></p>
+<p>The Tomita operator <span class="math inline">\(SA\Omega=A^*\Omega\)</span>, <span class="math inline">\(A\in\mathcal M\)</span>, is closable, and its closure has the polar decomposition <span class="math inline">\(S=J\Delta^{1/2}\)</span>. The modular conjugation <span class="math inline">\(J\)</span> is an antiunitary involution with <span class="math inline">\(J\Omega=\Omega\)</span> and <span class="math inline">\(J\mathcal MJ=\mathcal M&#39;\)</span>, and the modular operator <span class="math inline">\(\Delta\)</span> is positive and injective [<a href="#ref-witten2018aps">18</a>]. For <span class="math inline">\(A\in\mathcal M\)</span> the definition of <span class="math inline">\(S\)</span> reads</p>
+<p><a id="eq:half"></a></p>
+<p><span class="math display">\[
+\Delta^{1/2}A\Omega=JA^*\Omega .\tag{4}
+\]</span></p>
+<p>The quantity that governs spacelike guessing is</p>
+<p><a id="eq:overlap"></a></p>
+<p><span class="math display">\[
+C_Z=\langle Z\Omega,\Delta^{1/2}Z\Omega\rangle=\|\Delta^{1/4}Z\Omega\|^2 .\tag{5}
+\]</span></p>
+<p>By Eq. <a href="#eq:half">(4)</a>, <span class="math inline">\(C_Z=\langle Z\Omega,JZ\Omega\rangle\)</span> is the overlap between the excitation created by the contrast and its modular reflection, hence <span class="math inline">\(C_Z\le q\)</span>. It is strictly positive whenever <span class="math inline">\(Z\neq0\)</span>, because <span class="math inline">\(\Omega\)</span> is separating and <span class="math inline">\(\Delta^{1/4}\)</span> has trivial kernel.</p>
+<p><strong>Theorem 1 (Modular overlap).</strong> <a id="thm:main"></a> Let <span class="math inline">\(Z\)</span> be as in Eq. <a href="#eq:effects">(1)</a>.</p>
+<ol type="1">
+<li><p>The mirror receiver with effects <span class="math inline">\(\tfrac12(\mathbf{1}\pm JZJ)\in\mathcal M&#39;\)</span> guesses the source outcome with probability <span class="math inline">\(\tfrac12(1+C_Z)\)</span>.</p></li>
+<li><p>Every receiver <span class="math inline">\(\mathcal N\subseteq\mathcal M&#39;\)</span> obeys <span class="math inline">\(d(X|\mathcal N)\le\tfrac12\sqrt{C_Z}\)</span>.</p></li>
+</ol>
+<p>Consequently,</p>
+<p><a id="eq:window"></a></p>
+<p><span class="math display">\[
+C_Z\ \le\ 2\,d(X|\mathcal M&#39;)\ \le\ \sqrt{C_Z} .\tag{6}
+\]</span></p>
+<p><em>Proof.</em> For (a), the Hermitian contraction <span class="math inline">\(JZJ\)</span> belongs to <span class="math inline">\(\mathcal M&#39;\)</span>, so the mirror effects are admissible. Expanding <span class="math inline">\(\sum_x\omega(E_x\tfrac12(\mathbf{1}+xJZJ))\)</span> and using <span class="math inline">\(\omega(Z)=0\)</span> and <span class="math inline">\(\omega(JZJ)=\overline{\omega(Z)}=0\)</span> leaves <span class="math inline">\(\tfrac12[1+\omega(Z\,JZJ)]\)</span>. Since <span class="math inline">\(J\Omega=\Omega\)</span> and <span class="math inline">\(Z=Z^*\)</span>, Eq. <a href="#eq:half">(4)</a> gives <span class="math inline">\(\omega(Z\,JZJ)=\langle Z\Omega,JZ\Omega\rangle=C_Z\)</span>.</p>
+<p>For (b), it suffices to take <span class="math inline">\(\mathcal N=\mathcal M&#39;\)</span>. Every Hermitian contraction <span class="math inline">\(B\in\mathcal M&#39;\)</span> has the form <span class="math inline">\(B=JAJ\)</span> with <span class="math inline">\(A=JBJ\)</span> a Hermitian contraction in <span class="math inline">\(\mathcal M\)</span>. Then Eq. <a href="#eq:half">(4)</a> and the Cauchy–Schwarz inequality give</p>
+<p><span class="math display">\[
+|\omega(ZB)|=|\langle Z\Omega,\Delta^{1/2}A\Omega\rangle|
+\le\|\Delta^{1/4}Z\Omega\|\,\|\Delta^{1/4}A\Omega\| .\tag{7}
+\]</span></p>
+<p>The second factor is <span class="math inline">\(\omega(A\,JAJ)^{1/2}\le\|A\|\le1\)</span>, so <span class="math inline">\(\|\ell_Z\|_{\mathcal M&#39;_*}\le\sqrt{C_Z}\)</span>, and Eq. <a href="#eq:privacy">(3)</a> finishes the proof. Equation <a href="#eq:window">(6)</a> combines (a) with (b).</p>
+<p>The two inequalities have different uses. The condition <span class="math inline">\(C_Z\le4\varepsilon^2\)</span> certifies <span class="math inline">\(\varepsilon\)</span>-privacy against the whole commutant; <span class="math inline">\(C_Z&gt;2\varepsilon\)</span> rules it out against a receiver able to measure <span class="math inline">\(JZJ\)</span>. Equivalently,</p>
+<p><a id="eq:entropywindow"></a></p>
+<p><span class="math display">\[
+1-\log_2(1+\sqrt{C_Z})\le H_{\min}(X|\mathcal M&#39;)
+\le1-\log_2(1+C_Z).\tag{8}
+\]</span></p>
+<p>These bounds concern the receiver's field observables. Additional side information, such as a purification of a measurement ancilla outside this algebra, changes the access model.</p>
+<p>The finite-dimensional case identifies the underlying discrimination problem. Let <span class="math inline">\(\rho\)</span> be a faithful density matrix and let <span class="math inline">\(\Omega=\sum_i\sqrt{p_i}|i\rangle|i\rangle\)</span> be its canonical purification, with <span class="math inline">\(\mathcal M\)</span> acting on the first factor. Then</p>
+<p><a id="eq:matrix"></a></p>
+<p><span class="math display">\[
+C_Z=\operatorname{Tr}(\sqrt\rho\,Z\sqrt\rho\,Z),\qquad
+2d=\|\sqrt\rho\,Z\sqrt\rho\|_1.\tag{9}
+\]</span></p>
+<p>On the second factor, the conditional density operators and their pretty good measurement are</p>
+<p><span class="math display">\[
+\tau_\pm=(\sqrt\rho E_\pm\sqrt\rho)^{\mathsf T},\qquad
+F_\pm^{\rm PGM}=E_\pm^{\mathsf T}.
+\]</span></p>
+<p>Thus <span class="math inline">\(P_{\rm PGM}=(1+C_Z)/2\)</span>. Renes's bound <span class="math inline">\(P_{\rm PGM}\ge P_{\rm opt}^2+(1-P_{\rm opt})^2\)</span> [<a href="#ref-renes2017better">14</a>] is exactly the upper inequality in Eq. <a href="#eq:window">(6)</a>; <span class="math inline">\(P_{\rm opt}\ge P_{\rm PGM}\)</span> gives the lower one. Our proof applies the same comparison directly to a standard pair <span class="math inline">\((\mathcal M,\Omega)\)</span>, including local field algebras.</p>
+<p>Both ends are attained. For <span class="math inline">\(\rho=\operatorname{diag}(p,1-p)\)</span>, <span class="math inline">\(p=(1+e^{-b})^{-1}\)</span>, and <span class="math inline">\(Z=\sigma_x\)</span>, Eq. <a href="#eq:matrix">(9)</a> gives <span class="math inline">\(2d=C_Z=\operatorname{sech}(b/2)\)</span>. For <span class="math inline">\(\rho=\mathbf{1}/2\)</span> and <span class="math inline">\(Z=t\sigma_z\)</span>, <span class="math inline">\(0&lt;t\le1\)</span>, it instead gives <span class="math inline">\(2d=t=\sqrt{C_Z}\)</span>. The latter example uses an unsharp readout when <span class="math inline">\(t&lt;1\)</span> and establishes exact sharpness over the class of binary effects in Theorem <a href="#thm:main">1</a>.</p>
+<p><a id="geometry"></a></p>
+<h2>Geometry</h2>
+<p><a id="sec:geometry"></a></p>
+<p>Let <span class="math inline">\(W=\{x:x^1&gt;|t|\}\)</span> be the right wedge and <span class="math inline">\(W&#39;=\{x:x^1&lt;-|t|\}\)</span> its causal complement, in <span class="math inline">\(3+1\)</span> dimensions, and take <span class="math inline">\(\mathcal M=\mathcal A(W)\)</span> in a theory satisfying wedge duality and the Bisognano–Wichmann property. These properties hold for the neutral scalar fields considered below. Bisognano and Wichmann showed that the modular group of <span class="math inline">\((\mathcal A(W),\Omega)\)</span> is the group of boosts preserving <span class="math inline">\(W\)</span> and that <span class="math inline">\(J\)</span> implements the reflection [<a href="#ref-bisognano1975duality">19</a>, <a href="#ref-bisognano1976duality">20</a>]</p>
+<p><a id="eq:reflection"></a></p>
+<p><span class="math display">\[
+j(t,x^1,\boldsymbol{x}_\perp)=(-t,-x^1,\boldsymbol{x}_\perp),\qquad J\mathcal A(\mathcal O)J=\mathcal A(j\mathcal O),\tag{10}
+\]</span></p>
+<p>with <span class="math inline">\(\mathcal A(W)&#39;=\mathcal A(W&#39;)\)</span>. For a neutral scalar field and a real test function <span class="math inline">\(f\)</span>, <span class="math inline">\(J\Phi(f)J=\Phi(f\circ j)\)</span>. In these units <span class="math inline">\(K=2\pi B\)</span>, where <span class="math inline">\(B=\int_{t=0}x^1T_{00}\,d^3x\)</span> generates the boosts.</p>
+<p><a id="fig:geometry"></a></p>
+<p><img src="figures/diagram-1.png" alt="image" /></p>
+<p><strong>Figure 1.</strong> A source measures a bit in a bounded region <span class="math inline">\(\mathcal O\)</span> inside the wedge <span class="math inline">\(W\)</span>. The modular conjugation <span class="math inline">\(J\)</span> maps its contrast <span class="math inline">\(Z\)</span> to an observable of the reflected region <span class="math inline">\(j\mathcal O\subset W&#39;\)</span>, which lies outside the causal future of <span class="math inline">\(\mathcal O\)</span>. No signal connects the two laboratories, yet their records, compared later in a common future, are correlated with strength <span class="math inline">\(C_Z\)</span>.</p>
+<p>If <span class="math inline">\(Z\in\mathcal A(\mathcal O)\)</span> with <span class="math inline">\(\mathcal O\subset W\)</span>, its mirror lies in the bounded region <span class="math inline">\(j\mathcal O\)</span>. The lower bound therefore needs only a reflected laboratory, whereas the upper bound applies to all observables in <span class="math inline">\(\mathcal A(W&#39;)\)</span>. A different wedge containing <span class="math inline">\(\mathcal O\)</span> gives a different mirror and a different allowed receiver region. Such bounds can be compared only after fixing the adversary's access region. The generator <span class="math inline">\(B\)</span> is the full boost generator, with the integral over the entire Cauchy surface. Appendix <a href="#sec:cost">A</a> discusses the corresponding energy estimate. We use wedge reflection throughout the explicit calculations.</p>
+<p><a id="free-fields"></a></p>
+<h2>Free fields</h2>
+<p><a id="sec:free"></a></p>
+<p>Let <span class="math inline">\(\Phi\)</span> be a free neutral scalar field of any mass in its vacuum, and let <span class="math inline">\(f\in C_c^\infty(W)\)</span> be real with nonzero one-particle vector <span class="math inline">\(h=\Phi(f)\Omega\)</span>. Write <span class="math inline">\(\delta\)</span> for the modular operator on the one-particle space [<a href="#ref-eckmann1973application">21</a>]. Two numbers describe the readout geometry,</p>
+<p><a id="eq:vc"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+v&amp;=\|h\|^2=\omega\bigl(\Phi(f)^2\bigr),\\
+c&amp;=\omega\bigl(\Phi(f)\Phi(f\circ j)\bigr)=\langle h,\delta^{1/2}h\rangle ,
+\end{aligned}\tag{11}
+\]</span></p>
+<p>and their ratio <span class="math inline">\(\rho=c/v\in(0,1)\)</span> is the vacuum correlation coefficient between the smeared field and its mirror image. The one-particle Tomita identity gives <span class="math inline">\(\delta^{1/2}h=j_1h\)</span>, where <span class="math inline">\(j_1\)</span> is the one-particle restriction of <span class="math inline">\(J\)</span>. This proves the second expression for <span class="math inline">\(c\)</span> without applying the bounded-operator identity to the unbounded field. Positivity follows as for <span class="math inline">\(C_Z\)</span>. Equality <span class="math inline">\(\rho=1\)</span> would require a nonzero boost-invariant one-particle vector, which is absent in the scalar one-particle space.</p>
+<p>Consider a readout <span class="math inline">\(Z=F(\Phi(f))\)</span>, with <span class="math inline">\(F\)</span> a real Borel function, <span class="math inline">\(|F|\le1\)</span> and <span class="math inline">\(\mathbb EF(\xi)=0\)</span>, where <span class="math inline">\(\xi\)</span> is a centered Gaussian variable of variance <span class="math inline">\(v\)</span>. Use the normalized probabilists' Hermite polynomials <span class="math inline">\(\mathrm{He}_n/\sqrt{n!}\)</span>, with coefficients</p>
+<p><a id="eq:hermite"></a></p>
+<p><span class="math display">\[
+a_n=\frac{\mathbb E\bigl[F(\xi)\,\mathrm{He}_n(\xi/\sqrt v)\bigr]}{\sqrt{n!}},\qquad a_0=0 .\tag{12}
+\]</span></p>
+<p><strong>Proposition 2 (Free-field overlap).</strong> <a id="prop:free"></a> With these definitions,</p>
+<p><a id="eq:mehler"></a></p>
+<p><span class="math display">\[
+C_Z=\sum_{n\ge1}a_n^2\rho^n=\mathbb E\bigl[F(\xi)F(\eta)\bigr],\tag{13}
+\]</span></p>
+<p>where <span class="math inline">\((\xi,\eta)\)</span> is a centered Gaussian pair with variances <span class="math inline">\(v\)</span> and covariance <span class="math inline">\(c\)</span>. Moreover <span class="math inline">\(q=\sum_na_n^2\)</span>, so <span class="math inline">\(C_Z\le q\rho\)</span> and every receiver in <span class="math inline">\(W&#39;\)</span> obeys</p>
+<p><a id="eq:ceiling"></a></p>
+<p><span class="math display">\[
+d\bigl(X|\mathcal A(W&#39;)\bigr)\le\tfrac12\sqrt{q\rho} .\tag{14}
+\]</span></p>
+<p><em>Proof.</em> The spacelike fields <span class="math inline">\(\Phi(f)\)</span> and <span class="math inline">\(\Phi(f\circ j)\)</span> commute, and their joint vacuum distribution is Gaussian with covariance <a href="#eq:vc">(11)</a>. Hence <span class="math inline">\(\omega(ZJZJ)=\mathbb E[F(\xi)F(\eta)]\)</span>. For a Gaussian pair with correlation <span class="math inline">\(\rho\)</span>, Mehler's identity gives</p>
+<p><span class="math display">\[
+\mathbb E\left[\frac{\mathrm{He}_n(\xi/\sqrt v)}{\sqrt{n!}}\,
+\frac{\mathrm{He}_m(\eta/\sqrt v)}{\sqrt{m!}}\right]
+=\delta_{nm}\rho^n .
+\]</span></p>
+<p>Expanding <span class="math inline">\(F\)</span> in this orthonormal basis proves the series [<a href="#ref-janson1997gaussian">22</a>]. The expansion converges in Gaussian <span class="math inline">\(L^2\)</span>, and Cauchy–Schwarz justifies passage to the joint expectation. Parseval gives <span class="math inline">\(q=\sum_n a_n^2\)</span>. Since <span class="math inline">\(a_0=0\)</span> and <span class="math inline">\(0&lt;\rho&lt;1\)</span>, <span class="math inline">\(C_Z\le q\rho\)</span>; Theorem <a href="#thm:main">1</a> supplies the privacy bound.</p>
+<p>A threshold readout records the sign of the smeared field, <span class="math inline">\(Z=\operatorname{sgn}\Phi(f)\)</span>. It is the scalar analogue of the vacuum homodyne generators that digitize the sign of a field quadrature [<a href="#ref-gabriel2010generator">23</a>, <a href="#ref-symul2011real">24</a>]. Here <span class="math inline">\(q=1\)</span> and Sheppard's arcsine law [<a href="#ref-sheppard1899application">25</a>] gives</p>
+<p><a id="eq:arcsine"></a></p>
+<p><span class="math display">\[
+C_Z=\frac2\pi\arcsin\rho .\tag{15}
+\]</span></p>
+<p>The Hermite expansion, a standard description of Gaussian correlations, now has a regional security interpretation. For a fixed readout and variance <span class="math inline">\(v\)</span>, it shows how the readout changes the distance dependence. Let <span class="math inline">\(r=\min\{n\ge1:a_n\ne0\}\)</span>, the Hermite rank. Then</p>
+<p><a id="eq:rank"></a></p>
+<p><span class="math display">\[
+C_Z=a_r^2\rho^r+O(\rho^{r+1}),\qquad
+d(X|\mathcal A(W&#39;))\le\tfrac12\sqrt q\,\rho^{r/2}.\tag{16}
+\]</span></p>
+<p>For example, let <span class="math inline">\(\Phi_{\rm G}\)</span> and <span class="math inline">\(\phi_{\rm G}\)</span> denote the standard normal distribution and density, and set <span class="math inline">\(z_0=\Phi_{\rm G}^{-1}(3/4)\)</span>. The sharp readout</p>
+<p><a id="eq:magnitude"></a></p>
+<p><span class="math display">\[
+F(\xi)=2\,\mathbf1_{\{|\xi|&gt;z_0\sqrt v\}}-1\tag{17}
+\]</span></p>
+<p>is fair and even. Its first nonzero Hermite coefficient is <span class="math inline">\(a_2=2\sqrt2\,z_0\phi_{\rm G}(z_0)\)</span>, obtained by integrating <span class="math inline">\((u^2-1)\phi_{\rm G}(u)\)</span> over the two tails. Hence its mirror advantage is <span class="math inline">\(O(\rho^2)\)</span> and its whole-wedge privacy error is at most <span class="math inline">\(\rho/2\)</span>. Both this readout and the sign readout are sharp and produce a fair bit entirely from the field. The improvement comes from which feature of the field is recorded, at fixed variance <span class="math inline">\(q=1\)</span>.</p>
+<p>An unsharp, smooth even readout gives the same rank-two suppression at finite modular energy (Appendix <a href="#sec:cost">A</a>). With <span class="math inline">\(m=e^{-v/2}\)</span>,</p>
+<p><a id="eq:even-smooth"></a></p>
+<p><span class="math display">\[
+F(\xi)=\frac{\cos\xi-m}{1+m},\qquad
+C_Z=\frac{m^2[\cosh(\rho v)-1]}{(1+m)^2}.\tag{18}
+\]</span></p>
+<p>This <span class="math inline">\(F\)</span> is fair and bounded by one, and its derivative is square integrable. The covariance follows directly from the Gaussian characteristic function.</p>
+<p>A Ramsey probe is a qubit prepared in <span class="math inline">\(|{+}x\rangle\)</span>, coupled through <span class="math inline">\(\exp[-\tfrac i2\sigma_z\otimes\Phi(f)]\)</span> and read out in the <span class="math inline">\(\sigma_y\)</span> basis. We assume trusted preparation and control of the probe. Because the free-field commutator is a c-number, time ordering of a spacetime-smeared longitudinal coupling only adds a phase, so this probe induces the field effects <span class="math inline">\(\tfrac12[\mathbf{1}\pm\sin\Phi(f)]\)</span> exactly. Proposition <a href="#prop:free">2</a> with <span class="math inline">\(F=\sin\)</span> gives</p>
+<p><a id="eq:ramsey"></a></p>
+<p><span class="math display">\[
+C_Z=e^{-v}\sinh(\rho v),\qquad q=\tfrac12(1-e^{-2v}).\tag{19}
+\]</span></p>
+<p>Sharp thresholds are idealized effects. Every nonconstant sharp readout of one smeared field has infinite mean modular energy, as shown in Appendix <a href="#sec:cost">A</a>. The bounded effects and their guessing probabilities remain well defined. The overlap bounds therefore apply even when a modular-energy estimate gives no useful information.</p>
+<p>The reflected field also defines an exactly solvable receiver class. Let <span class="math inline">\(\mathcal N_f\)</span> be the abelian algebra generated by <span class="math inline">\(\Phi(f\circ j)\)</span>. Its effects are functions of this one observable, so conditional expectation gives</p>
+<p><a id="eq:restricted"></a></p>
+<p><span class="math display">\[
+2d(X|\mathcal N_f)=\mathbb E\bigl|\mathbb E[F(\xi)|\eta]\bigr|.\tag{20}
+\]</span></p>
+<p>Indeed, a receiver with contrast <span class="math inline">\(G(\eta)\)</span> has advantage <span class="math inline">\(\tfrac12\mathbb E[F(\xi)G(\eta)]\)</span>, maximized by <span class="math inline">\(G=\operatorname{sgn}\mathbb E[F(\xi)|\eta]\)</span>. For the sign readout this is <span class="math inline">\(G(\eta)=\operatorname{sgn}\eta\)</span> and <span class="math inline">\(d(X|\mathcal N_f)=\pi^{-1}\arcsin\rho\)</span>. This is an exact optimum for <span class="math inline">\(\mathcal N_f\)</span> and a lower bound for the larger algebra <span class="math inline">\(\mathcal A(W&#39;)\)</span>. For the Ramsey readout,</p>
+<p><a id="eq:ramseyconditional"></a></p>
+<p><span class="math display">\[
+\mathbb E[\sin\xi|\eta]=e^{-v(1-\rho^2)/2}\sin(\rho\eta),\tag{21}
+\]</span></p>
+<p>so <span class="math inline">\(G(\eta)=\operatorname{sgn}\sin(\rho\eta)\)</span> improves on the modular mirror contrast <span class="math inline">\(\sin\eta\)</span>. Under <span class="math inline">\(f\mapsto\lambda f\)</span> at fixed geometry, its advantage is <span class="math inline">\(\lambda\rho\sqrt{2v/\pi}/2+o(\lambda)\)</span>, whereas <span class="math inline">\(\sqrt{C_Z}=\lambda\sqrt{\rho v}+o(\lambda)\)</span>. Here <span class="math inline">\(v\)</span> denotes the variance before rescaling and <span class="math inline">\(\lambda\downarrow0\)</span>. Thus the square-root scaling also occurs for field readouts.</p>
+<p><a id="fig:leakage"></a></p>
+<p><img src="figures/fig_leakage.png" alt="image" /></p>
+<p><strong>Figure 2.</strong> Privacy bounds for the compact source <a href="#eq:profile">(22)</a> and two sharp fair readouts. Each solid curve is the whole-wedge upper bound <span class="math inline">\(\sqrt{C_Z}/2\)</span>; each dashed curve is the reflected attack <span class="math inline">\(C_Z/2\)</span>. The shaded bands contain the respective optimal guessing advantages. The sign attack and magnitude upper bound nearly coincide. The magnitude readout improves the upper bound from order <span class="math inline">\(a^{-1}\)</span> to <span class="math inline">\(a^{-2}\)</span>. Only the sign attack is proved optimal in the single reflected-field algebra <span class="math inline">\(\mathcal N_f\)</span>.</p>
+<p><a id="how-fast-the-leak-decays"></a></p>
+<h2>How fast the leak decays</h2>
+<p><a id="sec:distance"></a></p>
+<p>To see the size of these effects, take a massless field and a time-symmetric source profile of size <span class="math inline">\(\sigma\)</span> centered at distance <span class="math inline">\(a\)</span> from the wedge edge,</p>
+<p><a id="eq:profile"></a></p>
+<p><span class="math display">\[
+f(t,\boldsymbol{x})=\lambda\,b(t/\sigma)\,B\bigl(|\boldsymbol{x}-a\boldsymbol{e}_1|/\sigma\bigr),\tag{22}
+\]</span></p>
+<p>where <span class="math inline">\(b(s)=B(s)=e^{-1/(1-s^2)}\)</span> for <span class="math inline">\(|s|&lt;1\)</span> and zero otherwise. The support is compactly contained in <span class="math inline">\(W\)</span> when <span class="math inline">\(a&gt;2\sigma\)</span>. Since <span class="math inline">\(f\circ j\)</span> is the same profile centered at <span class="math inline">\(-a\boldsymbol{e}_1\)</span>, the receiver repeats the source's experiment at the mirror point. Appendix <a href="#app:profile">B</a> reduces <span class="math inline">\(v\)</span>, <span class="math inline">\(c\)</span> and <span class="math inline">\(S_f\)</span> to one-dimensional integrals. At large distance the massless Wightman function at spacelike separation <span class="math inline">\(2a\)</span>, namely <span class="math inline">\((16\pi^2a^2)^{-1}\)</span>, controls the correlation, and</p>
+<p><a id="eq:rhoasym"></a></p>
+<p><span class="math display">\[
+\rho=\frac{1}{16\pi^2a^2v}\Bigl(\int f\,d^4x\Bigr)^2\bigl[1+O(\sigma^2/a^2)\bigr] .\tag{23}
+\]</span></p>
+<p>For these bumps <span class="math inline">\(\rho\simeq0.145\,(\sigma/a)^2\)</span>; the leading term is accurate to about <span class="math inline">\(0.2\%\)</span> at <span class="math inline">\(a=10\sigma\)</span>.</p>
+<p>Figure <a href="#fig:leakage">2</a> separates the source readouts and the receiver classes. For the sign readout, the reflected receiver advantage falls as <span class="math inline">\(a^{-2}\)</span> and the whole-wedge upper bound as <span class="math inline">\(a^{-1}\)</span>. The Ramsey readout has the same powers. These powers do not coincide, so the optimal whole-wedge asymptote is not determined by the calculation. In contrast, the balanced magnitude readout of Eq. <a href="#eq:magnitude">(17)</a> has a whole-wedge upper bound of order <span class="math inline">\(a^{-2}\)</span> and a mirror advantage of order <span class="math inline">\(a^{-4}\)</span>, directly from Eq. <a href="#eq:rank">(16)</a>. The inverse-square mirror leak is a property of particular readouts and profiles, not a universal rate.</p>
+<p>The profile can also suppress the leading geometric correlation. For a fixed compact profile translated away from the edge, <span class="math inline">\(\int f\,d^4x=0\)</span> removes both the <span class="math inline">\(a^{-2}\)</span> and <span class="math inline">\(a^{-3}\)</span> terms of the massless kernel expansion: each contains this integral as a factor. Then <span class="math inline">\(\rho=O(a^{-4})\)</span>, with faster decay possible if further moments vanish.</p>
+<p>At <span class="math inline">\(a=10\sigma\)</span>, <span class="math inline">\(\rho\simeq1.45\times10^{-3}\)</span>. The exact overlap gives a whole-wedge privacy bound of approximately <span class="math inline">\(0.0152\)</span> for the sign readout and <span class="math inline">\(4.41\times10^{-4}\)</span> for the balanced magnitude readout. These are upper bounds on the guessing advantage, not measurements of the optimum. All distances are relative to the source's spatial and temporal scale; this model does not specify the security of an optical device.</p>
+<p><a id="conclusion"></a></p>
+<h2>Conclusion</h2>
+<p><a id="sec:discussion"></a></p>
+<p>The privacy of a vacuum-generated bit depends on both the readout and the spacetime region available to an adversary. The modular overlap makes this dependence quantitative. It gives an explicit reflected guessing attack and, through its square root, an upper bound for every receiver in the opposite wedge. The finite-dimensional discrimination bound is known; geometric modular theory turns it into a statement about physical access to a quantum field.</p>
+<p>For a free scalar vacuum, evaluating the overlap requires only a Gaussian correlation. The first nonzero Hermite coefficient determines how the privacy bound falls with separation. In the compact massless example, recording whether the field magnitude exceeds a balanced threshold improves the whole-wedge upper bound from inverse distance to inverse distance squared, while still producing a sharp fair bit. The readout is therefore a concrete part of the privacy design.</p>
+<p>These are single-round guarantees for the specified field access algebra. The gap between the reflected attack and the whole-wedge upper bound leaves the optimal asymptote open. Private-string extraction [<a href="#ref-tomamichel2011leftover">26</a>, <a href="#ref-berta2016smooth">16</a>] additionally requires a block min-entropy bound: successive measurements can share correlations with one another and with the same receiver, so the single-bit bounds cannot be multiplied without further assumptions. Finite-resource detector implementations and such multi-round bounds are the next steps toward a field-based security analysis of a random number generator.</p>
+<p><a id="data-availability"></a></p>
+<h2>Data availability</h2>
+<p>The accompanying code specifies the numerical source profiles, generates the figure data, and runs the numerical checks.</p>
+<p><a id="modular-energy-and-sharp-readouts"></a></p>
+<h2>Modular energy and sharp readouts</h2>
+<p><a id="sec:cost"></a></p>
+<p>A mean modular energy gives a coarser lower bound on the overlap. This connects the guessing problem with modular estimates for local state preparation [<a href="#ref-blanco2026modular">27</a>]. The modular Hamiltonian <span class="math inline">\(K=-\ln\Delta\)</span> relates the overlap to an energy expectation. Let <span class="math inline">\(\psi_Z=Z\Omega/\sqrt q\)</span> and let <span class="math inline">\(\mu_Z\)</span> be the spectral measure of <span class="math inline">\(K\)</span> in <span class="math inline">\(\psi_Z\)</span>. Equation <a href="#eq:half">(4)</a> gives the normalization</p>
+<p><a id="eq:balance"></a></p>
+<p><span class="math display">\[
+\int e^{-k}\,d\mu_Z(k)=\|\Delta^{1/2}\psi_Z\|^2=\frac{\|JZ\Omega\|^2}{q}=1 .\tag{24}
+\]</span></p>
+<p>Since <span class="math inline">\(\max(-k,0)\le e^{-k}\)</span>, the negative part of <span class="math inline">\(k\)</span> is integrable, and the mean modular energy</p>
+<p><a id="eq:kappa"></a></p>
+<p><span class="math display">\[
+\kappa_Z=\int k\,d\mu_Z(k)\in[0,\infty]\tag{25}
+\]</span></p>
+<p>is always defined. Jensen's inequality applied to Eq. <a href="#eq:balance">(24)</a> gives <span class="math inline">\(\kappa_Z\ge0\)</span>.</p>
+<p><strong>Proposition 3 (Entropic cost).</strong> <a id="prop:cost"></a> The overlap obeys <span class="math inline">\(C_Z\ge q\,e^{-\kappa_Z/2}\)</span>. If the measurement is sharp, <span class="math inline">\(Z^2=\mathbf{1}\)</span>, then</p>
+<p><a id="eq:relent"></a></p>
+<p><span class="math display">\[
+\kappa_Z=S(\omega_Z\|\omega),\qquad \omega_Z(A)=\omega(ZAZ),\quad A\in\mathcal M,\tag{26}
+\]</span></p>
+<p>where <span class="math inline">\(S\)</span> is Araki's relative entropy on <span class="math inline">\(\mathcal M\)</span> [<a href="#ref-araki1975relative">28</a>].</p>
+<p><em>Proof.</em> Jensen's inequality for the convex function <span class="math inline">\(e^{-k/2}\)</span> gives <span class="math inline">\(C_Z/q=\int e^{-k/2}d\mu_Z\ge e^{-\kappa_Z/2}\)</span>. If <span class="math inline">\(Z^2=\mathbf{1}\)</span>, then <span class="math inline">\(Z\)</span> is a unitary in <span class="math inline">\(\mathcal M\)</span>, and the vector <span class="math inline">\(Z\Omega\)</span> represents <span class="math inline">\(\omega_Z\)</span> on <span class="math inline">\(\mathcal M\)</span> and <span class="math inline">\(\omega\)</span> on <span class="math inline">\(\mathcal M&#39;\)</span>. The relative Tomita operator <span class="math inline">\(AZ\Omega\mapsto A^*\Omega\)</span> equals <span class="math inline">\(ZS\)</span> on the dense set <span class="math inline">\(\mathcal MZ\Omega=\mathcal M\Omega\)</span>, so the relative modular operator is <span class="math inline">\((ZS)^*(ZS)=S^*S=\Delta\)</span>. Araki's definition <span class="math inline">\(S(\omega_Z\|\omega)=-\langle Z\Omega,\ln\Delta_{\Omega,Z\Omega}\,Z\Omega\rangle\)</span> then reduces to <span class="math inline">\(\langle Z\Omega,KZ\Omega\rangle=\kappa_Z\)</span>.</p>
+<p>For a sharp measurement the contrast is a unitary flip, and <span class="math inline">\(\kappa_Z\)</span> measures its relative entropy on the source algebra. For the Lüders instrument, each normalized branch <span class="math inline">\((\Omega\pm Z\Omega)/\sqrt2\)</span> has mean modular energy <span class="math inline">\(\kappa_Z/2\)</span>, since <span class="math inline">\(K\Omega=0\)</span>. This is an expectation of the modular Hamiltonian, not a general lower bound on laboratory work.</p>
+<p><strong>Corollary 4 (Entropic converse).</strong> <a id="cor:converse"></a> For a sharp fair bit and any receiver containing <span class="math inline">\(JZJ\)</span>,</p>
+<p><a id="eq:converse"></a></p>
+<p><span class="math display">\[
+d(X|\mathcal N)\ \ge\ \tfrac12\,e^{-S(\omega_Z\|\omega)/2} .\tag{27}
+\]</span></p>
+<p>Privacy error <span class="math inline">\(\varepsilon&lt;\tfrac12\)</span> against such a receiver requires <span class="math inline">\(S(\omega_Z\|\omega)\ge2\ln[1/(2\varepsilon)]\)</span>.</p>
+<p>The coefficient <span class="math inline">\(1/2\)</span> in the exponential cannot be reduced. In the two-level example of Sec. <a href="#sec:overlap">3</a>, <span class="math inline">\(\kappa_Z=b\tanh(b/2)\)</span> and <span class="math inline">\(C_Z\sim2e^{-\kappa_Z/2}\)</span> as <span class="math inline">\(b\to\infty\)</span>, so no bound of the form <span class="math inline">\(C_Z\ge c\,e^{-a\kappa_Z}\)</span> with fixed <span class="math inline">\(c&gt;0\)</span> holds for <span class="math inline">\(a&lt;\tfrac12\)</span>. The bound can nevertheless be loose, because Jensen's inequality keeps only the mean of the modular spectrum. The field examples below have <span class="math inline">\(\kappa_Z=\infty\)</span> for sharp thresholds; even for smooth readouts, the energy bound can be much weaker than the overlap. For unsharp readouts the prefactor <span class="math inline">\(q\)</span> also matters: reducing the field dependence can lower the leakage without increasing modular energy.</p>
+<p><a id="energy-of-a-gaussian-readout"></a></p>
+<h3>Energy of a Gaussian readout</h3>
+<p>In the free-field Fock representation, <span class="math inline">\(\Delta=\Gamma(\delta)\)</span> and <span class="math inline">\(K=d\Gamma(k)\)</span>, with <span class="math inline">\(k=-\ln\delta\)</span> [<a href="#ref-eckmann1973application">21</a>]. Thus the modular Hamiltonian sums one-particle generators. Smooth compact support of <span class="math inline">\(f\)</span> gives a finite expectation <span class="math inline">\(S_f=\langle h,kh\rangle\)</span>.</p>
+<p>The mean modular energy factorizes as</p>
+<p><a id="eq:factor"></a></p>
+<p><span class="math display">\[
+\kappa_Z=\frac{S_f}{v}\,\bar n,\qquad \bar n=\frac1q\sum_{n\ge1}n\,a_n^2,\qquad S_f=\langle h,kh\rangle ,\tag{28}
+\]</span></p>
+<p>where <span class="math inline">\(S_f&gt;0\)</span> is the vacuum relative entropy on <span class="math inline">\(\mathcal A(W)\)</span> of the coherent state <span class="math inline">\(e^{i\Phi(f)}\Omega\)</span>, and <span class="math inline">\(\bar n=v\,\mathbb E[F&#39;(\xi)^2]/q\)</span> if <span class="math inline">\(F\)</span> is weakly differentiable with <span class="math inline">\(F&#39;(\xi)\)</span> square integrable, while <span class="math inline">\(\bar n=\infty\)</span> otherwise. Finally <span class="math inline">\(C_Z\ge q\rho^{\bar n}\ge q\,e^{-\kappa_Z/2}\)</span>.</p>
+<p>To see the factorization, set <span class="math inline">\(\hat h=h/\sqrt v\)</span> and <span class="math inline">\(e_n=(n!)^{-1/2}a^\dagger(\hat h)^n\Omega\)</span>. Wick ordering gives <span class="math inline">\(Z\Omega=\sum_n a_n e_n\)</span>, while</p>
+<p><span class="math display">\[
+\langle e_n,d\Gamma(k)e_n\rangle
+=n\langle\hat h,k\hat h\rangle .
+\]</span></p>
+<p>There are no cross terms between particle sectors. The negative part of <span class="math inline">\(K\)</span> is integrable in <span class="math inline">\(Z\Omega\)</span> by Eq. <a href="#eq:balance">(24)</a>, so summing the sector expectations also proves Eq. <a href="#eq:factor">(28)</a> when the positive part diverges. The Weyl unitary <span class="math inline">\(U=e^{i\Phi(f)}\in\mathcal A(W)\)</span> creates a coherent state with one-particle amplitude <span class="math inline">\(ih\)</span>. For a general local unitary <span class="math inline">\(U\)</span>, the relative Tomita operator is <span class="math inline">\(US\)</span>, by the same calculation as in Proposition <a href="#prop:cost">3</a>. Therefore its relative entropy equals <span class="math inline">\(\langle U\Omega,KU\Omega\rangle=\langle ih,k\,ih\rangle=S_f\)</span> [<a href="#ref-longo2019entropy">29</a>, <a href="#ref-casini2019relative">30</a>]. Jensen gives <span class="math inline">\(c/v\ge e^{-S_f/(2v)}\)</span>, and <span class="math inline">\(S_f=0\)</span> would force <span class="math inline">\(c/v=1\)</span>, excluded in Sec. <a href="#sec:free">5</a>. Thus <span class="math inline">\(S_f&gt;0\)</span>.</p>
+<p>The Gaussian Sobolev identity <span class="math inline">\(\sum_n na_n^2=v\,\mathbb E[F&#39;(\xi)^2]\)</span> follows from <span class="math inline">\(\mathrm{He}_n&#39;=n\,\mathrm{He}_{n-1}\)</span>; finiteness is equivalent to the indicated weak derivative condition [<a href="#ref-nualart2006malliavin">31</a>]. Jensen's inequality for <span class="math inline">\(n\mapsto\rho^n\)</span> gives the remaining overlap estimate. In geometric terms <span class="math inline">\(S_f\)</span> is <span class="math inline">\(2\pi\)</span> times the boost energy of the classical wave generated by <span class="math inline">\(f\)</span> [<a href="#ref-longo2019entropy">29</a>, <a href="#ref-ciolli2020information">32</a>]. For <span class="math inline">\(F=\sin\)</span>, Eq. <a href="#eq:factor">(28)</a> gives <span class="math inline">\(\kappa_Z=S_f\coth v\)</span>.</p>
+<p>The sign function has no weak derivative in Gaussian <span class="math inline">\(L^2\)</span>, so <span class="math inline">\(\bar n=\infty\)</span> and <span class="math inline">\(\kappa_Z=\infty\)</span>. The same holds for every nonconstant sharp readout of one smeared field, including Eq. <a href="#eq:magnitude">(17)</a>: if <span class="math inline">\(F^2=1\)</span> had a square-integrable weak derivative, differentiating <span class="math inline">\(F^2\)</span> would give <span class="math inline">\(F&#39;=0\)</span>, forcing <span class="math inline">\(F\)</span> to be constant. The entropic converse of Corollary <a href="#cor:converse">4</a> is then silent. For the sign readout, the mirror advantage is nevertheless at least <span class="math inline">\(\rho/\pi\)</span>. The overlap sees what the energy bound cannot.</p>
+<p>For the compact profile <a href="#eq:profile">(22)</a>, <span class="math inline">\(S_f=2\pi a\langle\omega\rangle v\)</span>, with <span class="math inline">\(\langle\omega\rangle\simeq1.60/\sigma\)</span> (Appendix <a href="#app:profile">B</a>). The one-particle Jensen bound at <span class="math inline">\(a=10\sigma\)</span> is of order <span class="math inline">\(10^{-22}\)</span>, compared with <span class="math inline">\(\rho\simeq1.5\times10^{-3}\)</span>. The mean modular energy grows linearly with distance while the overlap decays algebraically. This explains why the main text uses the overlap itself for privacy estimates.</p>
+<p><a id="profile-integrals"></a></p>
+<h2>Profile integrals</h2>
+<p><a id="app:profile"></a></p>
+<p>With <span class="math inline">\([a(\boldsymbol{k}),a^\dagger(\boldsymbol{k}&#39;)]=(2\pi)^32|\boldsymbol{k}|\,\delta^3(\boldsymbol{k}-\boldsymbol{k}&#39;)\)</span>, the one-particle wave function of <span class="math inline">\(\Phi(f)\Omega\)</span> is the restriction of the Fourier transform <span class="math inline">\(\tilde f(k^0,\boldsymbol{k})=\int d^4x\,f(x)e^{i(k^0t-\boldsymbol{k}\cdot\boldsymbol{x})}\)</span> to the mass shell <span class="math inline">\(k^0=|\boldsymbol{k}|\)</span>. For the profile <a href="#eq:profile">(22)</a> it equals <span class="math inline">\(g(k)e^{-ik^1a}\)</span>, with <span class="math inline">\(k=|\boldsymbol{k}|\)</span> and <span class="math inline">\(g(k)=\lambda\sigma^4\hat b(k\sigma)\hat B(k\sigma)\)</span>. Here <span class="math inline">\(\hat b\)</span> is the one-dimensional Fourier transform and <span class="math inline">\(\hat B\)</span> the three-dimensional radial transform of the dimensionless bumps; both are real. The reflected profile has wave function <span class="math inline">\(g(k)e^{ik^1a}\)</span>. Angular integration with the measure <span class="math inline">\(d^3k/[(2\pi)^32k]\)</span> gives</p>
+<p><span class="math display">\[
+v=\frac{1}{4\pi^2}\int_0^\infty kg^2\,dk,\qquad
+c=\frac{1}{4\pi^2}\int_0^\infty kg^2\,\frac{\sin2ka}{2ka}\,dk .\tag{29}
+\]</span></p>
+<p>For large <span class="math inline">\(a\)</span> the second integral tends to <span class="math inline">\(g(0)^2/(16\pi^2a^2)\)</span> with <span class="math inline">\(g(0)=\int f\,d^4x\)</span>, which is Eq. <a href="#eq:rhoasym">(23)</a>. The boost generator acts on one-particle wave functions as <span class="math inline">\(i|\boldsymbol{k}|\,\partial_{k^1}\)</span>. The term containing <span class="math inline">\(g&#39;\)</span> is odd in <span class="math inline">\(k^1\)</span> and integrates to zero:</p>
+<p><span class="math display">\[
+S_f=2\pi\langle h,Bh\rangle=2\pi a\,v\,\langle\omega\rangle,\qquad
+\langle\omega\rangle=\frac{\int_0^\infty k^2g^2\,dk}{\int_0^\infty kg^2\,dk},\tag{30}
+\]</span></p>
+<p>which is <span class="math inline">\(2\pi\)</span> times the energy of the wave packet weighted by the position <span class="math inline">\(x^1=a\)</span> of its center. For Fig. <a href="#fig:leakage">2</a>, the transforms are evaluated by quadrature; the oscillatory integral uses sine-weighted quadrature of an interpolated <span class="math inline">\(g^2\)</span>. Doubling the momentum grid gives the same displayed coefficients. For the magnitude readout, integration by parts gives <span class="math inline">\(a_n=4\phi_{\rm G}(z_0)\mathrm{He}_{n-1}(z_0)/\sqrt{n!}\)</span> for even <span class="math inline">\(n\ge2\)</span>, with all odd coefficients zero. We sum through <span class="math inline">\(n=20\)</span>; Parseval bounds the omitted overlap by <span class="math inline">\(\rho^{22}\)</span>, below <span class="math inline">\(5.1\times10^{-33}\)</span> over the plotted range. The plotted upper bound includes this remainder, and direct Gaussian quadrature checks the series. The scripts record the profile, quadrature settings, and figure data. The numerical checks of Theorem <a href="#thm:main">1</a>, Proposition <a href="#prop:cost">3</a> and Proposition <a href="#prop:free">2</a>, including a finite-dimensional test of the window <a href="#eq:window">(6)</a> on random states and a truncated two-mode model of the free-field formulas, are provided with the accompanying code.</p>
+<p><a id="ai-assistance"></a></p>
+<h2>AI assistance</h2>
+<p>The research vision and original ideas are the author's. The author used OpenAI's GPT models, including Astra, and Anthropic's Claude Opus models for writing, theorem proving, and literature review. GPT models were used most often, and Astra was the most useful overall. This work is in progress. Not all claims have been verified by a human.</p>
+<p><a id="references"></a></p>
+<h2>References</h2>
+<p><a id="ref-herrero2017quantum"></a></p>
+<p>[1]</p>
+<p>Miguel Herrero-Collantes and Juan Carlos Garcia-Escartin. Quantum random number generators. <em>Rev. Mod. Phys.</em>, 89(1):015004, 2017.</p>
+<p><a id="ref-koenig2009operational"></a></p>
+<p>[2]</p>
+<p>Robert König, Renato Renner, and Christian Schaffner. The operational meaning of min- and max-entropy. <em>IEEE Trans. Inf. Theory</em>, 55(9):4337–4347, 2009.</p>
+<p><a id="ref-summers1987maximal"></a></p>
+<p>[3]</p>
+<p>Stephen J. Summers and Reinhard Werner. Maximal violation of Bell's inequalities is generic in quantum field theory. <em>Commun. Math. Phys.</em>, 110(2):247–259, 1987.</p>
+<p><a id="ref-reznik2003entanglement"></a></p>
+<p>[4]</p>
+<p>Benni Reznik. Entanglement from the vacuum. <em>Found. Phys.</em>, 33(1):167–176, 2003.</p>
+<p><a id="ref-pozas2015harvesting"></a></p>
+<p>[5]</p>
+<p>Alejandro Pozas-Kerstjens and Eduardo Martı́n-Martı́nez. Harvesting correlations from the quantum vacuum. <em>Phys. Rev. D</em>, 92(6):064042, 2015.</p>
+<p><a id="ref-fewster2020quantum"></a></p>
+<p>[6]</p>
+<p>Christopher J. Fewster and Rainer Verch. Quantum fields and local measurements. <em>Commun. Math. Phys.</em>, 378(2):851–889, 2020.</p>
+<p><a id="ref-thinh2016certified"></a></p>
+<p>[7]</p>
+<p>Le Phuc Thinh, Jean-Daniel Bancal, and Eduardo Martı́n-Martı́nez. Certified randomness from a two-level system in a relativistic quantum field. <em>Phys. Rev. A</em>, 94(2):022321, 2016.</p>
+<p><a id="ref-lopp2018light"></a></p>
+<p>[8]</p>
+<p>Richard Lopp and Eduardo Martı́n-Martı́nez. Light, matter, and quantum randomness generation: A relativistic quantum information perspective. <em>Opt. Commun.</em>, 423:29–47, 2018.</p>
+<p><a id="ref-araki1974some"></a></p>
+<p>[9]</p>
+<p>Huzihiro Araki. Some properties of modular conjugation operator of von Neumann algebras and a non-commutative Radon-Nikodym theorem with a chain rule. <em>Pac. J. Math.</em>, 50(2):309–354, 1974.</p>
+<p><a id="ref-guedes2024unruh"></a></p>
+<p>[10]</p>
+<p>F. M. Guedes, M. S. Guimaraes, I. Roditi, and S. P. Sorella. Unruh-De Witt detectors, Bell-CHSH inequality and Tomita-Takesaki theory. <em>J. High Energy Phys.</em>, 2024(6):31, 2024.</p>
+<p><a id="ref-caribe2026modular"></a></p>
+<p>[11]</p>
+<p>J. G. A. Caribé, M. S. Guimaraes, I. Roditi, and S. P. Sorella. Modular theory and the Bell-CHSH inequality in relativistic scalar quantum field theory. <em>Eur. Phys. J. C</em>, 86(7):823, 2026.</p>
+<p><a id="ref-hausladen1994pretty"></a></p>
+<p>[12]</p>
+<p>Paul Hausladen and William K. Wootters. A 'pretty good' measurement for distinguishing quantum states. <em>J. Mod. Opt.</em>, 41(12):2385–2390, 1994.</p>
+<p><a id="ref-barnum2002reversing"></a></p>
+<p>[13]</p>
+<p>Howard Barnum and Emanuel Knill. Reversing quantum dynamics with near-optimal quantum and classical fidelity. <em>J. Math. Phys.</em>, 43(5):2097–2106, 2002.</p>
+<p><a id="ref-renes2017better"></a></p>
+<p>[14]</p>
+<p>Joseph M. Renes. Better bounds on optimal measurement and entanglement recovery, with applications to uncertainty and monogamy relations. <em>Phys. Rev. A</em>, 96(4):042328, 2017.</p>
+<p><a id="ref-haag1996local"></a></p>
+<p>[15]</p>
+<p>Rudolf Haag. <em>Local Quantum Physics</em>. Springer, Berlin, 2nd edition, 1996.</p>
+<p><a id="ref-berta2016smooth"></a></p>
+<p>[16]</p>
+<p>Mario Berta, Fabian Furrer, and Volkher B. Scholz. The smooth entropy formalism for von Neumann algebras. <em>J. Math. Phys.</em>, 57(1):015213, 2016.</p>
+<p><a id="ref-helstrom1969quantum"></a></p>
+<p>[17]</p>
+<p>Carl W. Helstrom. Quantum detection and estimation theory. <em>J. Stat. Phys.</em>, 1(2):231–252, 1969.</p>
+<p><a id="ref-witten2018aps"></a></p>
+<p>[18]</p>
+<p>Edward Witten. APS medal for exceptional achievement in research: Invited article on entanglement properties of quantum field theory. <em>Rev. Mod. Phys.</em>, 90(4):045003, 2018.</p>
+<p><a id="ref-bisognano1975duality"></a></p>
+<p>[19]</p>
+<p>Joseph J. Bisognano and Eyvind H. Wichmann. On the duality condition for a Hermitian scalar field. <em>J. Math. Phys.</em>, 16(4):985–1007, 1975.</p>
+<p><a id="ref-bisognano1976duality"></a></p>
+<p>[20]</p>
+<p>Joseph J. Bisognano and Eyvind H. Wichmann. On the duality condition for quantum fields. <em>J. Math. Phys.</em>, 17(3):303–321, 1976.</p>
+<p><a id="ref-eckmann1973application"></a></p>
+<p>[21]</p>
+<p>Jean-Pierre Eckmann and Konrad Osterwalder. An application of Tomita's theory of modular Hilbert algebras: Duality for free Bose fields. <em>J. Funct. Anal.</em>, 13(1):1–12, 1973.</p>
+<p><a id="ref-janson1997gaussian"></a></p>
+<p>[22]</p>
+<p>Svante Janson. <em>Gaussian Hilbert Spaces</em>. Cambridge University Press, Cambridge, 1997.</p>
+<p><a id="ref-gabriel2010generator"></a></p>
+<p>[23]</p>
+<p>Christian Gabriel, Christoffer Wittmann, Denis Sych, Ruifang Dong, Wolfgang Mauerer, Ulrik L. Andersen, Christoph Marquardt, and Gerd Leuchs. A generator for unique quantum random numbers based on vacuum states. <em>Nat. Photonics</em>, 4(10):711–715, 2010.</p>
+<p><a id="ref-symul2011real"></a></p>
+<p>[24]</p>
+<p>Thomas Symul, Syed M. Assad, and Ping Koy Lam. Real time demonstration of high bitrate quantum random number generation with coherent laser light. <em>Appl. Phys. Lett.</em>, 98(23):231103, 2011.</p>
+<p><a id="ref-sheppard1899application"></a></p>
+<p>[25]</p>
+<p>W. F. Sheppard. On the application of the theory of error to cases of normal distribution and normal correlation. <em>Philos. Trans. R. Soc. London A</em>, 192(192):101–167, 1899.</p>
+<p><a id="ref-tomamichel2011leftover"></a></p>
+<p>[26]</p>
+<p>Marco Tomamichel, Christian Schaffner, Adam Smith, and Renato Renner. Leftover hashing against quantum side information. <em>IEEE Trans. Inf. Theory</em>, 57(8):5524–5535, 2011.</p>
+<p><a id="ref-blanco2026modular"></a></p>
+<p>[27]</p>
+<p>Javier Blanco-Romero and Florina Almenares Mendoza. Modular lower bounds on Reeh-Schlieder state preparation, 2026.</p>
+<p><a id="ref-araki1975relative"></a></p>
+<p>[28]</p>
+<p>Huzihiro Araki. Relative entropy of states of von Neumann algebras. <em>Publ. Res. Inst. Math. Sci.</em>, 11(3):809–833, 1975.</p>
+<p><a id="ref-longo2019entropy"></a></p>
+<p>[29]</p>
+<p>Roberto Longo. Entropy of coherent excitations. <em>Lett. Math. Phys.</em>, 109(12):2587–2600, 2019.</p>
+<p><a id="ref-casini2019relative"></a></p>
+<p>[30]</p>
+<p>Horacio Casini, Sergio Grillo, and Diego Pontello. Relative entropy for coherent states from Araki formula. <em>Phys. Rev. D</em>, 99(12):125020, 2019.</p>
+<p><a id="ref-nualart2006malliavin"></a></p>
+<p>[31]</p>
+<p>David Nualart. <em>The Malliavin Calculus and Related Topics</em>. Probability and Its Applications. Springer, Berlin, 2nd edition, 2006.</p>
+<p><a id="ref-ciolli2020information"></a></p>
+<p>[32]</p>
+<p>Fabio Ciolli, Roberto Longo, and Giuseppe Ruzzi. The information in a wave. <em>Commun. Math. Phys.</em>, 379(3):979–1000, 2020.</p>
+{% endraw %}

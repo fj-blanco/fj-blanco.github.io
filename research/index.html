@@ -1,0 +1,27 @@
+---
+layout: default
+title: Research
+description: Working papers on quantum fields, randomness, computation, and cryptography by Javier Blanco-Romero.
+permalink: /research/
+section: research
+main_class: research-page
+---
+<header class="page-header research-header">
+  <p class="eyebrow">Working papers</p>
+  <h1>Research</h1>
+  <p class="research-intro">Quantum fields, randomness, computation, and cryptography.</p>
+  <p class="research-status"><strong>Work in progress.</strong> Not all claims have been verified by a human.</p>
+</header>
+<ol class="research-list">
+  {% for paper in site.data.research %}
+  <li>
+    <p class="eyebrow">{{ paper.area }}</p>
+    <h2><a href="{{ '/research/' | append: paper.slug | append: '/' | relative_url }}">{{ paper.title }}</a></h2>
+    <p>{{ paper.summary }}</p>
+  </li>
+  {% endfor %}
+</ol>
+<footer class="research-footer">
+  <p>Each paper includes the full manuscript, references, figures, and supporting source code.</p>
+  <p><a href="https://github.com/fj-blanco/research">Research sources on GitHub</a> · <a href="https://scholar.google.com/citations?user=YkhPZxkAAAAJ">Published work on Google Scholar</a></p>
+</footer>

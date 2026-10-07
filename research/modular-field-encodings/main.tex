@@ -1,0 +1,576 @@
+\documentclass[11pt,a4paper]{article}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,xcolor,booktabs,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,arrows,positioning,calc,automata}
+\usepackage[numbers,sort&compress]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{1pt}
+\usepackage{url}
+\usepackage[colorlinks=true,allcolors=blue!45!black]{hyperref}
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\M}{\mathcal M}
+\newcommand{\N}{\mathcal N}
+\newcommand{\A}{\mathcal A}
+\newcommand{\HH}{\mathcal H}
+\newcommand{\tr}{\operatorname{Tr}}
+\newcommand{\Dmax}{D_{\max}}
+\newcommand{\dist}{d_{\mathrm{tr}}}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\E}{\mathcal E}
+\newcommand{\B}{\mathcal B}
+\newcommand{\ssec}{\epsilon_{\mathrm{sec}}}
+\newcommand{\eB}{\epsilon_{\mathrm B}}
+\hypersetup{pdftitle={Modular Localization for Private Field Encodings},pdfauthor={Javier Blanco-Romero}}
+\title{Modular Localization for Private Field Encodings}
+\author{Javier Blanco-Romero\\\small Department of Telematic Engineering, Universidad Carlos III de Madrid,\\Legan\'es, Madrid, Spain}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+We study a private classical bit encoded in a quantum field when an
+adversary has partial spacetime access. Opposite coherent displacements
+admit a simple security bound in terms of the relative entropy visible to
+the adversary, while a local quadrature gives an explicit decoding error.
+For the chiral current, we construct smooth finite-energy pulses with a
+nonzero accessible tail. Both errors decrease exponentially with a parameter
+that increases energy and source extent only linearly. We also characterize
+heralded local preparation by max-relative entropy on the commutant and give
+a finite-error converse for the same pulse family. These are two operational
+uses of modular localization: suppressing information leakage and pricing
+restricted preparation. Security assumes a prescribed source and access
+window; physical implementation and advantages over optical wiretap
+encodings remain to be established.
+\end{abstract}
+
+\section{Information and access}
+
+A field can be easy to generate yet difficult to read or reproduce from a
+restricted region. The two restrictions concern different tasks.
+Preparation hardness asks whether an operation can leave a specified output
+state. Secrecy asks what an observer can learn about an unknown message.
+This paper gives each task its own error criterion and proves both for an
+explicit coherent-state family.
+
+Local algebras describe the available observables without imposing a
+finite-mode tensor decomposition~\cite{haag1964algebraic,witten2018aps}.
+Our starting point is a prescribed vacuum and a public encoding of a bit in
+opposite field displacements. The receiver measures a bounded region; the
+adversary accesses a half-line that includes a nonzero tail of the pulse.
+The modular energy of that tail bounds all adversarial measurements.
+A longer separation suppresses leakage, while a larger amplitude improves
+reliable decoding.
+
+The information-theoretic ingredients have substantial precedent. Bosonic
+wiretap channels already use an access advantage for private
+communication~\cite{wang2012private}. Spacetime secret sharing is formalized
+by localize-exclude tasks~\cite{hayden2019localizing}, and smooth entropy
+methods apply to von Neumann algebras~\cite{berta2016smooth}. We use the
+coherent-state relative-entropy formulas of
+Ref.~\cite{bostelmann2022relative} to give a continuum construction with
+explicit source support, energy, decoding error, and leakage. This is a
+field realization of private encoding; secrecy from restricted access is
+not itself a new cryptographic functionality.
+
+The preparation result develops our earlier modular lower
+bound~\cite{blanco2026modular}. Its order criterion is standard steering
+and Radon--Nikodym machinery~\cite{hughston1993complete,raginsky2003radon},
+applied here with a global approximation requirement. It quantifies remote
+field preparation~\cite{ber2016remote} without using that task as an
+unproved security reduction. Causal-exclusion authentication is a separate
+question about the origin of a detected event.
+
+\section{A private bit with partial access}
+\label{sec:private}
+
+Fix commuting receiver and adversary algebras $\B,\E\subset B(\HH)$,
+generated by Weyl operators of real linear smearing spaces.
+Alice chooses a uniform $b\in\{+1,-1\}$ and prepares
+$\xi_b=W(bf)\Omega$. Eve knows the entire encoding and receives the state
+restricted to $\E$, denoted $\omega_b^{\E}$. She may apply any normal
+quantum channel or measurement to this state, with independent ancillary
+memory. The algebra describes her total access during the security window,
+including all colluding laboratories and any retained measurement records.
+The preparation device and its environment are trusted. Access to additional
+field regions after the window requires a new analysis.
+
+For normal states on an algebra, write
+$d(\varphi,\psi)=\frac12\norm{\varphi-\psi}$, using the predual norm.
+Let $Z$ be Alice's classical bit and
+$\bar\omega^{\E}=(\omega_+^{\E}+\omega_-^{\E})/2$. Define
+\begin{equation}
+\begin{split}
+\ssec&=d(\omega_{Z\E},\tau_Z\otimes\bar\omega^{\E})\\
+&=\tfrac14\norm{\omega_+^{\E}-\omega_-^{\E}},
+\end{split}
+\label{eq:secrecy}
+\end{equation}
+where $\tau_Z$ is uniform. Thus $p_{\rm guess}=1/2+\ssec$.
+This distance controls Eve's complete quantum information, including the
+flag of any postselection. Conditional guessing on a rare retained branch
+need not have the same bound.
+
+Use the Weyl convention
+\begin{equation}
+W(f)W(h)=e^{-i\sigma(f,h)/2}W(f+h),\qquad W(h)=e^{ij(h)},
+\label{eq:weyl}
+\end{equation}
+where $\sigma$ is defined by this relation. The vacuum quadrature variance
+is $v_h=\langle\Omega,j(h)^2\Omega\rangle$. These operational definitions
+fix the displacement and noise in the same normalization. All logarithms
+are natural. Set
+\begin{equation}
+S_{\E}(f)=D_{\E}(\omega_f\Vert\omega_0).
+\end{equation}
+
+\begin{theorem}[Modular privacy bound]
+\label{thm:privacy}
+For coherent displacements of a quasifree reference state with
+$S_{\E}(f)<\infty$,
+\begin{equation}
+\ssec\le\min\{\tfrac12,\sqrt{S_{\E}(f)/2}\}.
+\label{eq:privacy}
+\end{equation}
+If $j(h)$ is affiliated with $\B$, $v=v_h>0$, and
+$\mu=\sigma(f,h)\ne0$, threshold decoding has error
+\begin{equation}
+\eB=\Phi(-|\mu|/\sqrt v),
+\label{eq:decoding}
+\end{equation}
+where $\Phi$ is the standard normal distribution function.
+\end{theorem}
+
+\begin{proof}
+A displacement acts by an automorphism on each Weyl algebra.
+Relative entropy between two coherent states depends quadratically on the
+difference of their profiles~\cite{bostelmann2022relative}, so
+\begin{equation}
+D_{\E}(\omega_f\Vert\omega_{-f})=S_{\E}(2f)=4S_{\E}(f).
+\end{equation}
+Pinsker's inequality gives
+\begin{equation*}
+d(\omega_f^{\E},\omega_{-f}^{\E})\le\sqrt{2S_{\E}(f)},
+\end{equation*}
+which proves the first claim through Eq.~\eqref{eq:secrecy}. One can obtain the same
+inequality by applying classical Pinsker to every binary effect and taking
+the supremum. The Weyl relations give
+$W(f)^*j(h)W(f)=j(h)+\mu I$. Bob therefore observes $N(\pm\mu,v)$,
+and the sign test proves Eq.~\eqref{eq:decoding}.
+\end{proof}
+
+Bob accepts $+1$ using the bounded effect
+\begin{equation*}
+Q_h=\mathbf1_{[0,\infty)}(\operatorname{sgn}(\mu)j(h)).
+\end{equation*}
+After decoding, the joint state of Alice's bit, Bob's bit, and Eve is within
+$\eB+\ssec$ of an ideal shared uniform bit independent of Eve. To see this,
+replace Bob's classical output by Alice's bit at distance $\eB$, then use
+Eq.~\eqref{eq:secrecy}. Eve's subsequent processing cannot increase this
+distance. The statement also survives arbitrary nonselective operations
+in Eve's commuting algebra. For independent uses, a hybrid argument adds
+these errors, even if Eve later processes all records jointly. Independence
+of uses is an assumption about the source, not about spatial vacuum modes.
+
+\section{An explicit finite-energy encoding}
+\label{sec:family}
+
+Consider the vacuum chiral $U(1)$ current on a null line, with
+$\E=\A((0,\infty))$. Write the physical vacuum-subtracted energy density as
+\begin{equation}
+\mathcal E_f(u)=c_j[f'(u)]^2,\qquad c_j>0.
+\label{eq:stress}
+\end{equation}
+The constant $c_j$ records the current normalization; it is fixed together
+with $\sigma$ and $v_h$, never chosen independently. This avoids mixing
+Weyl conventions with Fourier or stress-tensor conventions.
+The half-line relative entropy is~\cite{longo2019entropy,bostelmann2022relative}
+\begin{equation}
+S_{\E}(f)=2\pi c_j\int_0^\infty u[f'(u)]^2\,du.
+\label{eq:tail-entropy}
+\end{equation}
+It applies also when the profile crosses the cut. Units are $\hbar=c=1$.
+
+Fix a smooth step $s$ with $s(t)=0$ for $t\le0$, $s(t)=1$ for $t\ge1$,
+and $0<s(t)<1$ otherwise. For example, set
+$s(t)=r(t)/(r(t)+r(1-t))$ with $r(t)=e^{-1/t}$ for $t>0$ and zero otherwise.
+Put
+\begin{equation}
+g(t)=e^{-t}s(t+1),\qquad \chi(t)=1-s(t).
+\end{equation}
+For a fixed length $\ell>0$, amplitude $A>0$, and separation $a>\ell$, choose
+\begin{equation}
+f_{A,a}(u)=A\,g((u+a)/\ell)\chi(u/\ell).
+\label{eq:pulse}
+\end{equation}
+This smooth profile is supported in $[-a-\ell,\ell]$. Its receiver core
+lies in $I_a=(-a-\ell,-a)$, and its tail in Eve's region is
+$A e^{-a/\ell}e^{-u/\ell}\chi(u/\ell)$. It is nonzero on $(0,\ell)$.
+Alice needs trusted preparation access to the full support before the
+adversarial window. We do not assume that an operation confined to $I_a$
+can generate this tail.
+
+Choose $h(t)=r(t+3/4)r(-t-1/4)g'(t)\in C_c^\infty((-1,0))$,
+and put $h_a(u)=h((u+a)/\ell)$. Its pairing with $g$ is nonzero since
+$\int g h'=-\int r(t+3/4)r(-t-1/4)(g')^2<0$, and the current symplectic form
+is a nonzero constant times $\int f h'$.
+Translation invariance gives constants
+\begin{gather}
+\mu_0=A^{-1}\sigma(f_{A,a},h_a)\ne0,\qquad v_0=v_{h_a}>0,\\
+\kappa=\mu_0^2/(2v_0).
+\end{gather}
+They are independent of $A,a$ at fixed $\ell$. Define the finite constants
+\begin{align}
+C_\chi&=2\pi c_j\int_0^1t e^{-2t}[\chi'(t)-\chi(t)]^2dt>0,\label{eq:cchi}\\
+C_E&=c_j\left(\int_{-1}^{\infty}[g'(t)]^2dt
++\int_0^1e^{-2t}[\chi'(t)-\chi(t)]^2dt\right).
+\end{align}
+
+\begin{theorem}[A private bit with nonzero leakage]
+\label{thm:family}
+The encoding $W(bf_{A,a})\Omega$, decoded in $\A(I_a)$, satisfies
+\begin{align}
+\eB&=\Phi(-A|\mu_0|/\sqrt{v_0})\le\tfrac12e^{-\kappa A^2},\\
+\ssec&\le\min\{\tfrac12,\sqrt{C_\chi/2}\,A e^{-a/\ell}\},\label{eq:family-security}\\
+E_{A,a}&=\int\mathcal E_{f_{A,a}}(u)du\le C_E A^2/\ell.
+\end{align}
+In particular, $A=\sqrt n$ and $a=n\ell$, $n\ge2$, give
+$\eB\le\tfrac12e^{-\kappa n}$ and
+$\ssec\le\sqrt{C_\chi n/2}\,e^{-n}$, with energy $O(n/\ell)$,
+source extent $(n+2)\ell$, and receiver extent $\ell$.
+\end{theorem}
+
+\begin{proof}
+On Eve's half-line, differentiating the displayed tail and substituting
+$t=u/\ell$ in Eq.~\eqref{eq:tail-entropy} gives the exact identity
+\begin{equation}
+S_{\E}(f_{A,a})=C_\chi A^2 e^{-2a/\ell}>0.
+\label{eq:explicit-leakage}
+\end{equation}
+Theorem~\ref{thm:privacy} now supplies secrecy and decoding. The Gaussian
+bound uses $\Phi(-x)\le e^{-x^2/2}/2$ for $x\ge0$. For the energy, split
+the integral at $u=0$. The left part is
+$(c_j A^2/\ell)\int_{-1}^{a/\ell}g'(t)^2dt$; the right part is
+$(c_j A^2/\ell)e^{-2a/\ell}\int_0^1e^{-2t}(\chi'-\chi)^2dt$.
+Their sum is at most $C_E A^2/\ell$.
+\end{proof}
+
+This family suppresses an accessible tail; exact causal exclusion would
+instead give $S_{\E}=0$. The improvement with $a$ comes from the specified
+waveform and the access cut. It is not a universal consequence of negative
+mean modular energy, and increasing amplitude alone increases leakage.
+The theorem counts field energy and source extent, without asserting a
+polynomial gate compilation or a bounded-bandwidth implementation.
+
+\paragraph{Robustness.}
+For a coherent profile error $r$, the positive quadratic form in
+Eq.~\eqref{eq:tail-entropy} implies
+\begin{equation}
+\ssec(f+r)\le
+\frac{\sqrt{S_{\E}(f)}+\sqrt{S_{\E}(r)}}{\sqrt2}.
+\label{eq:profile-error}
+\end{equation}
+More generally, if each actual encoded global state is within distance
+$\nu$ of its ideal state and the actual decoding effect is within operator
+norm $\tau$ of the ideal one, the bounds become
+$\ssec^{\rm act}\le\ssec+\nu$ and
+$\eB^{\rm act}\le\eB+\nu+\tau$.
+These follow from contraction under restriction and the triangle inequality.
+A fixed error floor eventually dominates an exponential ideal bound.
+Finite bandwidth, loss, and source leakage must be bounded in this model
+before claiming the same experimental security.
+
+\section{The cost of restricted preparation}
+\label{sec:preparation}
+
+We now ask a different question about the same field states. An actor knows
+the target, receives no specimen, starts from $\Omega$, and acts only in
+$\M$. All attempted preparations, including discarded trials, are counted.
+Let $\HH$ be separable and $\Omega$ cyclic and separating for $\M$,
+as in the vacuum Reeh--Schlieder setting~\cite{reeh1961bemerkungen}.
+An accepted local instrument has
+\begin{equation}
+B_j\in\M,\quad\sum_jB_j^*B_j\le I,\quad
+\sigma=\sum_j\ket{B_j\Omega}\bra{B_j\Omega}=p\rho.
+\label{eq:instrument}
+\end{equation}
+Finite or countable sums are allowed, with strong convergence in the first
+sum. Independent ancillary memory can be absorbed into these Kraus
+operators after it is discarded. There is no circuit or energy bound on
+the actor. This is an algebraic class of operations; concrete laboratory
+couplings require their own localization analysis~\cite{fewster2020measurement}.
+
+For $P_\xi=\ket\xi\bra\xi$, define
+$\dist(\rho,P_\xi)=\frac12\norm{\rho-P_\xi}_1$ and let
+$p_\varepsilon(\xi;\M)$ be the supremum of $p$ subject to
+$\dist(\rho,P_\xi)\le\varepsilon$. This is a global conditional-output
+requirement. Passing one local detector test need not imply it.
+
+For a density operator $\rho$, let $\rho'$ denote its normal state on
+$\M'$, and let $\omega_0'(X')=\bra\Omega X'\ket\Omega$. State domination
+means an inequality on every positive element of the algebra. With natural
+logarithms, define
+\begin{equation}
+\Dmax(\varphi\Vert\omega)
+=\log\inf\{c\ge1:\varphi\le c\omega\}.
+\label{eq:dmax}
+\end{equation}
+The value is $+\infty$ when no finite $c$ exists. This is the operator-order max-relative entropy~\cite{datta2009min}.
+
+\begin{theorem}[Local preparation criterion]
+\label{thm:criterion}
+For a density operator $\rho$ and $0<p\le1$, an instrument
+\eqref{eq:instrument} with output $\sigma=p\rho$ exists if and only if
+\begin{equation}
+p\rho'\le\omega_0'.
+\label{eq:domination}
+\end{equation}
+Hence its optimal exact preparation probability is
+\begin{equation}
+p_{\mathrm{ex}}(\rho;\M)
+=\exp[-\Dmax(\rho'\Vert\omega_0')].
+\label{eq:exact}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+For $X'\ge0$ in $\M'$, commutation and \eqref{eq:instrument} give
+\begin{align}
+\tr(\sigma X')
+&=\sum_j\bra\Omega B_j^*X'B_j\ket\Omega\nonumber\\
+&=\bra\Omega (X')^{1/2}
+\Bigl(\sum_jB_j^*B_j\Bigr)(X')^{1/2}\ket\Omega\nonumber\\
+&\le\omega_0'(X').
+\label{eq:necessary}
+\end{align}
+
+Conversely, write a spectral decomposition
+$\rho=\sum_j\lambda_j P_{\psi_j}$. Since $\Omega$ is separating for
+$\M$, it is cyclic for $\M'$. On the dense subspace $\M'\Omega$, define
+\begin{equation}
+B_j(X'\Omega)=\sqrt{p\lambda_j}\,X'\psi_j.
+\end{equation}
+Domination gives
+\begin{equation}
+\sum_j\norm{B_jX'\Omega}^2
+=p\rho'(X'^*X')\le\norm{X'\Omega}^2.
+\end{equation}
+Thus these maps are well-defined and extend to bounded operators with
+$\sum_jB_j^*B_j\le I$. They commute with $\M'$ on the dense subspace,
+hence everywhere, so $B_j\in\M$. Their output is $p\rho$. Optimizing
+$p$ proves \eqref{eq:exact}, with $e^{-\infty}=0$.
+\end{proof}
+
+In particular, for a pure target one operator suffices. Equation
+\eqref{eq:exact} also shows why counting accepted outcomes is unnecessary:
+the sum of all accepted branches obeys the same order constraint.
+
+\begin{corollary}[Approximate preparation cost]
+\label{cor:smooth}
+For $0\le\varepsilon<1$,
+\begin{equation}
+p_\varepsilon(\xi;\M)
+=\exp\!\left[-\inf_{\rho:\,\dist(\rho,P_\xi)\le\varepsilon}
+\Dmax(\rho'\Vert\omega_0')\right],
+\label{eq:smooth}
+\end{equation}
+where the infimum is over density operators on $\HH$. Moreover,
+$p_\varepsilon(\xi;\M)>0$ for every $\varepsilon>0$.
+\end{corollary}
+
+\begin{proof}
+The identity follows by optimizing Theorem~\ref{thm:criterion} over the
+allowed outputs. For positivity, cyclicity supplies $A\in\M$ such that
+$A\Omega/\norm{A\Omega}$ is sufficiently close to $\xi$. Rescaling
+$A$ to a contraction gives a nonzero success probability.
+\end{proof}
+
+The smoothing in \eqref{eq:smooth} is on the full output state. Replacing it
+by smoothing only the commutant restriction would define a different task.
+
+The exact cost can be bounded using a measured observable in the commutant. If
+$0\le Q\le I$, $Q\in\M'$, and $r=\bra\xi Q\ket\xi>\varepsilon$,
+then every allowed output obeys
+\begin{equation}
+p(r-\varepsilon)\le p\tr(\rho Q)\le\omega_0'(Q),
+\qquad
+p_\varepsilon(\xi;\M)\le\frac{\omega_0'(Q)}{r-\varepsilon}.
+\label{eq:witness}
+\end{equation}
+Only one test is needed for this upper bound: a state close to the target
+must reproduce its acceptance probability to within $\varepsilon$. The
+converse need not hold.
+
+\begin{corollary}[Preparation converse for the private encoding]
+\label{cor:coherent}
+Set $\M=\E$ and $\xi=W(f_{A,a})\Omega$. For
+$0\le\varepsilon<1$, $0<\delta<1-\varepsilon$, and
+$z_\delta=\Phi^{-1}(1-\delta)$,
+\begin{equation}
+p_\varepsilon(\xi;\E)\le\min\left\{1,
+\frac{\overline\Phi(A|\mu_0|/\sqrt{v_0}-z_\delta)}
+{1-\delta-\varepsilon}\right\},
+\label{eq:coherent-bound}
+\end{equation}
+where $\overline\Phi=1-\Phi$. At fixed $\varepsilon,\delta$ this is
+$\exp[-\kappa A^2+O(A)]$ as $A\to\infty$.
+Exact preparation has probability zero for $A>0$; every positive error
+permits a nonzero probability.
+\end{corollary}
+
+\begin{proof}
+The signed core quadrature has target mean $A|\mu_0|$ and variance $v_0$.
+Thresholding at $A|\mu_0|-\sqrt{v_0}z_\delta$ defines a projection
+$Q\in\A(I_a)\subseteq\E'$ with target acceptance $1-\delta$ and vacuum
+acceptance equal to the numerator of Eq.~\eqref{eq:coherent-bound}.
+Equation~\eqref{eq:witness} proves the finite-error claim for the whole
+instrument. For exact preparation, the Gaussian likelihood ratio
+$\exp(A|\mu_0|x/v_0-A^2\mu_0^2/(2v_0))$ is unbounded. No positive multiple
+of the target measure is dominated by the vacuum measure. Theorem~\ref{thm:criterion}
+therefore gives zero probability. At positive error, cyclicity of the
+vacuum gives the last claim.
+\end{proof}
+
+The fixed-completeness threshold gives a leading exponent four times that
+of the midpoint threshold. This is a converse, with no matching field
+preparation strategy asserted. The core quadrature translates with the
+pulse, so its preparation bound is independent of $a$. The secrecy bound
+in Eq.~\eqref{eq:family-security} does depend on $a$ because it prices the
+remaining accessible tail. Neither statement treats spatial vacuum modes
+as independent copies.
+
+\section{Scope and implementation}
+
+The private-bit task now has an explicit decoding rule and an unconditional
+quantum-information leakage bound for a specified access model. Its
+security proof uses modular relative entropy directly. The preparation
+criterion is an additional resource result, with a global approximation
+metric and a complete accounting of postselection. It is not needed as an
+assumed reduction in the secrecy proof.
+
+The construction uses public waveforms and trusted access restrictions.
+It does not provide a classical one-way function, bit commitment, public-key
+encryption, or authentication of Alice. The encoding can be copied by an
+actor with the same preparation access. Its cryptographic content is
+private classical information during the prescribed access window.
+
+The remaining physical problem is to implement and calibrate this access
+model, including source support, tails, and detector coupling. A finite-mode
+benchmark is given below. Establishing a new cryptographic advantage also
+requires comparison with optical wiretap encodings at comparable energy,
+access, and error. The present results supply an explicit continuum family
+and quantitative security parameters for that comparison.
+
+\appendix
+\section{Modular preparation}
+\label{app:modular}
+
+Let $\Delta$ be the modular operator of $(\M,\Omega)$ and $K=-\log\Delta$.
+For a single contraction $B\in\M$ with $B\Omega=\sqrt p\,\psi$,
+Tomita's relation gives
+\begin{equation}
+p\norm{e^{-K/2}\psi}^2=\norm{B^*\Omega}^2\le1.
+\label{eq:tomita}
+\end{equation}
+For a pure target this connects the order cost to modular theory,
+\begin{equation}
+\Dmax(\omega_\xi'\Vert\omega_0')
+\ge\log\norm{e^{-K/2}\xi}^2\ge-\langle\xi,K\xi\rangle.
+\end{equation}
+The first inequality uses the extended quadratic form; the second assumes
+a finite expectation and follows from Jensen's inequality. For a unitary
+$U\in\M$, Eq.~\eqref{eq:tomita} has $p=1$ and equality before its last
+inequality, forcing $\langle U\Omega,KU\Omega\rangle\ge0$ when finite.
+A squeezing unitary confined to the actor's algebra therefore cannot
+produce a negative full modular expectation.
+
+A mean is not stable under state approximation. For $s>0$, let
+$P_s=\mathbf1_{(-\infty,-s]}(K)$ and $q_s=\norm{P_s\xi}^2$.
+Spectral calculus gives $p\norm{P_s\psi}^2\le e^{-s}$, hence
+\begin{equation}
+p\le\frac{e^{-s}}{(\sqrt{q_s}-\eta)^2},\qquad
+\norm{\psi-\xi}\le\eta<\sqrt{q_s}.
+\label{eq:spectral}
+\end{equation}
+A pure-state trace distance $\varepsilon$ permits
+$\eta=\sqrt{2-2\sqrt{1-\varepsilon^2}}$ after phase alignment.
+This bound concerns one Kraus branch. The order criterion covers all
+accepted branches. The projection $P_s$ need not be a local detector.
+
+For the positive-half-line current algebra the full Tomita generator has
+coherent expectation $2\pi\int_{\mathbb R}u\mathcal E_f(u)du$.
+An exterior pulse of energy $E_f$ supported in $u\le-a$ has expectation
+at most $-2\pi aE_f$~\cite{brunetti1993modular}.
+This signed full charge is distinct from the nonnegative half-line
+relative entropy in Eq.~\eqref{eq:tail-entropy}. A large negative mean
+alone does not supply a finite-error verification theorem.
+
+\section{An attainable optical preparation cost}
+\label{app:optical}
+
+For two modes take
+\begin{equation}
+\ket{\Omega_\lambda}=\sqrt{1-\lambda^2}
+\sum_{k\ge0}\lambda^k\ket{k}_A\ket{k}_B,\quad 0<\lambda<1,
+\end{equation}
+with $\M=B(\HH_A)\otimes I_B$ and thermal marginal
+$\tau_B=(1-\lambda^2)\sum_k\lambda^{2k}\ket k\bra k$.
+Set $\bar n=\lambda^2/(1-\lambda^2)$. The target is
+$\ket0_A\ket\alpha_B$, including a reset of $A$.
+Domination on $B$ gives the exact optimum
+\begin{equation}
+p_{\rm opt}=\langle\alpha|\tau_B^{-1}|\alpha\rangle^{-1}
+=\frac{e^{-|\alpha|^2/\bar n}}{1+\bar n}.
+\end{equation}
+It is attained by $B_\beta=\ket0\bra\beta$, with
+$\beta=\alpha^*/\lambda$, implemented by displacement $D(-\beta)$,
+vacuum detection, and reset. No operation conditioned on the herald is
+allowed on $B$. Optical remote preparation is established
+experimentally~\cite{han2023remote}; this calculation provides a benchmark
+for its restricted preparation cost.
+
+For a detector of efficiency $0<\zeta\le1$ with no dark counts, the
+no-click effect before displacement is $(1-\zeta)^{a^\dagger a}$.
+The displaced effect is
+$E_{\zeta,\beta}=D(\beta)(1-\zeta)^{a^\dagger a}D(-\beta)$.
+The conditional unnormalized state is
+$\sqrt{\tau_B}E_{\zeta,\beta}^{\mathsf T}\sqrt{\tau_B}$,
+where transpose is in the number basis. Gaussian conditioning gives
+\begin{align}
+p_\zeta&=\frac{e^{-\zeta|\beta|^2/(1+\zeta\bar n)}}{1+\zeta\bar n},\\
+\gamma_\zeta&=\frac{\zeta\sqrt{\bar n(1+\bar n)}\,\beta^*}{1+\zeta\bar n},\qquad
+n_\zeta=\frac{(1-\zeta)\bar n}{1+\zeta\bar n}.
+\end{align}
+The output is a thermal state of occupation $n_\zeta$ displaced by
+$\gamma_\zeta$, with fidelity
+\begin{equation}
+F_\alpha=\frac{e^{-|\alpha-\gamma_\zeta|^2/(1+n_\zeta)}}{1+n_\zeta}.
+\end{equation}
+For an exactly reset $A$, the global trace-distance error is at most
+$\sqrt{1-F_\alpha}$. These formulas describe this detector, not the optimum
+at nonzero error. For any source, including a mixed or lossy one, its
+actual marginal obeys $pF_\alpha\le\langle\alpha|\tau_B|\alpha\rangle$.
+This follows from necessity of domination and is directly measurable.
+The two-mode benchmark tests the preparation result; it does not realize
+the continuum private-bit access model or its type-III local algebras.
+
+\section*{AI assistance}
+The research vision and original ideas are the author's. The author used OpenAI's GPT models, including Astra, and Anthropic's Claude Opus models for writing, theorem proving, and literature review. GPT models were used most often, and Astra was the most useful overall. This work is in progress. Not all claims have been verified by a human.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+\end{document}

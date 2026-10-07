@@ -19,3 +19,6 @@ exclude:
   - Gemfile.lock
   - README.md
   - vendor
+
+include:
+  - __init__.py

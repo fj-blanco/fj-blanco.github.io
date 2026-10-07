@@ -1,0 +1,1186 @@
+---
+layout: "paper"
+title: "On the Min-Entropy Asymptotics of Binary Context Graphs"
+description: "Minimum mean cycles, algebraic noise-floor criteria, and finite-block certificates for binary sources."
+section: "research"
+main_class: "paper-page"
+math: true
+permalink: "/research/binary-context-min-entropy/"
+area: "Information theory · Randomness"
+---
+{% raw %}
+<p><a id="abstract"></a></p>
+<h2>Abstract</h2>
+<p>We study block min-entropy for binary sources with finite memory. The context graph expresses the asymptotic rate as a minimum mean cycle cost and supplies certificates valid at every block length. For generalized binary autoregressive sources and mixtures of parity rules, we give a polynomial gcd criterion for attaining the universal noise floor. When the rules are incompatible, polynomial relations force defects and yield explicit weighted entropy gaps. This argument gives a complete solution for every source with two active lags. We also prove exact finite-block invariance under deterministic XOR masks, exhibit a golden-ratio spectral correction at an order-two transition, and derive symbolic certificates for balanced negative sources through order four. For higher orders, we formulate a two-run conjecture and prove that its continuum limit has a unique, smoothly varying minimizing run ratio.</p>
+<p><a id="introduction"></a></p>
+<h2>Introduction</h2>
+<p><a id="sec:introduction"></a></p>
+<p>For an independent binary source, the most likely block repeats the more likely bit. With memory, choosing a likely bit changes the future context and may make later outputs less likely. Finding the most likely block therefore requires a path through the space of histories.</p>
+<p>An order-<span class="math inline">\(p\)</span> source has a finite context graph. Its nodes are length-<span class="math inline">\(p\)</span> histories, and an edge appends one bit. Weight each edge by the negative logarithm of its transition probability. Products of probabilities become sums of costs, and the most likely block becomes the cheapest path. Removing cycles leaves only a bounded number of edges, so the asymptotic min-entropy rate is the minimum mean cycle cost. Potentials that bound every edge give finite-block guarantees as well as certificates of cycle optimality.</p>
+<p>Our main application is the generalized binary autoregressive process, gbAR(<span class="math inline">\(p\)</span>) [<a href="#ref-jentsch2019generalized">1</a>]. At each time, the source selects a lag and copies or flips its bit, or emits fresh noise. With uniform noise, a transition is most likely when all selected copy and flip instructions agree. We first ask whether a sequence can satisfy all these instructions at every time. A polynomial gcd and evaluations modulo two give a complete test, also valid for mixtures of general parity rules.</p>
+<p>If the rules are incompatible, a polynomial relation among them forces at least one defect in each translated window. Counting these windows and weighting defects by their entropy cost gives a positive gap above the noise floor. For two active lags, a periodic word attains this bound, solving the problem for every choice of lags, signs, and weights. For more rules, the distribution of simultaneous defects matters. We obtain further exact families and isolate a two-run candidate for the balanced purely negative model at general order.</p>
+<p><a id="related-work"></a></p>
+<h3>Related work</h3>
+<p>Min-entropy and average conditional min-entropy are standard measures of guessing probability [<a href="#ref-renyi1961measures">2</a>, <a href="#ref-dodis2004fuzzy">3</a>], and predictors provide operational upper bounds on source min-entropy [<a href="#ref-kelsey2015predictive">4</a>]. The gbAR model belongs to the mixture-based discrete autoregressive family introduced by Jacobs and Lewis and extended to signed coefficients by Jentsch and Reichmann [<a href="#ref-jacobs1978discrete">5</a>, <a href="#ref-jentsch2019generalized">1</a>]. Our previous work studied finite-block and predictor-based min-entropy for gbAR sources [<a href="#ref-blanco2025machine">6</a>]; the present paper isolates the exact asymptotic structure.</p>
+<p>The finite-state part uses classical graph and spectral tools. Minimum mean cycles, circulation duality, and max-plus cyclicity give the rate, the reduced-cost certificate, and the eventual finite-block correction [<a href="#ref-karp1978characterization">7</a>, <a href="#ref-baccelli1992synchronization">8</a>]. The Rényi rate is a Perron-root formula [<a href="#ref-rached2001renyi">9</a>]. In ergodic-optimization language, minimum cycles support minimizing measures and reduced-cost potentials are finite-state sub-actions  [<a href="#ref-jenkinson2006ergodic">10</a>, <a href="#ref-jenkinson2019ergodic">11</a>, <a href="#ref-bousch2000lepoisson">12</a>, <a href="#ref-garibaldi2017ergodic">13</a>]. The large-order limit is the zero-temperature limit of a locally constant potential, whose spectral asymptotics and Gibbs selection are well studied [<a href="#ref-bremont2003gibbs">14</a>, <a href="#ref-chazottes2011zero">15</a>].</p>
+<p>The homogeneous parity systems define one-dimensional group shifts; compatible affine systems are their translates. Both can be read as convolutional constraints [<a href="#ref-schmidt1995dynamical">16</a>, <a href="#ref-forney1970convolutional">17</a>]. Gauge removal and frustrated sign patterns parallel the Mattis and Toulouse pictures in spin systems [<a href="#ref-mattis1976solvable">18</a>, <a href="#ref-toulouse1977frustration">19</a>]. The uniform-noise bounds place gbAR sources within the usual Santha–Vazirani interval description of weak randomness  [<a href="#ref-santha1986generating">20</a>, <a href="#ref-chor1988unbiased">21</a>]. At weak coupling, the balanced negative family becomes a Max-Cut problem on circulant graphs  [<a href="#ref-poljak1992max">22</a>].</p>
+<p>Our main results are the algebraic noise-floor criterion, weighted entropy bounds from incompatible rules, and the complete two-lag formula. Exact gauge invariance and symbolic certificates simplify further families. The finite-state spectral and periodicity results provide the foundation and an explicit application at the order-two transition. The higher-order analysis gives finite-order formulas and a unique continuum optimum for the two-run candidate.</p>
+<p>Section <a href="#sec:finite_state">2</a> develops the finite-state theory. Section <a href="#sec:signed_rules">3</a> gives the signed-lag and parity-rule formulation. Section <a href="#sec:families">4</a> collects the gbAR formulas and the higher-order conjecture.</p>
+<p><a id="finite-state-min-entropy"></a></p>
+<h2>Finite-State Min-Entropy</h2>
+<p><a id="sec:finite_state"></a></p>
+<p>Throughout, <span class="math inline">\(\log\)</span> means <span class="math inline">\(\log_2\)</span>, <span class="math inline">\(\ln\)</span> is the natural logarithm, and <span class="math inline">\(\oplus\)</span> denotes addition modulo two (XOR). Fix a stationary binary source <span class="math inline">\(X=(X_t)_{t\in\mathbb Z}\)</span> whose conditional law depends on at most <span class="math inline">\(p\)</span> preceding bits, where <span class="math inline">\(p\ge1\)</span> is an integer. Its context space is <span class="math inline">\(\mathcal C_p=\{0,1\}^p\)</span>, with oldest-first context</p>
+<p><span class="math display">\[
+U_t=(X_{t-p},\ldots,X_{t-1}).
+\]</span></p>
+<p>Thus lag <span class="math inline">\(i\)</span> is component <span class="math inline">\(u_{p+1-i}\)</span> of a context <span class="math inline">\(u\)</span>. Write <span class="math inline">\(P(x\mid u)=P(X_t=x\mid U_t=u)\)</span> for the transition probability. Appending <span class="math inline">\(x\in\{0,1\}\)</span> updates the context by</p>
+<p><span class="math display">\[
+T(u,x)=(u_2,\ldots,u_p,x).
+\]</span></p>
+<p>Let <span class="math inline">\(\pi\)</span> be the stationary context law and <span class="math inline">\(\mathcal S_p=\{u\in\mathcal C_p:\pi(u)&gt;0\}\)</span> its support. All context maxima and sums below are over <span class="math inline">\(\mathcal S_p\)</span>.</p>
+<p><a id="block-guessing-and-the-context-graph"></a></p>
+<h3>Block guessing and the context graph</h3>
+<p>The one-step guessability at <span class="math inline">\(u\)</span> is <span class="math inline">\(g_1(u)=\max_xP(x\mid u)\)</span>. For a finite-valued random variable <span class="math inline">\(Z\)</span>, its min-entropy is</p>
+<p><span class="math display">\[
+H_\infty(Z)=-\log\max_zP(Z=z).
+\]</span></p>
+<p>For <span class="math inline">\(n\ge1\)</span>, write <span class="math inline">\(X_t^{t+n-1}=(X_t,\ldots,X_{t+n-1})\)</span> for an output block and <span class="math inline">\(x_1^n\in\{0,1\}^n\)</span> for a realization. The worst-context and average-conditional min-entropies per symbol are</p>
+<p><a id="eq:worst_rate"></a></p>
+<p><a id="eq:avg_rate"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+h_\infty^{\mathrm{worst}}(n)
+&amp;:=-\frac1n\log\max_{\substack{u\in\mathcal S_p\\x_1^n\in\{0,1\}^n}}
+P(X_t^{t+n-1}=x_1^n\mid U_t=u),\qquad\text{(1)}\\
+\widetilde h_\infty^{\mathrm{avg}}(n)
+&amp;:=-\frac1n\log\sum_{u\in\mathcal S_p}\pi(u)
+\max_{x_1^n}P(X_t^{t+n-1}=x_1^n\mid U_t=u).\qquad\text{(2)}
+\end{aligned}
+\]</span></p>
+<p>They satisfy</p>
+<p><a id="eq:block_sandwich"></a></p>
+<p><span class="math display">\[
+h_\infty^{\mathrm{worst}}(n)
+\le \widetilde h_\infty^{\mathrm{avg}}(n)
+\le \frac1nH_\infty(X_t^{t+n-1})
+\le h_\infty^{\mathrm{worst}}(n)+\frac{\Delta_0}{n},\tag{3}
+\]</span></p>
+<p>where <span class="math inline">\(\Delta_0=-\log\min_{u\in\mathcal S_p}\pi(u)\)</span>. The first two inequalities follow by averaging conditional guessing probabilities. For the last, the unconditional probability of a best conditional block is at least its conditional probability times the stationary weight of its starting context. Hence the three limits agree whenever one exists; we denote this common rate by <span class="math inline">\(h_\infty\)</span>. We use <span class="math inline">\(H_*(n)\)</span> for any of the three unnormalized quantities <span class="math inline">\(n h_\infty^{\mathrm{worst}}(n)\)</span>, <span class="math inline">\(n\widetilde h_\infty^{\mathrm{avg}}(n)\)</span>, and <span class="math inline">\(H_\infty(X_1^n)\)</span> when the same assertion applies to all three.</p>
+<p><a id="the-flat-simtp-benchmark."></a></p>
+<h5 id="the-flat-simtp-benchmark">The flat SIMTP benchmark.</h5>
+<p>An order-<span class="math inline">\(p\)</span> chain is state-independent maximum transition probability (SIMTP) when <span class="math inline">\(g_1(u)=P_{\max}\)</span> for every <span class="math inline">\(u\in\mathcal S_p\)</span>. In that case, from each context there is an outgoing edge of probability <span class="math inline">\(P_{\max}\)</span>, so a most likely continuation can keep paying the same cost at every step. Conversely, no continuation can have larger probability. Hence, for every <span class="math inline">\(n\)</span>,</p>
+<p><a id="eq:simtp_benchmark"></a></p>
+<p><span class="math display">\[
+h_\infty^{\mathrm{worst}}(n)
+=\widetilde h_\infty^{\mathrm{avg}}(n)
+=-\log P_{\max},
+\qquad
+h_\infty=-\log P_{\max}.\tag{4}
+\]</span></p>
+<p>The unconditional stationary block entropy can still carry a bounded initial-state correction. SIMTP is therefore the flat case in which context compatibility adds no asymptotic cost. When <span class="math inline">\(g_1\)</span> varies, locally maximizing edges still contain a cycle, but its mean cost need not be optimal. SIMTP can also be detected at one step. The equality <span class="math inline">\(h_\infty^{\mathrm{worst}}(1)=\widetilde
+h_\infty^{\mathrm{avg}}(1)\)</span> holds only when the maximum of <span class="math inline">\(g_1(u)\)</span> equals its stationary average, which forces <span class="math inline">\(g_1\)</span> to be constant.</p>
+<p>The context graph has node set <span class="math inline">\(\mathcal S_p\)</span> and one edge <span class="math inline">\(u\xrightarrow{x}T(u,x)\)</span> for every positive transition probability. We attach the edge cost</p>
+<p><a id="eq:edge_cost"></a></p>
+<p><span class="math display">\[
+c(u,x)=-\log P(X_t=x\mid U_t=u).\tag{5}
+\]</span></p>
+<p>A directed cycle <span class="math inline">\(C=(u_0\xrightarrow{x_0}u_1,\ldots,
+u_{\ell-1}\xrightarrow{x_{\ell-1}}u_0)\)</span> has mean cost</p>
+<p><span class="math display">\[
+\mu(C)=\frac1\ell\sum_{j=0}^{\ell-1}c(u_j,x_j).
+\]</span></p>
+<p>The minimum local cost <span class="math inline">\(\min_u[-\log g_1(u)]\)</span> is a lower bound on every mean cycle cost. Attaining it requires a cycle made entirely of edges with that global minimum cost.</p>
+<p><strong>Theorem 1 (Cycle formula and dual certificate).</strong> <a id="thm:cycle_and_dual"></a> Assume the context graph is strongly connected, so every context can reach every other context, and set</p>
+<p><span class="math display">\[
+\mu^*=\min_C\mu(C),
+\]</span></p>
+<p>where the minimum is over directed cycles. Then</p>
+<p><span class="math display">\[
+h_\infty=\mu^*.
+\]</span></p>
+<p>A minimizing simple cycle has length at most <span class="math inline">\(|\mathcal S_p|\le2^p\)</span>. Moreover, if a function <span class="math inline">\(\varphi:\mathcal S_p\to\mathbb R\)</span> and a real number <span class="math inline">\(\lambda\)</span> satisfy</p>
+<p><a id="eq:dual_certificate"></a></p>
+<p><span class="math display">\[
+c(u,x)+\varphi(u)-\varphi(T(u,x))\ge\lambda\tag{6}
+\]</span></p>
+<p>for every edge, then <span class="math inline">\(h_\infty\ge\lambda\)</span>. Equality holds if the tight edges, meaning those for which <a href="#eq:dual_certificate">(6)</a> holds with equality, contain a directed cycle. Conversely, a potential satisfying <a href="#eq:dual_certificate">(6)</a> exists for <span class="math inline">\(\lambda=\mu^*\)</span>.</p>
+<p><em>Proof.</em> For a fixed starting context, a continuation has probability equal to the product of its edge probabilities. Its negative logarithm is therefore the path cost. Strong connectivity lets a path reach a minimum mean cycle and repeat it, with bounded initial and final costs. This gives an asymptotic cost at most <span class="math inline">\(\mu^*\)</span>.</p>
+<p>For the reverse bound, remove closed portions of any length-<span class="math inline">\(n\)</span> path until the remaining path is simple. Each removed portion decomposes into cycles, all of mean at least <span class="math inline">\(\mu^*\)</span>. At most <span class="math inline">\(|\mathcal S_p|-1\)</span> edges remain, and their costs are nonnegative, so</p>
+<p><span class="math display">\[
+\text{path cost}\ge\mu^*(n-|\mathcal S_p|+1).
+\]</span></p>
+<p>Division by <span class="math inline">\(n\)</span> proves convergence, and <a href="#eq:block_sandwich">(3)</a> transfers it to all three entropy notions. Decomposing a closed walk also shows that some simple cycle has no larger mean; its length is at most <span class="math inline">\(|\mathcal S_p|\)</span>.</p>
+<p>Summing <a href="#eq:dual_certificate">(6)</a> around a cycle cancels the potential differences and bounds its mean cost below by <span class="math inline">\(\lambda\)</span>. A cycle of tight edges attains equality. To construct an optimal potential, subtract <span class="math inline">\(\mu^*\)</span> from every edge cost. All cycles now have nonnegative cost. Add an auxiliary node with a zero-cost edge to every context, and let <span class="math inline">\(\varphi(v)\)</span> be the shortest-path distance from that node to <span class="math inline">\(v\)</span>. These distances are finite because there is no negative cycle. Extending a shortest path by one edge gives</p>
+<p><span class="math display">\[
+\varphi(v)\le\varphi(u)+c(u,x)-\mu^*,
+\]</span></p>
+<p>which is the required inequality.</p>
+<p>A potential redistributes edge costs while preserving every cycle cost. This is the dual certificate for the minimum mean cycle problem. Karp's algorithm computes the rate in <span class="math inline">\(O(NM)\)</span> operations for <span class="math inline">\(N\)</span> nodes and <span class="math inline">\(M\)</span> edges [<a href="#ref-karp1978characterization">7</a>]. A full binary context graph has <span class="math inline">\(N=2^p\)</span> and <span class="math inline">\(M=2^{p+1}\)</span>, giving <span class="math inline">\(O(4^p)\)</span> complexity.</p>
+<p><strong>Corollary 2 (Finite-block certificate).</strong> <a id="cor:finite_block_certificate"></a> If <span class="math inline">\(\varphi\)</span> satisfies <a href="#eq:dual_certificate">(6)</a>, then, for every <span class="math inline">\(n\ge1\)</span>,</p>
+<p><a id="eq:finite_block_certificate"></a></p>
+<p><span class="math display">\[
+H_*(n)\ge n\lambda-\operatorname{osc}(\varphi),
+\qquad
+\operatorname{osc}(\varphi)=\max_u\varphi(u)-\min_u\varphi(u).\tag{7}
+\]</span></p>
+<p><em>Proof.</em> Along a path <span class="math inline">\(u_0\to\cdots\to u_n\)</span>, telescoping gives <span class="math inline">\(\sum c\ge n\lambda+\varphi(u_n)-\varphi(u_0)\)</span>. Minimize over paths and use <a href="#eq:block_sandwich">(3)</a>.</p>
+<p>The certificate applies before any asymptotic regime. If every edge inequality is rigorously bounded below by <span class="math inline">\(\lambda-\varepsilon\)</span>, with <span class="math inline">\(\varepsilon\ge0\)</span>, replace <span class="math inline">\(\lambda\)</span> by <span class="math inline">\(\lambda-\varepsilon\)</span> in <a href="#eq:finite_block_certificate">(7)</a>.</p>
+<p><a id="a-four-state-example."></a></p>
+<h5 id="a-four-state-example">A four-state example.</h5>
+<p>Consider a source that flips lag <span class="math inline">\(1\)</span> or lag <span class="math inline">\(2\)</span>, each with probability <span class="math inline">\(0.3\)</span>, and otherwise emits a fair bit with probability <span class="math inline">\(0.4\)</span>. This is the purely negative gbAR(2) model with coefficients <span class="math inline">\(\alpha_1=\alpha_2=-0.3\)</span> and noise weight <span class="math inline">\(\beta=0.4\)</span>. Its transition table is</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Context <span class="math inline">\(u\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(P(0\mid u)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(P(1\mid u)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_1(u)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(-\log g_1(u)\)</span></th>
+<th style="text-align: center;">Best <span class="math inline">\(x\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(00\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.20\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.80\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.80\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.322\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(01\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.50\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.50\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.50\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.000\)</span></td>
+<td style="text-align: center;">either</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(10\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.50\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.50\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.50\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.000\)</span></td>
+<td style="text-align: center;">either</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(11\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.80\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.20\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.80\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.322\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Figure <a href="#fig:gbar2_context_graph">1</a> shows the full context graph. The solid period-four cycle <span class="math inline">\(00\to01\to11\to10\to00\)</span> has mean cost <span class="math inline">\((0.322+1+0.322+1)/4=0.661\)</span> and is the minimum-mean cycle. An edge of probability <span class="math inline">\(0.8\)</span> always leaves a unanimous context for a mixed one, where the next edge has probability <span class="math inline">\(0.5\)</span>. This is the simplest example in which the minimum local prediction cost does not determine the asymptotic rate.</p>
+<p><a id="fig:gbar2_context_graph"></a></p>
+<p><img src="figures/diagram-1.png" alt="image" /></p>
+<p><strong>Figure 1.</strong> Context graph of the balanced negative gbAR(2) example. Red nodes have local cost <span class="math inline">\(0.322\)</span> and blue nodes have local cost <span class="math inline">\(1\)</span>. The solid edges form the minimum-mean cycle; dashed edges are the remaining transitions.</p>
+<p><a id="rényi-rates-and-finite-block-corrections"></a></p>
+<h3>Rényi rates and finite-block corrections</h3>
+<p><a id="subsec:renyi_finite"></a></p>
+<p>Assume throughout this subsection that the context chain on <span class="math inline">\(\mathcal S_p\)</span> is irreducible, meaning its graph is strongly connected. For <span class="math inline">\(q&gt;0\)</span>, <span class="math inline">\(q\ne1\)</span>, define</p>
+<p><span class="math display">\[
+H_q(Z)=\frac{1}{1-q}\log\sum_zP(Z=z)^q,
+\qquad h_q=\lim_{n\to\infty}\frac{H_q(X_1^n)}n.
+\]</span></p>
+<p>The limits at <span class="math inline">\(q=1\)</span> and <span class="math inline">\(q\to\infty\)</span> give Shannon entropy and min-entropy. The standard spectral formula is</p>
+<p><a id="eq:renyi_spectral"></a></p>
+<p><span class="math display">\[
+h_q=\frac{1}{1-q}\log\lambda_q,\tag{8}
+\]</span></p>
+<p>where <span class="math inline">\(\lambda_q\)</span> is the Perron root (the spectral radius) of</p>
+<p><span class="math display">\[
+(M_q)_{u,T(u,x)}=P(x\mid u)^q=2^{-q c(u,x)}
+\]</span></p>
+<p>on allowed edges, with all other entries zero  [<a href="#ref-rached2001renyi">9</a>]. Fixing the first <span class="math inline">\(p\)</span> output bits fixes the context, so boundary probabilities do not change this entropy rate.</p>
+<p>Fix an optimal potential <span class="math inline">\(\varphi\)</span> in <a href="#eq:dual_certificate">(6)</a> with <span class="math inline">\(\lambda=\mu^*\)</span> and define the reduced cost of an edge <span class="math inline">\(e:u\to v\)</span>, writing <span class="math inline">\(c(e)=c(u,x)\)</span>,</p>
+<p><span class="math display">\[
+r(e)=c(e)+\varphi(u)-\varphi(v)-\mu^*\ge0.
+\]</span></p>
+<p>Call an edge <em>tight</em> when <span class="math inline">\(r(e)=0\)</span>, and let <span class="math inline">\(K\)</span> be the adjacency matrix of the tight-edge subgraph. Its <span class="math inline">\((u,v)\)</span> entry is one when a tight edge goes from <span class="math inline">\(u\)</span> to <span class="math inline">\(v\)</span>, and zero otherwise. The critical graph consists of the nodes and edges that lie on at least one minimum mean cycle. Equivalently, it is the part of the tight-edge subgraph that belongs to directed cycles; tight edges outside it cannot contribute to a closed walk. We write <span class="math inline">\(\rho(K)\)</span> for the spectral radius of <span class="math inline">\(K\)</span>. Deleting tight edges that lie on no cycle does not change this spectral radius.</p>
+<p><strong>Proposition 3 (Large-order Rényi rate).</strong> <a id="prop:large_order_renyi"></a> For every <span class="math inline">\(q&gt;1\)</span>,</p>
+<p><a id="eq:renyi_bound"></a></p>
+<p><span class="math display">\[
+0\le h_q-h_\infty\le\frac{h_\infty}{q-1}\le\frac{1}{q-1}.\tag{9}
+\]</span></p>
+<p>More precisely,</p>
+<p><a id="eq:renyi_correction"></a></p>
+<p><span class="math display">\[
+\lambda_q=2^{-q h_\infty}\bigl(\rho(K)+o(1)\bigr),
+\qquad
+h_q=h_\infty+
+\frac{h_\infty-\log\rho(K)}{q-1}
++o(q^{-1}).\tag{10}
+\]</span></p>
+<p><em>Proof.</em> Let <span class="math inline">\(C\)</span> be a minimum-mean cycle of length <span class="math inline">\(\ell\)</span>, based at <span class="math inline">\(u\)</span>. The diagonal entry <span class="math inline">\((M_q^\ell)_{u,u}\)</span> sums the weights of all closed paths of length <span class="math inline">\(\ell\)</span> from <span class="math inline">\(u\)</span>. The single contribution from <span class="math inline">\(C\)</span> is</p>
+<p><span class="math display">\[
+\prod_{e\in C}2^{-q c(e)}=2^{-q\ell h_\infty}.
+\]</span></p>
+<p>Since <span class="math inline">\(\rho(M_q^\ell)=\lambda_q^\ell\)</span> is at least this diagonal entry, <span class="math inline">\(\lambda_q\ge2^{-q h_\infty}\)</span>.</p>
+<p>Since <span class="math inline">\(1-q&lt;0\)</span>, this lower bound on <span class="math inline">\(\lambda_q\)</span> gives <span class="math inline">\(h_q\le qh_\infty/(q-1)\)</span>. Monotonicity of Rényi entropy gives <span class="math inline">\(h_q\ge h_\infty\)</span>. Finally, <span class="math inline">\(h_\infty\le1\)</span> because a binary block of length <span class="math inline">\(n\)</span> has at most <span class="math inline">\(2^n\)</span> possible values. This proves <a href="#eq:renyi_bound">(9)</a>.</p>
+<p>For the correction, let <span class="math inline">\(D_q=\operatorname{diag}(2^{-q\varphi(u)})\)</span>. Conjugation preserves eigenvalues, and the normalized matrix has entries</p>
+<p><span class="math display">\[
+\bigl(2^{q h_\infty}D_qM_qD_q^{-1}\bigr)_{u,v}
+=2^{-q r(e)}.
+\]</span></p>
+<p>They tend to one on tight edges and zero elsewhere. The matrix therefore converges to <span class="math inline">\(K\)</span>. Continuity of the spectral radius in finite dimension gives <span class="math inline">\(2^{q h_\infty}\lambda_q\to\rho(K)\)</span>, which is positive because <span class="math inline">\(K\)</span> contains a minimum mean cycle. Taking logarithms proves <a href="#eq:renyi_correction">(10)</a>.</p>
+<p>We now turn to exact finite-block behavior. Two nodes are in the same strongly connected component when each can be reached from the other by a directed path. For each strongly connected component of the critical graph, take the greatest common divisor of the lengths of all its directed cycles. Let <span class="math inline">\(\gamma\)</span> be the least common multiple of these componentwise gcds. This integer is the cyclicity of the critical graph.</p>
+<p>For <span class="math inline">\(u\in\mathcal S_p\)</span> and <span class="math inline">\(n\ge0\)</span>, let <span class="math inline">\(D_u(n)\)</span> be the cheapest length-<span class="math inline">\(n\)</span> continuation cost from <span class="math inline">\(u\)</span>, with <span class="math inline">\(D_u(0)=0\)</span>.</p>
+<p><strong>Proposition 4 (Eventual periodicity of block costs).</strong> <a id="prop:block_periodicity"></a> There is <span class="math inline">\(N_0\)</span> such that</p>
+<p><a id="eq:continuation_periodicity"></a></p>
+<p><span class="math display">\[
+D_u(n+\gamma)=D_u(n)+\gamma h_\infty\tag{11}
+\]</span></p>
+<p>for every <span class="math inline">\(u\)</span> and every <span class="math inline">\(n\ge N_0\)</span>. Consequently, after subtracting <span class="math inline">\(n h_\infty\)</span>, the worst-context, average-conditional, and stationary unconditional block min-entropies are eventually periodic, with period dividing <span class="math inline">\(\gamma\)</span>.</p>
+<p><em>Proof.</em> Define the min-plus context matrix <span class="math inline">\(A\)</span> by</p>
+<p><span class="math display">\[
+A_{u,v}=
+\begin{cases}
+c(u,x),&amp;v=T(u,x)\text{ for an allowed output }x,\\
++\infty,&amp;\text{if there is no edge }u\to v.
+\end{cases}
+\]</span></p>
+<p>Min-plus matrix multiplication replaces ordinary addition by minimum and ordinary multiplication by addition. It follows inductively that <span class="math inline">\((A^{\otimes n})_{u,v}\)</span> is the cheapest cost of a length-<span class="math inline">\(n\)</span> path from <span class="math inline">\(u\)</span> to <span class="math inline">\(v\)</span>.</p>
+<p>Since <span class="math inline">\(A\)</span> is irreducible, the min-plus cyclicity theorem gives</p>
+<p><span class="math display">\[
+A^{\otimes(n+\gamma)}=\gamma h_\infty\otimes A^{\otimes n}
+\]</span></p>
+<p>for all sufficiently large <span class="math inline">\(n\)</span> [<a href="#ref-baccelli1992synchronization">8</a>]. Here scalar multiplication means adding <span class="math inline">\(\gamma h_\infty\)</span> to every finite entry. Taking the minimum over the terminal context in row <span class="math inline">\(u\)</span> proves <a href="#eq:continuation_periodicity">(11)</a>.</p>
+<p>The three block entropies follow from</p>
+<p><span class="math display">\[
+\begin{aligned}
+n h_\infty^{\mathrm{worst}}(n)&amp;=\min_uD_u(n),\\
+n\widetilde h_\infty^{\mathrm{avg}}(n)
+&amp;=-\log\sum_u\pi(u)2^{-D_u(n)},\\
+H_\infty(X_1^n)&amp;=\min_u\{-\log\pi(u)+D_u(n-p)\},\qquad n\ge p.
+\end{aligned}
+\]</span></p>
+<p>The last identity fixes the first <span class="math inline">\(p\)</span> bits and optimizes the remaining continuation. Each expression increases by <span class="math inline">\(\gamma h_\infty\)</span> when <span class="math inline">\(n\)</span> increases by <span class="math inline">\(\gamma\)</span>, once its continuation lengths exceed the transient.</p>
+<p>After the transient, finitely many residue classes determine every larger block entropy. Before it, Corollary <a href="#cor:finite_block_certificate">2</a> still gives a lower bound.</p>
+<p>The quantity <span class="math inline">\(\log\rho(K)\)</span> is the exponential growth rate of the number of paths in the critical graph. Their costs differ from <span class="math inline">\(nh_\infty\)</span> only by endpoint potentials. It is zero for a single critical cycle. For a fair coin, all edges are critical, <span class="math inline">\(h_\infty=1\)</span>, and <span class="math inline">\(\rho(K)=2\)</span>, so the correction vanishes. For fixed <span class="math inline">\(q&gt;0\)</span>, the Perron root is analytic in the positive allowed transition probabilities on a fixed irreducible support. The cycle envelope arises in the limit <span class="math inline">\(q\to\infty\)</span>.</p>
+<p>For an order-one gbAR source with uniform noise weight <span class="math inline">\(0&lt;\beta\le1\)</span>, put <span class="math inline">\(a=1-\beta/2\)</span> and <span class="math inline">\(b=\beta/2\)</span>. For a positive lag its transfer matrix is</p>
+<p><span class="math display">\[
+M_q=\begin{pmatrix}a^q&amp;b^q\\ b^q&amp;a^q\end{pmatrix},
+\]</span></p>
+<p>and a negative lag only interchanges <span class="math inline">\(a^q\)</span> and <span class="math inline">\(b^q\)</span> within each row. In either case every row sums to <span class="math inline">\(a^q+b^q\)</span>. The all-ones vector is therefore a positive eigenvector with eigenvalue <span class="math inline">\(a^q+b^q\)</span>, which is the Perron root. Substitution in <a href="#eq:renyi_spectral">(8)</a> gives</p>
+<p><a id="eq:gbar1_renyi"></a></p>
+<p><span class="math display">\[
+h_q=\frac{1}{1-q}\log\left[
+\left(1-\frac{\beta}{2}\right)^q
++\left(\frac{\beta}{2}\right)^q
+\right].\tag{12}
+\]</span></p>
+<p>The curve passes from the binary Shannon entropy <span class="math inline">\(H_b(z)=-z\log z-(1-z)\log(1-z)\)</span>, evaluated at <span class="math inline">\(z=\beta/2\)</span> when <span class="math inline">\(q=1\)</span>, to the noise floor <span class="math inline">\(-\log(1-\beta/2)\)</span> as <span class="math inline">\(q\to\infty\)</span>.</p>
+<p><a id="signed-lags-and-parity-rules"></a></p>
+<h2>Signed Lags and Parity Rules</h2>
+<p><a id="sec:signed_rules"></a></p>
+<p><a id="gbar-as-a-periodic-constraint-problem"></a></p>
+<h3>gbAR as a periodic constraint problem</h3>
+<p>A gbAR(<span class="math inline">\(p\)</span>) source has coefficients <span class="math inline">\(\alpha_1,\ldots,\alpha_p\in(-1,1)\)</span> and noise weight <span class="math inline">\(\beta&gt;0\)</span> with <span class="math inline">\(\sum_i|\alpha_i|+\beta=1\)</span>. At each time, independently of the past, a selector chooses lag <span class="math inline">\(i\)</span> with probability <span class="math inline">\(|\alpha_i|\)</span> or chooses noise with probability <span class="math inline">\(\beta\)</span>. A positive coefficient copies <span class="math inline">\(X_{t-i}\)</span>, a negative one flips it, and an independent noise bit is Bernoulli with parameter <span class="math inline">\(\epsilon\in[0,1]\)</span>. With uniform noise, <span class="math inline">\(\epsilon=1/2\)</span>, the transition law is</p>
+<p><a id="eq:gbar_transition"></a></p>
+<p><span class="math display">\[
+P(x_t\mid x_{t-1},\ldots,x_{t-p})
+=\frac{\beta}{2}
++\sum_{i:\alpha_i&gt;0}|\alpha_i|\mathbf{1}_{\{x_t=x_{t-i}\}}
++\sum_{i:\alpha_i&lt;0}|\alpha_i|\mathbf{1}_{\{x_t\ne x_{t-i}\}}.\tag{13}
+\]</span></p>
+<p>Here <span class="math inline">\(\mathbf{1}_{E}\)</span> is one when event <span class="math inline">\(E\)</span> holds and zero otherwise. We assume uniform noise unless stated otherwise.</p>
+<p><strong>Proposition 5 (Ergodicity of uniform-noise gbAR).</strong> <a id="prop:gbar_ergodicity"></a> Every uniform-noise gbAR(<span class="math inline">\(p\)</span>) context chain is irreducible and aperiodic, with a unique stationary law of full support.</p>
+<p><em>Proof.</em> Every output bit has conditional probability at least <span class="math inline">\(\beta/2&gt;0\)</span>. Starting from any context, emitting the bits of a target context reaches it in at most <span class="math inline">\(p\)</span> steps, so the chain is irreducible and has full support. The all-zero context has a self-loop, which makes the chain aperiodic.</p>
+<p>Let</p>
+<p><span class="math display">\[
+A=\{i:|\alpha_i|&gt;0\},
+\qquad
+s_i=\begin{cases}0,&amp;\alpha_i&gt;0,\\1,&amp;\alpha_i&lt;0.\end{cases}
+\]</span></p>
+<p>If <span class="math inline">\(A=\varnothing\)</span>, the source is a fair coin and <span class="math inline">\(H_*(n)=n\)</span>. In the remaining lag arguments assume <span class="math inline">\(A\ne\varnothing\)</span>. We call <span class="math inline">\(A\)</span> the <em>active-lag set</em> and <span class="math inline">\(s=(s_i)_{i\in A}\)</span> the <em>sign vector</em>; <span class="math inline">\(s_i=0\)</span> denotes a copy instruction and <span class="math inline">\(s_i=1\)</span> a flip instruction. For a candidate binary sequence <span class="math inline">\(y=(y_t)_{t\in\mathbb Z}\)</span>, rule <span class="math inline">\(i\)</span> is satisfied at time <span class="math inline">\(t\)</span> when <span class="math inline">\(y_t\oplus y_{t-i}=s_i\)</span>; otherwise it has a <em>defect</em> there. Since no transition probability exceeds <span class="math inline">\(1-\beta/2\)</span>, every uniform-noise gbAR source obeys</p>
+<p><a id="eq:noise_floor"></a></p>
+<p><span class="math display">\[
+h_\infty\ge-\log(1-\beta/2).\tag{14}
+\]</span></p>
+<p>This is the universal noise floor. The source also satisfies the Santha–Vazirani interval bounds [<a href="#ref-santha1986generating">20</a>, <a href="#ref-chor1988unbiased">21</a>], with <span class="math inline">\(X_{&lt;t}\)</span> denoting the full past,</p>
+<p><span class="math display">\[
+\frac{\beta}{2}
+\le P(X_t=x\mid X_{&lt;t})
+\le1-\frac{\beta}{2}.
+\]</span></p>
+<p>A cycle of length <span class="math inline">\(L\)</span> in the context graph emits a binary sequence that repeats every <span class="math inline">\(L\)</span> steps. Conversely, a periodic binary sequence traces a closed walk in the graph. We occasionally use <em>binary word</em> as a synonym for such a finite or periodic bit sequence. Therefore</p>
+<p><a id="eq:periodic_variational"></a></p>
+<p><span class="math display">\[
+h_\infty=
+\min_{1\le L\le2^p}\min_{y\in\{0,1\}^L}
+\frac1L\sum_{t=0}^{L-1}
+-\log\left(
+\frac{\beta}{2}
++\sum_{i\in A}|\alpha_i|
+\mathbf{1}_{\{y_t\oplus y_{t-i}=s_i\}}
+\right),\tag{15}
+\]</span></p>
+<p>with indices read modulo <span class="math inline">\(L\)</span>.</p>
+<p><strong>Proposition 6 (Active-lag compression).</strong> <a id="prop:active_lag_compression"></a> Let <span class="math inline">\(d=\gcd(A)\)</span> and <span class="math inline">\(m=\max(A)/d\)</span>. Replacing every active lag <span class="math inline">\(jd\)</span> by lag <span class="math inline">\(j\)</span>, without changing its sign or weight, gives a gbAR(<span class="math inline">\(m\)</span>) source with the same min-entropy rate.</p>
+<p><em>Proof.</em> Represent any periodic binary sequence with a period divisible by <span class="math inline">\(d\)</span>, and split that period into its <span class="math inline">\(d\)</span> residue classes modulo <span class="math inline">\(d\)</span>. Every active lag is a multiple of <span class="math inline">\(d\)</span>, so each rule compares symbols within one residue class. After relabeling time within that class, lag <span class="math inline">\(jd\)</span> becomes lag <span class="math inline">\(j\)</span>. The original mean cost is the average of the <span class="math inline">\(d\)</span> compressed-sequence costs and therefore cannot be below the minimum compressed cost. Conversely, placing the same compressed minimizer on every residue class gives an original sequence with that cost.</p>
+<p>The gcd of the active lag values controls this reduction. For example, active lags <span class="math inline">\(\{2,6\}\)</span> compress to <span class="math inline">\(\{1,3\}\)</span> and hence to an order-three source.</p>
+<p><a id="the-algebraic-floor-criterion"></a></p>
+<h3>The algebraic floor criterion</h3>
+<p><a id="subsec:algebraic_floor"></a></p>
+<p>Polynomials encode XORs of shifted bits. Let <span class="math inline">\(\mathbb F_2=\{0,1\}\)</span> be the field with addition modulo two, <span class="math inline">\(R=\mathbb F_2[x]\)</span> its polynomial ring, and <span class="math inline">\(V=\mathbb F_2^{\mathbb Z}\)</span> the space of bi-infinite binary sequences. The shift <span class="math inline">\(\sigma:V\to V\)</span> is defined by <span class="math inline">\((\sigma y)_t=y_{t-1}\)</span>. For a polynomial <span class="math inline">\(g(x)=\sum_{j=0}^Dg_jx^j\)</span> of degree at most <span class="math inline">\(D\)</span>, with coefficients <span class="math inline">\(g_j\in\mathbb F_2\)</span>, set</p>
+<p><span class="math display">\[
+(g(\sigma)y)_t=\sum_{j=0}^Dg_jy_{t-j},
+\]</span></p>
+<p>with the sum in <span class="math inline">\(\mathbb F_2\)</span>. Write <span class="math inline">\(\mathbf1\)</span> for the constant one sequence. Since every shift fixes <span class="math inline">\(\mathbf1\)</span>,</p>
+<p><span class="math display">\[
+g(\sigma)\mathbf1=g(1)\mathbf1.
+\]</span></p>
+<p>Thus <span class="math inline">\(g(1)\)</span> records the parity of the number of terms of <span class="math inline">\(g\)</span>. For example, the lag-<span class="math inline">\(i\)</span> rule is</p>
+<p><a id="eq:lag_equation"></a></p>
+<p><span class="math display">\[
+(1+\sigma^i)y=s_i\mathbf1.\tag{16}
+\]</span></p>
+<p>Negative shifts need no larger ring here. Multiplying a relation containing negative powers by a common power of <span class="math inline">\(x\)</span> translates it into an ordinary polynomial relation without changing its coefficient counts or its evaluation at one.</p>
+<p><strong>Lemma 7 (Polynomial recurrences).</strong> <a id="lem:polynomial_facts"></a> For positive integers <span class="math inline">\(a,b\)</span>,</p>
+<p><span class="math display">\[
+\gcd(1+x^a,1+x^b)=1+x^{\gcd(a,b)}.
+\]</span></p>
+<p>If <span class="math inline">\(g\in R\)</span> has <span class="math inline">\(g(0)=1\)</span> and degree <span class="math inline">\(D\)</span>, then, for each <span class="math inline">\(c\in\mathbb F_2\)</span>, the equation <span class="math inline">\(g(\sigma)y=c\mathbf1\)</span> has exactly <span class="math inline">\(2^D\)</span> solutions in <span class="math inline">\(V\)</span>, all periodic. For an arbitrary nonzero <span class="math inline">\(g\)</span>, the same statement holds after removing its monomial factor.</p>
+<p><em>Proof.</em> For <span class="math inline">\(a&gt;b\)</span>, the identity <span class="math inline">\(1+x^a=x^{a-b}(1+x^b)+(1+x^{a-b})\)</span> reduces the polynomial gcd exactly as subtraction reduces the integer gcd. Iteration proves the first claim.</p>
+<p>For the second, <span class="math inline">\(D=0\)</span> gives the unique solution <span class="math inline">\(y=c\mathbf1\)</span>. If <span class="math inline">\(D\ge1\)</span>, both endpoint coefficients are one, so the recurrence</p>
+<p><span class="math display">\[
+y_t+\sum_{j=1}^{D-1}g_jy_{t-j}+y_{t-D}=c
+\]</span></p>
+<p>extends any <span class="math inline">\(D\)</span> consecutive bits uniquely forwards and backwards. There are exactly <span class="math inline">\(2^D\)</span> such extensions. The shift permutes this finite solution set, so each solution is periodic. A monomial factor only shifts the equations and does not change their solutions.</p>
+<p>To include general parity rules, choose <span class="math inline">\(k\ge1\)</span> polynomials</p>
+<p><span class="math display">\[
+F_i(x)=1+\sum_{j=1}^pf_{ij}x^j,
+\qquad f_{ij}\in\mathbb F_2,\quad i=1,\ldots,k,
+\]</span></p>
+<p>targets <span class="math inline">\(s_i\in\mathbb F_2\)</span>, and weights <span class="math inline">\(w_i&gt;0\)</span> with <span class="math inline">\(\beta=1-\sum_iw_i&gt;0\)</span>. Selecting rule <span class="math inline">\(i\)</span> determines the output by</p>
+<p><span class="math display">\[
+y_t\oplus\bigoplus_{j=1}^p f_{ij}y_{t-j}=s_i.
+\]</span></p>
+<p>With probability <span class="math inline">\(\beta\)</span>, the source instead emits a fair bit. This <em>parity-rule mixture</em> has transition law</p>
+<p><a id="eq:parity_transition"></a></p>
+<p><span class="math display">\[
+P(X_t=y_t\mid U_t)
+=\frac{\beta}{2}+\sum_{i=1}^kw_i
+\mathbf{1}_{\{(F_i(\sigma)y)_t=s_i\}}.\tag{17}
+\]</span></p>
+<p>The context in this formula is supplied by the preceding <span class="math inline">\(p\)</span> bits of <span class="math inline">\(y\)</span>. Every transition is positive, so the proof of Proposition <a href="#prop:gbar_ergodicity">5</a> applies unchanged. gbAR corresponds to <span class="math inline">\(F_i=1+x^i\)</span> for the active lags.</p>
+<p>The polynomial gcd is the common part of the rules. Dividing it out leaves polynomials with gcd one, which the Euclidean algorithm can combine to give the constant polynomial one. This Bézout identity reduces compatibility to a test on the target bits.</p>
+<p><strong>Theorem 8 (Parity-rule noise floor).</strong> <a id="thm:parity_floor"></a> Let <span class="math inline">\(G\)</span> be the monic gcd of the rule polynomials and write</p>
+<p><span class="math display">\[
+G=\gcd(F_1,\ldots,F_k),
+\qquad U_i=F_i/G.
+\]</span></p>
+<p>The following conditions are equivalent:</p>
+<ol type="1">
+<li><p>the source attains the noise floor <span class="math inline">\(h_\infty=-\log(1-\beta/2)\)</span>;</p></li>
+<li><p>the system <span class="math inline">\(F_i(\sigma)y=s_i\mathbf1\)</span>, <span class="math inline">\(i=1,\ldots,k\)</span>, has a solution;</p></li>
+<li><p>there is <span class="math inline">\(q\in\mathbb F_2\)</span> such that</p>
+<p><a id="eq:parity_criterion"></a></p></li>
+</ol>
+<p><span class="math display">\[
+s_i=qU_i(1),\qquad i=1,\ldots,k.\tag{18}
+\]</span></p>
+<p>When these conditions hold, the number of satisfying bi-infinite words is <span class="math inline">\(2^{\deg G}\)</span>. Here <span class="math inline">\(G(0)=1\)</span>, since each <span class="math inline">\(F_i(0)=1\)</span>.</p>
+<p><em>Proof.</em> Every edge has probability at most <span class="math inline">\(1-\beta/2\)</span>, with equality exactly when all rules hold. By the cycle formula, the floor is attained exactly when a periodic word satisfies all rules. Any bi-infinite solution is already periodic by Lemma <a href="#lem:polynomial_facts">7</a> applied to one rule, so conditions 1 and 2 are equivalent.</p>
+<p>Since <span class="math inline">\(\gcd(U_1,\ldots,U_k)=1\)</span>, choose Bézout coefficients <span class="math inline">\(b_i\in R\)</span> with <span class="math inline">\(\sum_i b_iU_i=1\)</span>. If <span class="math inline">\(y\)</span> satisfies the system, put <span class="math inline">\(z=G(\sigma)y\)</span>. Then <span class="math inline">\(U_i(\sigma)z=s_i\mathbf1\)</span>, whence</p>
+<p><span class="math display">\[
+z=\sum_i b_i(\sigma)U_i(\sigma)z
+=\left(\sum_i b_i(1)s_i\right)\mathbf1=q\mathbf1,
+\]</span></p>
+<p>where <span class="math inline">\(q=\sum_i b_i(1)s_i\in\mathbb F_2\)</span>. It follows that <span class="math inline">\(s_i=qU_i(1)\)</span> for every <span class="math inline">\(i\)</span>.</p>
+<p>Conversely, if <span class="math inline">\(s_i=qU_i(1)\)</span>, any solution of <span class="math inline">\(G(\sigma)y=q\mathbf1\)</span> satisfies all the rules, because <span class="math inline">\(F_i(\sigma)y=U_i(\sigma)G(\sigma)y=qU_i(1)\mathbf1\)</span>. Such solutions exist by Lemma <a href="#lem:polynomial_facts">7</a>. At least one <span class="math inline">\(U_i(1)\)</span> equals one. Otherwise <span class="math inline">\(1+x\)</span> would divide every <span class="math inline">\(U_i\)</span>, contrary to their gcd being one. Thus <span class="math inline">\(q\)</span> is unique, and the full solution set is exactly that of <span class="math inline">\(G(\sigma)y=q\mathbf1\)</span>, which has <span class="math inline">\(2^{\deg G}\)</span> elements.</p>
+<p>Call a target vector <em>compatible</em> when these conditions hold, and <em>frustrated</em> otherwise. The test consists of a polynomial gcd and <span class="math inline">\(k\)</span> evaluations at <span class="math inline">\(x=1\)</span>. It is polynomial in the rule degrees and avoids the <span class="math inline">\(2^p\)</span>-state graph.</p>
+<p><a id="gbar-specialization."></a></p>
+<h5 id="gbar-specialization">gbAR specialization.</h5>
+<p>For gbAR, <span class="math inline">\(F_i=1+x^i\)</span>. Let <span class="math inline">\(d=\gcd(A)\)</span>. Then</p>
+<p><span class="math display">\[
+G=1+x^d,
+\qquad
+U_i(1)=\frac{i}{d}\pmod2.
+\]</span></p>
+<p>Indeed, over <span class="math inline">\(\mathbb F_2\)</span>,</p>
+<p><span class="math display">\[
+\frac{1+x^i}{1+x^d}
+=1+x^d+x^{2d}+\cdots+x^{(i/d-1)d},
+\]</span></p>
+<p>so evaluation at <span class="math inline">\(x=1\)</span> counts <span class="math inline">\(i/d\)</span> terms modulo two. Therefore the floor is attained exactly when there is <span class="math inline">\(q\in\{0,1\}\)</span> such that</p>
+<p><a id="eq:gbar_floor_criterion"></a></p>
+<p><span class="math display">\[
+s_i=q\frac{i}{d}\pmod2,
+\qquad i\in A.\tag{19}
+\]</span></p>
+<p>For <span class="math inline">\(q=0\)</span>, a satisfying word is constant on each residue class modulo <span class="math inline">\(d\)</span>, so <span class="math inline">\(d\)</span> is a period. For <span class="math inline">\(q=1\)</span>, it alternates along each residue class, so <span class="math inline">\(2d\)</span> is a period. These need not be the least periods of individual words. In either case there are exactly <span class="math inline">\(2^d\)</span> satisfying words.</p>
+<p><a id="a-three-term-parity-example."></a></p>
+<h5 id="a-three-term-parity-example">A three-term parity example.</h5>
+<p>Take <span class="math inline">\(p=2\)</span> and <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, <span class="math inline">\(F_1=1+x\)</span>, <span class="math inline">\(F_2=1+x+x^2\)</span>, equal structured weights <span class="math inline">\(w_1=w_2=\alpha/2\)</span>, and <span class="math inline">\(\beta=1-\alpha\)</span>. Here <span class="math inline">\(G=1\)</span>, <span class="math inline">\(F_1(1)=0\)</span>, and <span class="math inline">\(F_2(1)=1\)</span>, so the compatible targets are precisely those with <span class="math inline">\(s_1=0\)</span>. For the frustrated target <span class="math inline">\((s_1,s_2)=(1,0)\)</span>, put</p>
+<p><span class="math display">\[
+c_m=-\log\left(\frac{1-\alpha}{2}+\frac{m\alpha}{2}\right),
+\qquad m=0,1,2.
+\]</span></p>
+<p>The period-three word <span class="math inline">\(011\)</span> traces <span class="math inline">\(01\to11\to10\to01\)</span>. Rule <span class="math inline">\(2\)</span> always holds and rule <span class="math inline">\(1\)</span> fails once, giving satisfaction counts <span class="math inline">\((2,2,1)\)</span> and mean cost <span class="math inline">\((1+2c_2)/3\)</span>, since <span class="math inline">\(c_1=1\)</span>. We prove optimality using Corollary <a href="#cor:weighted_syzygy">12</a> below.</p>
+<p><a id="gauge-symmetry-and-defect-profiles"></a></p>
+<h3>Gauge symmetry and defect profiles</h3>
+<p><a id="subsec:gauge_profiles"></a></p>
+<p>A deterministic XOR mask can change the signs while preserving every block entropy. Let <span class="math inline">\(d=\gcd(A)\)</span> and choose <span class="math inline">\(\eta\in\{0,1\}\)</span>. Select one initial mask bit for each residue class modulo <span class="math inline">\(d\)</span> and extend it by</p>
+<p><span class="math display">\[
+r_{j+nd}=r_j\oplus \eta(n\bmod2),
+\qquad j=0,\ldots,d-1,\quad n\in\mathbb Z.
+\]</span></p>
+<p>For every active lag <span class="math inline">\(i=md\)</span>, this mask satisfies</p>
+<p><span class="math display">\[
+r_t\oplus r_{t-i}=\eta m\pmod2.
+\]</span></p>
+<p>It has period <span class="math inline">\(d\)</span> when <span class="math inline">\(\eta=0\)</span> and period <span class="math inline">\(2d\)</span> when <span class="math inline">\(\eta=1\)</span>.</p>
+<p><strong>Proposition 9 (Gauge invariance).</strong> <a id="prop:gauge_invariance"></a> For a stationary uniform-noise gbAR source, <span class="math inline">\(Y_t=X_t\oplus r_t\)</span> is stationary with the same coefficient magnitudes and signs</p>
+<p><a id="eq:gauge_action"></a></p>
+<p><span class="math display">\[
+s_i&#39;=s_i\oplus\left(\eta\frac{i}{d}\bmod2\right).\tag{20}
+\]</span></p>
+<p>For every <span class="math inline">\(n\ge1\)</span>, the two sources have equal block Rényi entropies <span class="math inline">\(H_\theta\)</span> for <span class="math inline">\(\theta&gt;0\)</span>, including Shannon entropy at <span class="math inline">\(\theta=1\)</span> and min-entropy at <span class="math inline">\(\theta=\infty\)</span>. Their worst-context and average-conditional block min-entropies also coincide. Consequently all corresponding entropy rates agree.</p>
+<p><em>Proof.</em> Substitution into each instruction gives <span class="math inline">\(Y_t\oplus Y_{t-i}=s_i\oplus r_t\oplus r_{t-i}=s_i&#39;\)</span>. Uniform noise is unchanged by XOR, so <span class="math inline">\(Y\)</span> has a time-independent gbAR context kernel <span class="math inline">\(P&#39;\)</span>. Let <span class="math inline">\(\nu_t\)</span> be its context law and let <span class="math inline">\(L\)</span> be a period of the mask. Stationarity of <span class="math inline">\(X\)</span> gives <span class="math inline">\(\nu_{t+L}=\nu_t\)</span>, while the Markov property gives <span class="math inline">\(\nu_{t+L}=\nu_t(P&#39;)^L\)</span>. By Proposition <a href="#prop:gbar_ergodicity">5</a>, <span class="math inline">\(P&#39;\)</span> is irreducible and aperiodic, so <span class="math inline">\((P&#39;)^L\)</span> has the same unique stationary law as <span class="math inline">\(P&#39;\)</span>. Every <span class="math inline">\(\nu_t\)</span> equals that law, proving stationarity of <span class="math inline">\(Y\)</span>.</p>
+<p>At each fixed time, XOR with the mask bijects output blocks and preserves their probabilities. It also bijects starting contexts and their conditional continuations, preserving both conditional probabilities and stationary context weights. Taking maxima, sums, or entropy therefore proves every stated finite-block equality.</p>
+<p>The two sign vectors <span class="math inline">\(s\)</span> and <span class="math inline">\(s\oplus(i/d\bmod2)\)</span> form a gauge orbit. Equation <a href="#eq:gbar_floor_criterion">(19)</a> says that the floor is reached exactly when this orbit contains the all-positive sign pattern.</p>
+<p><a id="two-active-lags."></a></p>
+<h5 id="two-active-lags">Two active lags.</h5>
+<p>Let <span class="math inline">\(A=\{m_1d,m_2d\}\)</span>, where <span class="math inline">\(\gcd(m_1,m_2)=1\)</span>, and write <span class="math inline">\(s_1,s_2\)</span> for the sign bits attached to lags <span class="math inline">\(m_1d,m_2d\)</span>, respectively. If <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span> are both odd, the floor is attained exactly when the two signs agree. If one compressed lag is even and the other is odd, the floor is attained exactly when the even compressed lag is positive. Equivalently, the floor criterion requires <span class="math inline">\((s_1,s_2)=q(m_1,m_2)\pmod2\)</span> for some <span class="math inline">\(q\in\mathbb F_2\)</span>. The vector <span class="math inline">\((m_1,m_2)\pmod2\)</span> is nonzero, so this is exactly the vanishing of the determinant of the two vectors over <span class="math inline">\(\mathbb F_2\)</span>. Thus the pair is frustrated exactly when</p>
+<p><a id="eq:two_lag_parity"></a></p>
+<p><span class="math display">\[
+m_1s_2+m_2s_1\equiv1\pmod2.\tag{21}
+\]</span></p>
+<p>The two frustrated sign patterns form one gauge orbit and have identical block entropies. Section <a href="#subsec:two_lag">4.2</a> supplies their common asymptotic rate for arbitrary weights.</p>
+<p>For a periodic word <span class="math inline">\(y\)</span>, let</p>
+<p><span class="math display">\[
+B_t(y)=\{i\in A:y_t\oplus y_{t-i}=s_i\}
+\]</span></p>
+<p>be the set of satisfied lag rules at time <span class="math inline">\(t\)</span>, and let <span class="math inline">\(\rho_B\)</span> be the fraction of times for which <span class="math inline">\(B_t=B\)</span>. The convex hull of all cycle profiles <span class="math inline">\(\rho=(\rho_B)_{B\subseteq A}\)</span> is denoted by <span class="math inline">\(\mathcal P_{A,s}\)</span>. Since it is enough to consider the finitely many simple cycles of the context graph, this convex hull is a finite polytope.</p>
+<p><strong>Proposition 10 (Profile formula).</strong> <a id="prop:profile_formula"></a> Set</p>
+<p><span class="math display">\[
+c_B=-\log\left(\frac{\beta}{2}
++\sum_{i\in B}|\alpha_i|\right).
+\]</span></p>
+<p>Then</p>
+<p><a id="eq:profile_formula"></a></p>
+<p><span class="math display">\[
+h_\infty
+=\min_{\rho\in\mathcal P_{A,s}}
+\sum_{B\subseteq A}\rho_Bc_B.\tag{22}
+\]</span></p>
+<p><em>Proof.</em> A cycle with profile <span class="math inline">\(\rho\)</span> has mean cost <span class="math inline">\(\sum_B\rho_Bc_B\)</span>. Minimizing a linear function over the cycle profiles or their convex hull gives the same value. Apply Theorem <a href="#thm:cycle_and_dual">1</a>.</p>
+<p>For a balanced family with <span class="math inline">\(k=|A|\)</span>, total structured weight <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, and <span class="math inline">\(|\alpha_i|=\alpha/k\)</span>, it is enough to record the number <span class="math inline">\(m\)</span> of satisfied rules. Write</p>
+<p><span class="math display">\[
+c_m(\alpha)=-\log\left(\frac{1-\alpha}{2}
++\frac{m\alpha}{k}\right)
+\]</span></p>
+<p>and let <span class="math inline">\(\rho_m\)</span> be the fraction of edges with <span class="math inline">\(m\)</span> satisfied rules. Let <span class="math inline">\(\mathcal Q_{A,s}\)</span> be the set of count profiles obtained by projecting the cycle profiles in <span class="math inline">\(\mathcal P_{A,s}\)</span> onto the number of satisfied rules. The minimum average defect count is</p>
+<p><span class="math display">\[
+D^*(A,s)=\min_{\rho\in\mathcal Q_{A,s}}
+\sum_{m=0}^k\rho_m(k-m).
+\]</span></p>
+<p>Let <span class="math inline">\(\underline c_\alpha(x)\)</span> be the piecewise-linear interpolation of the discrete convex curve <span class="math inline">\(m\mapsto c_m(\alpha)\)</span> on <span class="math inline">\([0,k]\)</span>. Every feasible count profile obeys</p>
+<p><a id="eq:defect_convex_bound"></a></p>
+<p><span class="math display">\[
+\sum_{m=0}^k\rho_m c_m(\alpha)
+\ge \underline c_\alpha\!\left(k-D^*(A,s)\right).\tag{23}
+\]</span></p>
+<p>Indeed, Jensen's inequality gives a lower bound at the mean number of satisfied rules, and that mean is at most <span class="math inline">\(k-D^*\)</span>. Since <span class="math inline">\(\underline c_\alpha\)</span> is decreasing, replacing the actual mean by <span class="math inline">\(k-D^*\)</span> can only weaken the bound. Since <span class="math inline">\(\alpha&gt;0\)</span>, equality holds exactly when the mean is <span class="math inline">\(k-D^*\)</span> and the profile is supported on its floor and ceiling. If <span class="math inline">\(k-D^*\)</span> is an integer, all mass must lie at that integer. Equality in <a href="#eq:defect_convex_bound">(23)</a> is attained in the purely negative families through order four. At larger orders, further constraints on the profile can make the bound strict.</p>
+<p>For the weak-coupling expansion,</p>
+<p><span class="math display">\[
+c_m(\alpha)
+=1-\left(\frac{2m}{k}-1\right)\frac{\alpha}{\ln2}
++O(\alpha^2),
+\]</span></p>
+<p>uniformly over the finitely many values of <span class="math inline">\(m\)</span>. Inserting this expansion in <a href="#eq:profile_formula">(22)</a> shows that the first-order minimizer maximizes the mean number of satisfied rules, equivalently minimizes the mean number of defects. Hence</p>
+<p><a id="eq:weak_coupling"></a></p>
+<p><span class="math display">\[
+h_\infty(\alpha)
+=1-\left(1-\frac{2D^*(A,s)}{k}\right)
+\frac{\alpha}{\ln2}+O(\alpha^2).\tag{24}
+\]</span></p>
+<p>Thus <span class="math inline">\(D^*\)</span> determines the first-order effect of frustration.</p>
+<p>For the balanced purely negative family, <span class="math inline">\(A=\{1,\ldots,p\}\)</span> and all sign bits are one. Write <span class="math inline">\(D_p^*=D^*(\{1,\ldots,p\},(1,\ldots,1))\)</span>. If a word <span class="math inline">\(y\)</span> of period <span class="math inline">\(L\)</span> is used as a two-colouring of <span class="math inline">\(\mathbb Z/L\mathbb Z\)</span>, let <span class="math inline">\(\Gamma_{L,p}\)</span> have one indexed edge <span class="math inline">\(\{t-i,t\}\)</span> for every <span class="math inline">\(t\)</span> and <span class="math inline">\(i=1,\ldots,p\)</span>, retaining loops and parallel edges. A cut counts a non-loop edge when its endpoints have different colours; loops never cross a cut, and parallel edges are counted with their multiplicity. If <span class="math inline">\(m_t\)</span> is the number of disagreements with the previous <span class="math inline">\(p\)</span> bits, then the indexed edges ending at <span class="math inline">\(t\)</span> contribute exactly <span class="math inline">\(m_t\)</span> crossings. Therefore</p>
+<p><span class="math display">\[
+\operatorname{cut}_{\Gamma_{L,p}}(y)=\sum_tm_t,
+\]</span></p>
+<p>so</p>
+<p><a id="eq:maxcut_defect"></a></p>
+<p><span class="math display">\[
+D_p^*=p-\max_{1\le L\le2^p}\frac1L
+\operatorname{MaxCut}(\Gamma_{L,p}).\tag{25}
+\]</span></p>
+<p>Here <span class="math inline">\(\operatorname{MaxCut}\)</span> is the largest cut size. Allowing all <span class="math inline">\(L\ge1\)</span> gives the same supremum, since a minimum mean cycle has length at most <span class="math inline">\(2^p\)</span>. Thus the weak-coupling problem is Max-Cut on a circulant multigraph. At finite coupling the distribution of the individual counts <span class="math inline">\(m_t\)</span> matters.</p>
+<p><a id="syzygy-covering-bounds"></a></p>
+<h3>Syzygy covering bounds</h3>
+<p><a id="subsec:syzygy_bounds"></a></p>
+<p>A <em>syzygy</em> is a polynomial identity <span class="math inline">\(\sum_i g_iF_i=0\)</span>, with <span class="math inline">\(g_i\in R\)</span>. Each monomial of <span class="math inline">\(g_i\)</span> translates rule <span class="math inline">\(i\)</span> to another time. XORing these translated rules cancels the data bits. If the target bits sum to one, at least one translated rule must fail. Counting such failures yields a density bound; weighting them yields an entropy bound.</p>
+<p>For a periodic word <span class="math inline">\(y\)</span> of period <span class="math inline">\(L\)</span>, define the defect density</p>
+<p><span class="math display">\[
+d_i(y)=\frac1L\bigl|\{0\le t&lt;L:(F_i(\sigma)y)_t\ne s_i\}\bigr|.
+\]</span></p>
+<p>Write <span class="math inline">\(\|g\|\)</span> for the number of nonzero coefficients of <span class="math inline">\(g\in R\)</span>.</p>
+<p><strong>Theorem 11 (Syzygy covering bound).</strong> <a id="thm:syzygy_bound"></a> Suppose <span class="math inline">\(g_1,\ldots,g_k\in R\)</span> satisfy</p>
+<p><span class="math display">\[
+\sum_i g_iF_i=0,\qquad \sum_i g_i(1)s_i=1.
+\]</span></p>
+<p>Then every periodic word obeys</p>
+<p><a id="eq:syzygy_bound"></a></p>
+<p><span class="math display">\[
+\sum_i\|g_i\|d_i(y)\ge1.\tag{26}
+\]</span></p>
+<p><em>Proof.</em> The defect sequence <span class="math inline">\(e_i=F_i(\sigma)y\oplus s_i\mathbf1\)</span> is one exactly where rule <span class="math inline">\(i\)</span> fails. The two identities give</p>
+<p><span class="math display">\[
+\sum_i g_i(\sigma)e_i=\mathbf1.
+\]</span></p>
+<p>At each time, at least one term in this XOR must be one. Summing over a period of length <span class="math inline">\(L\)</span>, each defect of rule <span class="math inline">\(i\)</span> is counted <span class="math inline">\(\|g_i\|\)</span> times. Hence <span class="math inline">\(\sum_i\|g_i\|Ld_i(y)\ge L\)</span>.</p>
+<p>Every incompatible system has such a witness involving just two rules. Indeed, write <span class="math inline">\(F_i=GU_i\)</span> as in Theorem <a href="#thm:parity_floor">8</a>, and put <span class="math inline">\(v_i=U_i(1)\)</span>. Choose <span class="math inline">\(j\)</span> with <span class="math inline">\(v_j=1\)</span>. Incompatibility means <span class="math inline">\(s_i+v_i s_j=1\)</span> for some <span class="math inline">\(i\ne j\)</span>. Taking <span class="math inline">\(g_i=U_j\)</span>, <span class="math inline">\(g_j=U_i\)</span>, and all other coefficients zero gives both identities of Theorem <a href="#thm:syzygy_bound">11</a>. Thus pairwise witnesses detect every incompatibility, although their density bounds need not determine the optimal cost.</p>
+<p><strong>Corollary 12 (Weighted entropy gap and finite blocks).</strong> <a id="cor:weighted_syzygy"></a> For the parity-rule mixture, let <span class="math inline">\(P_H=1-\beta/2\)</span> be the universal upper bound on edge probabilities, put <span class="math inline">\(c_H=-\log P_H\)</span>, and define the single-defect penalties</p>
+<p><span class="math display">\[
+\ell_i=-\log\left(1-\frac{w_i}{P_H}\right)&gt;0.
+\]</span></p>
+<p>For a syzygy satisfying Theorem <a href="#thm:syzygy_bound">11</a>, put <span class="math inline">\(n_i=\|g_i\|\)</span> and <span class="math inline">\(\delta=\min_{i:n_i&gt;0}\ell_i/n_i\)</span>. After dividing the <span class="math inline">\(g_i\)</span> by their largest common monomial, let <span class="math inline">\(W=\max_{i:g_i\ne0}\deg g_i\)</span> be the width of their combined support. Then</p>
+<p><a id="eq:weighted_syzygy"></a></p>
+<p><span class="math display">\[
+h_\infty\ge c_H+\delta,
+\qquad H_*(n)\ge nc_H+(n-W)_+\delta\quad(n\ge1),\tag{27}
+\]</span></p>
+<p>where <span class="math inline">\((z)_+=\max\{z,0\}\)</span>.</p>
+<p><em>Proof.</em> If <span class="math inline">\(D\)</span> is the set of defective rules at a time, its transition cost is <span class="math inline">\(c(D)=-\log(P_H-\sum_{i\in D}w_i)\)</span>. Put <span class="math inline">\(t_i=w_i/P_H\)</span>. Since <span class="math inline">\(t_i\ge0\)</span> and <span class="math inline">\(\sum_i t_i&lt;1\)</span>, induction gives <span class="math inline">\(1-\sum_{i\in D}t_i\le\prod_{i\in D}(1-t_i)\)</span>, hence</p>
+<p><span class="math display">\[
+c(D)-c_H\ge\sum_{i\in D}\ell_i.
+\]</span></p>
+<p>Writing <span class="math inline">\(\overline c\)</span> for the mean cycle cost, averaging over a period and using the covering bound yields <span class="math inline">\(\overline c-c_H\ge\sum_i\ell_i d_i\ge\delta\sum_i n_i d_i\ge\delta\)</span>. Minimizing over cycles proves the rate bound.</p>
+<p>For a block at times <span class="math inline">\(1,\ldots,n\)</span>, let <span class="math inline">\(N_i\)</span> count its rule-<span class="math inline">\(i\)</span> defects. Apply the syzygy identity only at times <span class="math inline">\(W+1,\ldots,n\)</span>, so all defect positions lie inside the block. There are <span class="math inline">\((n-W)_+\)</span> such windows, and each defect is counted at most <span class="math inline">\(n_i\)</span> times. Thus <span class="math inline">\(\sum_i n_iN_i\ge(n-W)_+\)</span>, and the path cost is at least <span class="math inline">\(nc_H+\sum_i\ell_iN_i\ge nc_H+(n-W)_+\delta\)</span>. This holds for every starting context and every continuation; <a href="#eq:block_sandwich">(3)</a> gives the result for all three entropies.</p>
+<p>Several syzygies give a stronger linear program. If <span class="math inline">\(N_{ji}=\|g_i^{(j)}\|\)</span> records the coefficient counts of witness <span class="math inline">\(j\)</span>, then</p>
+<p><a id="eq:syzygy_lp"></a></p>
+<p><span class="math display">\[
+h_\infty\ge c_H+
+\min_{\substack{d\in[0,1]^k\\Nd\ge\boldsymbol1}}
+\sum_i\ell_i d_i,\tag{28}
+\]</span></p>
+<p>where <span class="math inline">\(d\)</span> is a trial defect-density vector and <span class="math inline">\(\boldsymbol1\)</span> has one entry per witness. Each actual cycle supplies a feasible vector. For two lags, a single witness already gives the exact entropy gap.</p>
+<p><strong>Corollary 13 (Two-lag frustration inequality).</strong> <a id="cor:frustration_inequality"></a> Let the active lags be coprime <span class="math inline">\(a&lt;b\)</span> with sign bits <span class="math inline">\(s_a,s_b\)</span> satisfying the frustration condition <span class="math inline">\(as_b+bs_a\equiv1\pmod2\)</span> of <a href="#eq:two_lag_parity">(21)</a>. Then every periodic word satisfies</p>
+<p><a id="eq:frustration_inequality"></a></p>
+<p><span class="math display">\[
+b\,d_a(y)+a\,d_b(y)\ge1 .\tag{29}
+\]</span></p>
+<p><em>Proof.</em> The pair</p>
+<p><span class="math display">\[
+g_a=\frac{1+x^b}{1+x}=1+x+\cdots+x^{b-1},
+\qquad
+g_b=\frac{1+x^a}{1+x}=1+x+\cdots+x^{a-1}
+\]</span></p>
+<p>satisfies <span class="math inline">\(g_aF_a=g_bF_b\)</span> for <span class="math inline">\(F_a=1+x^a\)</span> and <span class="math inline">\(F_b=1+x^b\)</span>, so it is a syzygy in characteristic two. Its coefficient counts are <span class="math inline">\(b\)</span> and <span class="math inline">\(a\)</span>, and its target parity is <span class="math inline">\(bs_a+as_b=1\)</span>. Apply Theorem <a href="#thm:syzygy_bound">11</a>.</p>
+<p>The three-term parity example in Section <a href="#subsec:algebraic_floor">3.2</a> is also sharp. The witness <span class="math inline">\(g_1=1+x+x^2\)</span>, <span class="math inline">\(g_2=1+x\)</span> gives <span class="math inline">\(3d_1+2d_2\ge1\)</span>. Here <span class="math inline">\(c_H=c_2\)</span> and <span class="math inline">\(\ell_1=\ell_2=1-c_2\)</span>, so Corollary <a href="#cor:weighted_syzygy">12</a> gives</p>
+<p><span class="math display">\[
+h_\infty\ge c_2+\frac{1-c_2}{3}=\frac{1+2c_2}{3}.
+\]</span></p>
+<p>The word <span class="math inline">\(011\)</span> attains equality. Moreover, equality in the bound forces <span class="math inline">\(d_2=0\)</span> and <span class="math inline">\(d_1=1/3\)</span>, identifying which rule carries the defects.</p>
+<p>For three lag rules the relaxation can be strict. For the balanced purely negative gbAR(3) source, the frustrated pairs <span class="math inline">\((1,2)\)</span> and <span class="math inline">\((2,3)\)</span> yield</p>
+<p><span class="math display">\[
+2d_1+d_2\ge1,
+\qquad
+3d_2+2d_3\ge1.
+\]</span></p>
+<p>These two inequalities allow the fractional choice <span class="math inline">\(d_1=d_2=1/3\)</span> and <span class="math inline">\(d_3=0\)</span>, whose total defect density is <span class="math inline">\(2/3\)</span>. No periodic word achieves that relaxation. Indeed, the order-three formula in Proposition <a href="#prop:negative_three_four">16</a>, together with the weak-coupling expansion <a href="#eq:weak_coupling">(24)</a>, shows that the true minimum is one defect per time step. Pairwise syzygies therefore omit constraints created by the simultaneous interaction of three rules.</p>
+<p><a id="closed-gbar-families"></a></p>
+<h2>Closed gbAR Families</h2>
+<p><a id="sec:families"></a></p>
+<p>This section collects the families for which the cycle problem can be solved in closed form. The first group follows directly from the floor criterion. The later formulas require explicit cycles and dual certificates.</p>
+<p><a id="floor-attaining-families"></a></p>
+<h3>Floor-attaining families</h3>
+<p><a id="positive-coefficients."></a></p>
+<h5 id="positive-coefficients">Positive coefficients.</h5>
+<p>For a positive gbAR(<span class="math inline">\(p\)</span>) source with a general Bernoulli noise bit of parameter <span class="math inline">\(0\le\epsilon\le1\)</span>, write <span class="math inline">\(|\boldsymbol\alpha|=\sum_{i=1}^p|\alpha_i|\)</span> for the total structured weight. Then</p>
+<p><a id="eq:positive_general"></a></p>
+<p><span class="math display">\[
+h_\infty
+=-\log\left(
+|\boldsymbol\alpha|
++\beta\max\{\epsilon,1-\epsilon\}
+\right).\tag{30}
+\]</span></p>
+<p>Choose the unanimous context whose bit is the more likely noise output. The matching self-loop attains the largest transition probability, and no edge can have a larger one. At <span class="math inline">\(\epsilon=0\)</span> or <span class="math inline">\(1\)</span>, this context is absorbing and is reached from any context by <span class="math inline">\(p\)</span> consecutive noise outputs, so the stationary source is constant and the rate is zero. For uniform noise, <a href="#eq:positive_general">(30)</a> becomes the floor <span class="math inline">\(-\log(1-\beta/2)\)</span>. This family need not be SIMTP when <span class="math inline">\(p\ge2\)</span> because local guessability generally varies across contexts. The rate is simple because a unanimous self-loop sustains the globally largest transition probability. Thus only the total structured weight <span class="math inline">\(|\boldsymbol\alpha|\)</span> enters the asymptotic answer, not its distribution among positive lags.</p>
+<p><a id="one-active-lag."></a></p>
+<h5 id="one-active-lag">One active lag.</h5>
+<p>A single active lag <span class="math inline">\(i\)</span> is always compatible. The constant word works for a positive coefficient. For a negative coefficient, choose one initial bit on each residue class modulo <span class="math inline">\(i\)</span> and alternate along that class, so that <span class="math inline">\(y_t\oplus y_{t-i}=1\)</span> for every <span class="math inline">\(t\)</span>. This construction has period dividing <span class="math inline">\(2i\)</span>. Therefore</p>
+<p><a id="eq:single_lag"></a></p>
+<p><span class="math display">\[
+h_\infty=-\log(1-\beta/2).\tag{31}
+\]</span></p>
+<p>The same conclusion holds for any dilation of the lag because of active-lag compression.</p>
+<p><a id="balanced-alternating-signs."></a></p>
+<h5 id="balanced-alternating-signs">Balanced alternating signs.</h5>
+<p>For <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, let</p>
+<p><a id="eq:alternating_sign_definition"></a></p>
+<p><span class="math display">\[
+\alpha_i=(-1)^{p-i}\frac{\alpha}{p},
+\qquad \beta=1-\alpha.\tag{32}
+\]</span></p>
+<p>For even <span class="math inline">\(p\)</span>, the sign bits satisfy <span class="math inline">\(s_i=i\pmod2\)</span>, so <a href="#eq:gbar_floor_criterion">(19)</a> holds with <span class="math inline">\(d=q=1\)</span>. The alternating period-two word attains</p>
+<p><a id="eq:even_alternating"></a></p>
+<p><span class="math display">\[
+h_\infty=-\log\left(\frac{1+\alpha}{2}\right).\tag{33}
+\]</span></p>
+<p>For odd <span class="math inline">\(p\)</span>, the gauge action <a href="#eq:gauge_action">(20)</a> maps the family to the balanced purely negative gbAR(<span class="math inline">\(p\)</span>) source. Its rate is therefore the same as the negative family studied below.</p>
+<p><a id="the-complete-two-lag-problem"></a></p>
+<h3>The complete two-lag problem</h3>
+<p><a id="subsec:two_lag"></a></p>
+<p>Sources with two active lags can be solved completely. By active-lag compression it suffices to treat coprime active lags <span class="math inline">\(a&lt;b\)</span> with weights <span class="math inline">\(\gamma_a,\gamma_b&gt;0\)</span>, noise weight <span class="math inline">\(\beta=1-\gamma_a-\gamma_b&gt;0\)</span>, and sign bits <span class="math inline">\(s_a,s_b\)</span>. An edge of the context graph pays one of four costs, according to its set of satisfied rules:</p>
+<p><span class="math display">\[
+w_\emptyset=-\log\frac{\beta}{2},\quad
+w_a=-\log\left(\gamma_a+\frac{\beta}{2}\right),\quad
+w_b=-\log\left(\gamma_b+\frac{\beta}{2}\right),\quad
+w_{ab}=-\log\left(1-\frac{\beta}{2}\right).
+\]</span></p>
+<p>The subscript records the rules that are satisfied. For example, <span class="math inline">\(w_a\)</span> is paid when rule <span class="math inline">\(a\)</span> holds and rule <span class="math inline">\(b\)</span> fails. The cost <span class="math inline">\(w_{ab}\)</span> is the noise floor, while <span class="math inline">\(w_\emptyset\)</span> is the most expensive case. These <span class="math inline">\(w\)</span> symbols denote costs; the selection weights in this subsection are <span class="math inline">\(\gamma_a\)</span> and <span class="math inline">\(\gamma_b\)</span>.</p>
+<p><strong>Lemma 14 (One defect per window).</strong> <a id="lem:one_defect"></a> Let the pair <span class="math inline">\((a,b)\)</span> be frustrated. There is a periodic word that satisfies rule <span class="math inline">\(b\)</span> at every time and violates rule <span class="math inline">\(a\)</span> at exactly one time in every <span class="math inline">\(b\)</span> consecutive times, with period dividing <span class="math inline">\(2b\)</span>. The same holds with the roles of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> exchanged.</p>
+<p><em>Proof.</em> Let <span class="math inline">\(Y=\{y:(1+\sigma^b)y=s_b\mathbf1\}\)</span>. By Lemma <a href="#lem:polynomial_facts">7</a>, <span class="math inline">\(Y\)</span> has <span class="math inline">\(2^b\)</span> elements. For <span class="math inline">\(y\in Y\)</span>, its rule-<span class="math inline">\(a\)</span> defect word is <span class="math inline">\(u=(1+\sigma^a)y\oplus s_a\mathbf1\)</span>. Since rule <span class="math inline">\(b\)</span> has no defects, the syzygy in Corollary <a href="#cor:frustration_inequality">13</a> gives</p>
+<p><span class="math display">\[
+u_t+u_{t-1}+\cdots+u_{t-b+1}=1\pmod2.
+\]</span></p>
+<p>XORing consecutive window equations gives <span class="math inline">\(u_t=u_{t-b}\)</span>. Thus every possible defect word is <span class="math inline">\(b\)</span>-periodic with odd parity in one period.</p>
+<p>To show that a single defect is possible, count the images of the map <span class="math inline">\(y\mapsto u\)</span>. Two words <span class="math inline">\(y,y&#39;\in Y\)</span> have the same image exactly when <span class="math inline">\(z=y\oplus y&#39;\)</span> satisfies <span class="math inline">\((1+\sigma^a)z=(1+\sigma^b)z=0\)</span>. The gcd of these polynomials is <span class="math inline">\(1+x\)</span>, so their common kernel consists of the two constant words. Each image therefore has two preimages, giving <span class="math inline">\(2^{b-1}\)</span> distinct defect words. There are exactly <span class="math inline">\(2^{b-1}\)</span> odd-parity <span class="math inline">\(b\)</span>-bit words, so every one occurs, including a word with a single one.</p>
+<p>The corresponding output obeys <span class="math inline">\(y_{t+b}=y_t\oplus s_b\)</span>, hence has period dividing <span class="math inline">\(2b\)</span>. Exchanging <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> proves the other construction.</p>
+<p><strong>Theorem 15 (Two-lag master formula).</strong> <a id="thm:two_lag_master"></a> If the sign pattern is compatible, <span class="math inline">\(h_\infty=w_{ab}\)</span>. If it is frustrated, then</p>
+<p><a id="eq:two_lag_master"></a></p>
+<p><span class="math display">\[
+h_\infty
+=\min\left\{
+\frac{(a-1)w_{ab}+w_a}{a},\;
+\frac{(b-1)w_{ab}+w_b}{b}
+\right\}.\tag{34}
+\]</span></p>
+<p><em>Proof.</em> The compatible case is Theorem <a href="#thm:parity_floor">8</a>. In the frustrated case, the single-defect penalties in Corollary <a href="#cor:weighted_syzygy">12</a> are</p>
+<p><span class="math display">\[
+\ell_a=w_b-w_{ab},\qquad \ell_b=w_a-w_{ab}.
+\]</span></p>
+<p>The syzygy has coefficient counts <span class="math inline">\(n_a=b\)</span> and <span class="math inline">\(n_b=a\)</span>, so</p>
+<p><span class="math display">\[
+h_\infty\ge w_{ab}+
+\min\left\{\frac{w_b-w_{ab}}b,\frac{w_a-w_{ab}}a\right\}.
+\]</span></p>
+<p>Lemma <a href="#lem:one_defect">14</a> attains both branch values. Preserving rule <span class="math inline">\(b\)</span> gives one edge of cost <span class="math inline">\(w_b\)</span> per <span class="math inline">\(b\)</span> steps, with cost <span class="math inline">\(w_{ab}\)</span> on all others; preserving rule <span class="math inline">\(a\)</span> gives the other branch. These periodic words trace admissible closed walks, proving equality.</p>
+<p>There is always an optimum that preserves one rule and violates the other at the smallest density allowed by the syzygy. The excess above the floor is</p>
+<p><span class="math display">\[
+h_\infty-w_{ab}
+=\min\left\{\frac{w_a-w_{ab}}a,\frac{w_b-w_{ab}}b\right\}.
+\]</span></p>
+<p>Each denominator is the compressed lag of the rule kept satisfied. For fixed weights, the gap tends to zero as the larger compressed lag tends to infinity. Dilating both lags leaves the rate unchanged. The same witness has width <span class="math inline">\(b-1\)</span>, so it also gives</p>
+<p><span class="math display">\[
+H_*(n)\ge nw_{ab}+(n-b+1)_+(h_\infty-w_{ab})
+\]</span></p>
+<p>for every block length in the compressed source.</p>
+<p><a id="order-two."></a></p>
+<h5 id="order-two">Order two.</h5>
+<p>Let <span class="math inline">\(\alpha_1=-\gamma_1\)</span> and <span class="math inline">\(\alpha_2=-\gamma_2\)</span> with <span class="math inline">\(\gamma_1,\gamma_2&gt;0\)</span>, <span class="math inline">\(\gamma_1+\gamma_2&lt;1\)</span>, and <span class="math inline">\(\beta=1-\gamma_1-\gamma_2\)</span>. Writing <span class="math inline">\(w_1=-\log(\gamma_1+\beta/2)\)</span>, <span class="math inline">\(w_2=-\log(\gamma_2+\beta/2)\)</span>, and <span class="math inline">\(w_{12}=-\log(1-\beta/2)\)</span>, the master formula at <span class="math inline">\((a,b)=(1,2)\)</span> gives</p>
+<p><a id="eq:negative_order_two"></a></p>
+<p><span class="math display">\[
+h_\infty
+=\min\left\{w_1,\frac{w_{12}+w_2}{2}\right\}.\tag{35}
+\]</span></p>
+<p>The first branch is the alternating cycle <span class="math inline">\(01\leftrightarrow10\)</span>; the second is the period-four cycle <span class="math inline">\(00\to01\to11\to10\to00\)</span>, which satisfies lag <span class="math inline">\(2\)</span> always and lag <span class="math inline">\(1\)</span> half of the time. A two-level potential, <span class="math inline">\(\varphi(00)=\varphi(11)=0\)</span> and <span class="math inline">\(\varphi(01)=\varphi(10)=\kappa\)</span>, with <span class="math inline">\(\kappa=w_1-w_2\)</span> on the first branch and <span class="math inline">\(\kappa=(w_{12}-w_2)/2\)</span> on the second, certifies the same value edge by edge through <a href="#eq:dual_certificate">(6)</a>.</p>
+<p>The two branches meet when</p>
+<p><span class="math display">\[
+(\gamma_1+\beta/2)^2
+=(\gamma_1+\gamma_2+\beta/2)(\gamma_2+\beta/2),
+\]</span></p>
+<p>which reduces to</p>
+<p><a id="eq:order_two_boundary"></a></p>
+<p><span class="math display">\[
+\gamma_2=\frac{\gamma_1(\gamma_1+1)}{\gamma_1+2}.\tag{36}
+\]</span></p>
+<p>Below this curve the alternating cycle is optimal; above it the period-four cycle is optimal. Both are critical on the curve. Figure <a href="#fig:order_two_phase_diagram">2</a> shows the two regions inside the admissible triangle <span class="math inline">\(\gamma_1&gt;0\)</span>, <span class="math inline">\(\gamma_2&gt;0\)</span>, and <span class="math inline">\(\gamma_1+\gamma_2&lt;1\)</span>. For a general frustrated pair, the boundary is likewise the equality of the two branches in <a href="#eq:two_lag_master">(34)</a>, separating the two preserved-rule choices.</p>
+<p><a id="fig:order_two_phase_diagram"></a></p>
+<p><img src="figures/order_two_phase_diagram.png" alt="image" /></p>
+<p><strong>Figure 2.</strong> Phase diagram of the purely negative gbAR(2) family in the coefficient magnitudes <span class="math inline">\((\gamma_1,\gamma_2)\)</span>. The boundary <a href="#eq:order_two_boundary">(36)</a> separates the period-two alternating optimum from the period-four optimum. The diagonal edge of the admissible region is <span class="math inline">\(\gamma_1+\gamma_2=1\)</span>, corresponding to vanishing noise weight.</p>
+<p>When <span class="math inline">\(\gamma_1=\gamma_2=\alpha/2\)</span> with <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, <span class="math inline">\(w_1=w_2=1\)</span> and <span class="math inline">\(w_{12}=-\log((1+\alpha)/2)\)</span>, so</p>
+<p><a id="eq:balanced_order_two"></a></p>
+<p><span class="math display">\[
+h_\infty
+=\frac12\left[1-
+\log\left(\frac{1+\alpha}{2}\right)\right].\tag{37}
+\]</span></p>
+<p>The same formula covers the frustrated mixed-sign case. If <span class="math inline">\(\alpha_1&gt;0\)</span> and <span class="math inline">\(\alpha_2&lt;0\)</span>, the gauge transformation maps the signs to the purely negative pair while preserving the magnitudes. Thus</p>
+<p><a id="eq:mixed_order_two"></a></p>
+<p><span class="math display">\[
+h_\infty
+=\min\left\{
+-\log(\alpha_1+\beta/2),
+\frac{-\log(1-\beta/2)
+-\log(|\alpha_2|+\beta/2)}{2}
+\right\}.\tag{38}
+\]</span></p>
+<p>Among the four sign pairs <span class="math inline">\((\operatorname{sgn}\alpha_1,\operatorname{sgn}\alpha_2)\)</span>, the pairs <span class="math inline">\((+,+)\)</span> and <span class="math inline">\((-,+)\)</span> attain the floor by <a href="#eq:two_lag_parity">(21)</a>, while <span class="math inline">\((+,-)\)</span> and <span class="math inline">\((-,-)\)</span> form the single frustrated gauge class.</p>
+<p><a id="balanced-weights-and-endpoint-lags."></a></p>
+<h5 id="balanced-weights-and-endpoint-lags">Balanced weights and endpoint lags.</h5>
+<p>For a frustrated pair with <span class="math inline">\(\gamma_a=\gamma_b\)</span>, we have <span class="math inline">\(w_a=w_b&gt;w_{ab}\)</span>. The optimal branch preserves the larger lag <span class="math inline">\(b\)</span> and violates rule <span class="math inline">\(a\)</span> once per <span class="math inline">\(b\)</span> steps:</p>
+<p><a id="eq:balanced_two_lag"></a></p>
+<p><span class="math display">\[
+h_\infty=w_{ab}+\frac{w_a-w_{ab}}{b}.\tag{39}
+\]</span></p>
+<p>In particular, take <span class="math inline">\(p\ge2\)</span> and place equal negative coefficients <span class="math inline">\(-\gamma\)</span>, with <span class="math inline">\(0&lt;\gamma&lt;1/2\)</span>, at lags <span class="math inline">\(1\)</span> and <span class="math inline">\(p\)</span>, so that <span class="math inline">\(\beta=1-2\gamma\)</span> and <span class="math inline">\(w_a=-\log(\gamma+\beta/2)=1\)</span>. Writing <span class="math inline">\(w_H=w_{ab}=-\log(1-\beta/2)\)</span>, the pair is frustrated exactly for even <span class="math inline">\(p\)</span>, and</p>
+<p><a id="eq:dual_endpoint"></a></p>
+<p><span class="math display">\[
+h_\infty=\frac{(p-1)w_H+1}{p}
+\qquad(p\ \text{even}),\tag{40}
+\]</span></p>
+<p>while odd <span class="math inline">\(p\)</span> is compatible and sits on the floor <span class="math inline">\(w_H\)</span>. For even <span class="math inline">\(p\)</span>, the period-<span class="math inline">\(2p\)</span> word</p>
+<p><span class="math display">\[
+(10)^{p/2-1}\,11\,(01)^{p/2-1}\,00
+\]</span></p>
+<p>realizes the one-defect orbit of Lemma <a href="#lem:one_defect">14</a>. It satisfies the lag-<span class="math inline">\(p\)</span> rule always and pays one fair edge per <span class="math inline">\(p\)</span> output symbols. Two incompatible endpoint rules therefore cost only one fair bit per <span class="math inline">\(p\)</span> outputs, and the rate approaches the floor as <span class="math inline">\(p\to\infty\)</span>.</p>
+<p><a id="weak-coupling-and-circulant-max-cut."></a></p>
+<h5 id="weak-coupling-and-circulant-max-cut">Weak coupling and circulant Max-Cut.</h5>
+<p>Poljak and Turzík studied Max-Cut on circulant graphs with edge distances <span class="math inline">\(1\)</span> and <span class="math inline">\(r\)</span> [<a href="#ref-poljak1992max">22</a>]. The balanced two-lag model meets the same problem at weak coupling. Read a periodic word as a two-colouring of a cycle. A negative lag rule is satisfied exactly when its distance-<span class="math inline">\(a\)</span> or distance-<span class="math inline">\(b\)</span> edge crosses the cut. There are two such edge incidences per time step, so the fraction of cut edges is one half of the mean number of satisfied rules.</p>
+<p>For coprime <span class="math inline">\(a&lt;b\)</span>, the purely negative sign pair is frustrated exactly when <span class="math inline">\(a+b\)</span> is odd. The optimal branch then violates one rule every <span class="math inline">\(b\)</span> steps, giving a mean of <span class="math inline">\(2-1/b\)</span> satisfied rules and asymptotic cut density</p>
+<p><span class="math display">\[
+\frac{2-1/b}{2}=1-\frac{1}{2b}.
+\]</span></p>
+<p>When <span class="math inline">\(a+b\)</span> is even, compatibility supplies a periodic two-colouring in which every lag edge crosses the cut; the corresponding finite circulant multigraph is bipartite. The master formula extends this cut-counting result from the first-order weak-coupling limit to the full logarithmic cost at every coupling strength.</p>
+<p><a id="the-rényi-curve-at-order-two."></a></p>
+<h5 id="the-rényi-curve-at-order-two">The Rényi curve at order two.</h5>
+<p>Return to the negative order-two source with magnitudes <span class="math inline">\(\gamma_1,\gamma_2\)</span>. Its full Rényi curve is explicit. With <span class="math inline">\(w_0=-\log(\beta/2)\)</span>, complementation of every bit exchanges <span class="math inline">\(00\leftrightarrow11\)</span> and <span class="math inline">\(01\leftrightarrow10\)</span> without changing edge costs. The Perron eigenvector, normalized to have coordinate sum one, is unique and hence invariant under this symmetry. The four-state transfer matrix therefore reduces to the two orbits <span class="math inline">\(\{00,11\}\)</span> and <span class="math inline">\(\{01,10\}\)</span>. The resulting quotient matrix is</p>
+<p><span class="math display">\[
+\widetilde M_q=
+\begin{pmatrix}
+2^{-qw_0} &amp; 2^{-qw_{12}}\\
+2^{-qw_2} &amp; 2^{-qw_1}
+\end{pmatrix}.
+\]</span></p>
+<p>For <span class="math inline">\(q&gt;0\)</span>, <span class="math inline">\(q\ne1\)</span>, this gives</p>
+<p><a id="eq:order_two_renyi_root"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+\lambda_q
+&amp;=\frac12\Bigl(
+2^{-qw_0}+2^{-qw_1}
++\sqrt{(2^{-qw_0}-2^{-qw_1})^2
++4\,2^{-q(w_{12}+w_2)}}
+\Bigr),\qquad\text{(41)}\\
+h_q&amp;=\frac{\log\lambda_q}{1-q}.\qquad\text{(42)}
+\end{aligned}
+\]</span></p>
+<p>As <span class="math inline">\(q\to\infty\)</span>, the diagonal contribution <span class="math inline">\(2^{-qw_1}\)</span> yields the alternating branch <span class="math inline">\(w_1\)</span>, while the off-diagonal product <span class="math inline">\(2^{-q(w_{12}+w_2)}\)</span> yields the period-four branch <span class="math inline">\((w_{12}+w_2)/2\)</span> in <a href="#eq:negative_order_two">(35)</a>.</p>
+<p>On the crossing <span class="math inline">\(2w_1=w_{12}+w_2\)</span>, all six non-loop edges are critical. In context order <span class="math inline">\(00,01,10,11\)</span>, their adjacency matrix is</p>
+<p><span class="math display">\[
+K=\begin{pmatrix}
+0&amp;1&amp;0&amp;0\\
+0&amp;0&amp;1&amp;1\\
+1&amp;1&amp;0&amp;0\\
+0&amp;0&amp;1&amp;0
+\end{pmatrix}.
+\]</span></p>
+<p>Its quotient on the same complement pairs is <span class="math inline">\(\left(\begin{smallmatrix}0&amp;1\\1&amp;1\end{smallmatrix}\right)\)</span>, whose positive eigenvector lifts to one of <span class="math inline">\(K\)</span>. Hence <span class="math inline">\(\rho(K)=\tau=(1+\sqrt5)/2\)</span>, and</p>
+<p><a id="eq:golden_correction"></a></p>
+<p><span class="math display">\[
+h_q=h_\infty+
+\frac{h_\infty-\log\tau}{q-1}+o(q^{-1}).\tag{43}
+\]</span></p>
+<p>Away from the crossing the critical graph is a single cycle, so <span class="math inline">\(\rho(K)=1\)</span>. On the crossing, paths can combine the competing cycles, producing exponential growth at rate <span class="math inline">\(\log\tau\)</span>. The critical graph contains both <span class="math inline">\(01\to10\to01\)</span> and <span class="math inline">\(00\to01\to10\to00\)</span>. It is strongly connected and has cycles of lengths two and three, so its cyclicity is one. Proposition <a href="#prop:block_periodicity">4</a> therefore implies that all three corrections <span class="math inline">\(H_*(n)-nh_\infty\)</span> are eventually constant on this boundary. In the two open regions the critical cyclicities are two and four; the block corrections can have smaller periods.</p>
+<p><a id="balanced-negative-orders-three-and-four"></a></p>
+<h3>Balanced negative orders three and four</h3>
+<p>For the balanced purely negative family,</p>
+<p><span class="math display">\[
+\alpha_i=-\frac{\alpha}{p},
+\qquad \beta=1-\alpha,
+\]</span></p>
+<p>where <span class="math inline">\(0&lt;\alpha&lt;1\)</span> unless an endpoint limit is stated explicitly, the transition probability depends only on the number <span class="math inline">\(m\)</span> of previous bits that disagree with the emitted bit. Write</p>
+<p><a id="eq:balanced_cost"></a></p>
+<p><span class="math display">\[
+P_m=\frac{1-\alpha}{2}+\frac{m\alpha}{p},
+\qquad c_m=-\log P_m.\tag{44}
+\]</span></p>
+<p>The Hamming weight <span class="math inline">\(h(u)=\sum_{j=1}^p u_j\)</span> counts the ones in context <span class="math inline">\(u\)</span>. Emitting zero disagrees with <span class="math inline">\(h(u)\)</span> past bits; emitting one disagrees with <span class="math inline">\(p-h(u)\)</span>. Thus</p>
+<p><a id="eq:hamming_weight_guessability"></a></p>
+<p><span class="math display">\[
+g_1(u)=\frac{1-\alpha}{2}
++\frac{\alpha}{p}\max\{h(u),p-h(u)\}.\tag{45}
+\]</span></p>
+<p><strong>Proposition 16 (Balanced negative orders three and four).</strong> <a id="prop:negative_three_four"></a> For the balanced purely negative source,</p>
+<p><a id="eq:negative_order_three"></a></p>
+<p><a id="eq:negative_order_four"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+p=3:&amp;\qquad
+h_\infty=c_2
+=-\log\left(\frac{3+\alpha}{6}\right),\qquad\text{(46)}\\
+p=4:&amp;\qquad
+h_\infty=\frac{1+2c_3}{3},
+\qquad
+c_3=-\log\left(\frac{2+\alpha}{4}\right).\qquad\text{(47)}
+\end{aligned}
+\]</span></p>
+<p><em>Proof.</em> <em>Order three.</em> The word <span class="math inline">\(0011\)</span> has two disagreements at every time and gives the upper bound <span class="math inline">\(c_2\)</span>. To certify optimality, assign potential <span class="math inline">\(c_2-c_3\)</span> to the unanimous contexts <span class="math inline">\(000\)</span> and <span class="math inline">\(111\)</span>, and zero to the other six contexts. The sixteen edge inequalities fall into four classes:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Source and target</th>
+<th style="text-align: center;">Disagreement count</th>
+<th style="text-align: center;">Required inequality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">unanimous <span class="math inline">\(\to\)</span> unanimous</td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(c_0\ge c_2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">unanimous <span class="math inline">\(\to\)</span> non-unanimous</td>
+<td style="text-align: center;"><span class="math inline">\(3\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(c_3+(c_2-c_3)=c_2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">non-unanimous <span class="math inline">\(\to\)</span> non-unanimous</td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span> or <span class="math inline">\(2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(c_1,c_2\ge c_2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">non-unanimous <span class="math inline">\(\to\)</span> unanimous</td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(c_1+c_3-c_2\ge c_2\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The last line is the only condition not immediate from the ordering of the <span class="math inline">\(c_m\)</span>. It is <span class="math inline">\(c_1+c_3\ge2c_2\)</span>, equivalent to</p>
+<p><span class="math display">\[
+P_1P_3\le P_2^2,
+\]</span></p>
+<p>because <span class="math inline">\(c_m=-\log P_m\)</span>. Direct expansion gives</p>
+<p><span class="math display">\[
+P_2^2-P_1P_3=\frac{\alpha^2}{9}\ge0.
+\]</span></p>
+<p>The potential therefore proves the matching lower bound <span class="math inline">\(c_2\)</span>.</p>
+<p><em>Order four.</em> The period-six cycle</p>
+<p><span class="math display">\[
+0001\to0011\to0111\to1110\to1100\to1000\to0001
+\]</span></p>
+<p>has disagreement counts <span class="math inline">\((3,2,3,3,2,3)\)</span>. Since <span class="math inline">\(c_2=1\)</span>, its mean is <span class="math inline">\((1+2c_3)/3\)</span>.</p>
+<p>A compact certificate separates the combinatorics from the parameter <span class="math inline">\(\alpha\)</span>. Convexity of <span class="math inline">\(m\mapsto c_m\)</span> means that the slopes of its piecewise linear interpolation are nondecreasing. The line through the adjacent points <span class="math inline">\((2,c_2)=(2,1)\)</span> and <span class="math inline">\((3,c_3)\)</span> is therefore a supporting line, so</p>
+<p><a id="eq:p4_supporting_line"></a></p>
+<p><span class="math display">\[
+c_m\ge1+(m-2)(c_3-1),
+\qquad m=0,\ldots,4.\tag{48}
+\]</span></p>
+<p>For an edge <span class="math inline">\(u\xrightarrow{x}v\)</span>, let <span class="math inline">\(m(u,x)\)</span> be the number of bits of <span class="math inline">\(u\)</span> different from <span class="math inline">\(x\)</span>. In lexicographic context order <span class="math inline">\(0000,0001,\ldots,1111\)</span>, take</p>
+<p><span class="math display">\[
+\Phi=(0,-4,-1,-5,\;0,-2,-3,-3,\;-3,-3,-2,0,\;-5,-1,-4,2).
+\]</span></p>
+<p>Every edge <span class="math inline">\(u\xrightarrow{x}v\)</span> satisfies</p>
+<p><a id="eq:p4_integer_certificate"></a></p>
+<p><span class="math display">\[
+3m(u,x)+\Phi(v)-\Phi(u)\le8.\tag{49}
+\]</span></p>
+<p>The ordered pairs of left sides, for <span class="math inline">\(x=0\)</span> and <span class="math inline">\(x=1\)</span>, in lexicographic context order are</p>
+<p><span class="math display">\[
+\begin{split}
+&amp;(0,8),(6,8),(4,8),(8,8),(0,6),(6,8),(4,8),(8,8),\\
+&amp;(6,8),(8,4),(8,6),(6,0),(8,8),(8,4),(8,6),(6,0).
+\end{split}
+\]</span></p>
+<p>The vector <span class="math inline">\(\Phi\)</span> is a potential for the disagreement count. Summing <a href="#eq:p4_integer_certificate">(49)</a> around a cycle of length <span class="math inline">\(L\)</span> cancels its potential differences and gives <span class="math inline">\(3\sum m\le8L\)</span>. Thus the mean disagreement count <span class="math inline">\(\overline m\)</span> satisfies <span class="math inline">\(\overline m\le8/3\)</span>. Thus no periodic word can disagree with more than <span class="math inline">\(8/3\)</span> of its previous four bits on average.</p>
+<p>Now average <a href="#eq:p4_supporting_line">(48)</a> around the same cycle. Since <span class="math inline">\(c_3&lt;1\)</span>, the slope <span class="math inline">\(c_3-1\)</span> is negative, and the upper bound on <span class="math inline">\(\overline m\)</span> becomes the lower cost bound</p>
+<p><span class="math display">\[
+\overline c
+\ge1+(\overline m-2)(c_3-1)
+\ge\frac{1+2c_3}{3}.
+\]</span></p>
+<p>The period-six cycle attains equality.</p>
+<p>The order-four certificate bounds the mean disagreement count, and the minimizing word attains the convex cost bound by using only the adjacent levels two and three. At higher orders, candidate words use a wider range of disagreement counts.</p>
+<p><a id="the-balanced-negative-family-at-general-order"></a></p>
+<h3>The balanced negative family at general order</h3>
+<p><a id="subsec:two_run"></a></p>
+<p>For <span class="math inline">\(p\ge2\)</span>, consider the periodic word <span class="math inline">\(0^R1^R\)</span>, with integer run length <span class="math inline">\(R\)</span> satisfying <span class="math inline">\(\lfloor p/2\rfloor+1\le R\le p\)</span>. During either run, the disagreement count has <span class="math inline">\(p-R+1\)</span> occurrences of <span class="math inline">\(R\)</span> and one occurrence of each integer from <span class="math inline">\(p-R+1\)</span> to <span class="math inline">\(R-1\)</span>. Its mean cost is therefore</p>
+<p><a id="eq:two_run_cost"></a></p>
+<p><span class="math display">\[
+H_{p,R}(\alpha)
+=\frac{
+\displaystyle\sum_{m=p-R+1}^{R-1}c_m(\alpha)
++(p-R+1)c_R(\alpha)}{R},\tag{50}
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+c_m(\alpha)
+=-\log\left(\frac{1-\alpha}{2}+\frac{m\alpha}{p}\right).
+\]</span></p>
+<p>For example, when <span class="math inline">\(p=5\)</span> and <span class="math inline">\(R=4\)</span>, the counts during either half of <span class="math inline">\(00001111\)</span> are <span class="math inline">\((4,4,3,2)\)</span>. Formula <a href="#eq:two_run_cost">(50)</a> then gives <span class="math inline">\((c_2+c_3+2c_4)/4\)</span>.</p>
+<p>The mean number of disagreements of this word is</p>
+<p><a id="eq:two_run_mean"></a></p>
+<p><span class="math display">\[
+\overline m_{p,R}
+=2p+1-R-\frac{p(p+1)}{2R}.\tag{51}
+\]</span></p>
+<p>Since</p>
+<p><span class="math display">\[
+\overline m_{p,R+1}-\overline m_{p,R}
+=-1+\frac{p(p+1)}{2R(R+1)},
+\]</span></p>
+<p>a first-order weak-coupling optimizer within the two-run class is</p>
+<p><a id="eq:two_run_weak_optimizer"></a></p>
+<p><span class="math display">\[
+R_{\mathrm{wc}}(p)
+=\left\lceil
+\frac{\sqrt{1+2p(p+1)}-1}{2}
+\right\rceil,\tag{52}
+\]</span></p>
+<p>with a tie at the next integer only when <span class="math inline">\(R_{\mathrm{wc}}(R_{\mathrm{wc}}+1)=p(p+1)/2\)</span>. In particular, <span class="math inline">\(R_{\mathrm{wc}}(p)/p\to1/\sqrt2\)</span>.</p>
+<p><strong>Conjecture 17 (Two-run envelope).</strong> <a id="conj:two_run"></a> For every <span class="math inline">\(p\ge2\)</span> and <span class="math inline">\(0&lt;\alpha&lt;1\)</span>, the balanced purely negative gbAR(<span class="math inline">\(p\)</span>) source satisfies</p>
+<p><a id="eq:two_run_conjecture"></a></p>
+<p><span class="math display">\[
+h_\infty(\alpha)
+=\min_{\lfloor p/2\rfloor+1\le R\le p}
+H_{p,R}(\alpha).\tag{53}
+\]</span></p>
+<p>The right side is an upper bound for every <span class="math inline">\(p\)</span>, and equality holds through order four by the formulas above. For each <span class="math inline">\(\alpha\in\{0.2,0.5,0.8\}\)</span>, Karp computations agree through <span class="math inline">\(p=13\)</span>, and floating-point reduced-cost potentials support equality through <span class="math inline">\(p=24\)</span>. These are checks at the stated parameter values. Figure <a href="#fig:two_run_envelope">3</a> shows the candidate branches at <span class="math inline">\(p=12\)</span>. The minimizing run length changes from <span class="math inline">\(R=9\)</span> to <span class="math inline">\(R=8\)</span> near <span class="math inline">\(\alpha=0.484\)</span>.</p>
+<p><a id="fig:two_run_envelope"></a></p>
+<p><img src="figures/two_run_envelope_p12.png" alt="image" /></p>
+<p><strong>Figure 3.</strong> Two-run candidate rates <span class="math inline">\(H_{12,R}(\alpha)\)</span> for <span class="math inline">\(R=7,\ldots,12\)</span>. The thick curve is their lower envelope. The branch crossing shows why no single run ratio describes the whole parameter range.</p>
+<p><a id="why-mean-defects-alone-do-not-suffice."></a></p>
+<h5 id="why-mean-defects-alone-do-not-suffice">Why mean defects alone do not suffice.</h5>
+<p>For a periodic word <span class="math inline">\(y\)</span>, let <span class="math inline">\(D_y\)</span> be the number of defects at a uniformly chosen phase. At <span class="math inline">\(p=5\)</span>, the sorted defects of <span class="math inline">\(0000111\)</span> and <span class="math inline">\(00001111\)</span> are, respectively,</p>
+<p><span class="math display">\[
+(1,1,2,2,2,2,3),\qquad (1,1,1,1,2,2,3,3).
+\]</span></p>
+<p>The equal-run word has smaller mean defect, but</p>
+<p><span class="math display">\[
+\mathbb E(D_{00001111}-2)_+=\frac14
+&gt;\frac17=\mathbb E(D_{0000111}-2)_+.
+\]</span></p>
+<p>Thus the two defect distributions are incomparable in increasing-convex order, which compares expectations of all increasing convex functions [<a href="#ref-shaked2007stochastic">23</a>]. Nevertheless, the equal-run word has smaller logarithmic cost. The equal- and unequal-run costs are, respectively,</p>
+<p><span class="math display">\[
+\frac{c_2+c_3+2c_4}{4},\qquad
+\frac{c_2+4c_3+2c_4}{7}.
+\]</span></p>
+<p>Their comparison reduces to <span class="math inline">\(c_2+2c_4\le3c_3\)</span>. To verify it, put <span class="math inline">\(z=P_3=(5+\alpha)/10\)</span> and <span class="math inline">\(t=\alpha/5\)</span>, so <span class="math inline">\(P_2=z-t\)</span> and <span class="math inline">\(P_4=z+t\)</span>. Then</p>
+<p><span class="math display">\[
+P_2P_4^2-P_3^3=t(z^2-zt-t^2)&gt;0,
+\]</span></p>
+<p>because <span class="math inline">\(0&lt;t/z&lt;1/3\)</span> for <span class="math inline">\(0&lt;\alpha&lt;1\)</span>. A proof of the conjecture must therefore use more than universal increasing-convex domination of the defect profiles.</p>
+<p><strong>Proposition 18 (Continuum two-run envelope).</strong> <a id="prop:continuum_two_run"></a> Fix <span class="math inline">\(0&lt;\alpha&lt;1\)</span>. For <span class="math inline">\(x\in[0,1]\)</span>, define</p>
+<p><span class="math display">\[
+f_\alpha(x)=-\log\left(\frac{1-\alpha}{2}+\alpha x\right).
+\]</span></p>
+<p>For a limiting run ratio <span class="math inline">\(r\in[1/2,1]\)</span>, set</p>
+<p><a id="eq:continuum_envelope"></a></p>
+<p><span class="math display">\[
+\mathcal H_\alpha(r)=\frac1r\left[
+\int_{1-r}^{r}f_\alpha(x)\,dx+(1-r)f_\alpha(r)
+\right].\tag{54}
+\]</span></p>
+<p>This function has a unique minimizer <span class="math inline">\(r_*(\alpha)\in(1/2,1)\)</span>, which is locally real analytic in <span class="math inline">\(\alpha\)</span>. As <span class="math inline">\(p\to\infty\)</span>,</p>
+<p><a id="eq:continuum_limit"></a></p>
+<p><span class="math display">\[
+\min_{\lfloor p/2\rfloor+1\le R\le p}H_{p,R}(\alpha)
+=\mathcal H_\alpha(r_*(\alpha))+O_\alpha(p^{-1}),\tag{55}
+\]</span></p>
+<p>where the error constant may depend on <span class="math inline">\(\alpha\)</span>. Every choice of minimizing integer run lengths <span class="math inline">\(R_p\)</span> satisfies <span class="math inline">\(R_p/p\to r_*(\alpha)\)</span>.</p>
+<p>An explicit expression is obtained by defining</p>
+<p><span class="math display">\[
+z_\alpha(x)=\frac{1-\alpha}{2}+\alpha x,\qquad
+F_\alpha(x)=\frac{z_\alpha(x)[1-\ln z_\alpha(x)]}{\alpha\ln2}.
+\]</span></p>
+<p>Then</p>
+<p><a id="eq:continuum_closed_form"></a></p>
+<p><span class="math display">\[
+\mathcal H_\alpha(r)=
+\frac{F_\alpha(r)-F_\alpha(1-r)+(1-r)f_\alpha(r)}r.\tag{56}
+\]</span></p>
+<p>The entropy extends continuously to <span class="math inline">\(\alpha=0\)</span>, where it is one. As <span class="math inline">\(\alpha\downarrow0\)</span>,</p>
+<p><a id="eq:continuum_weak"></a></p>
+<p><span class="math display">\[
+\min_r\mathcal H_\alpha(r)
+=1-\frac{3-2\sqrt2}{\ln2}\alpha+O(\alpha^2),
+\qquad r_*(\alpha)\longrightarrow\frac1{\sqrt2}.\tag{57}
+\]</span></p>
+<p>At this limiting ratio, the normalized mean satisfaction tends to <span class="math inline">\(2-\sqrt2\)</span> and the complementary defect fraction to <span class="math inline">\(\sqrt2-1\)</span>.</p>
+<p><em>Proof.</em> Put <span class="math inline">\(r=R/p\)</span> in <a href="#eq:two_run_cost">(50)</a> and divide its numerator and denominator by <span class="math inline">\(p\)</span>. The sum becomes</p>
+<p><span class="math display">\[
+\frac1p\sum_{m=p-R+1}^{R-1}f_\alpha(m/p),
+\]</span></p>
+<p>a Riemann sum for <span class="math inline">\(\int_{1-r}^{r}f_\alpha(x)\,dx\)</span>. The repeated endpoint contributes <span class="math inline">\((1-r+1/p)f_\alpha(r)\)</span>. Since <span class="math inline">\(f_\alpha\)</span> and its derivative are bounded on <span class="math inline">\([0,1]\)</span>,</p>
+<p><span class="math display">\[
+H_{p,R}(\alpha)=\mathcal H_\alpha(R/p)+O_\alpha(p^{-1})
+\]</span></p>
+<p>uniformly over all allowed <span class="math inline">\(R\)</span>. The grid of ratios has spacing <span class="math inline">\(1/p\)</span>, and <span class="math inline">\(\mathcal H_\alpha\)</span> has bounded derivative on <span class="math inline">\([1/2,1]\)</span>. Thus its discrete and continuous minimum values differ by <span class="math inline">\(O_\alpha(p^{-1})\)</span>. Also <span class="math inline">\(F_\alpha&#39;=f_\alpha\)</span>, proving <a href="#eq:continuum_closed_form">(56)</a>.</p>
+<p>To locate the minimum, let</p>
+<p><span class="math display">\[
+A_\alpha(r)=\int_{1-r}^{r}f_\alpha(x)\,dx+(1-r)f_\alpha(r).
+\]</span></p>
+<p>Differentiation gives</p>
+<p><span class="math display">\[
+\begin{aligned}
+A_\alpha&#39;(r)&amp;=f_\alpha(1-r)+(1-r)f_\alpha&#39;(r),\\
+A_\alpha&#39;&#39;(r)&amp;=-f_\alpha&#39;(1-r)-f_\alpha&#39;(r)
++(1-r)f_\alpha&#39;&#39;(r)&gt;0,
+\end{aligned}
+\]</span></p>
+<p>since <span class="math inline">\(f_\alpha&#39;&lt;0\)</span> and <span class="math inline">\(f_\alpha&#39;&#39;&gt;0\)</span>. Define <span class="math inline">\(N_\alpha(r)=rA_\alpha&#39;(r)-A_\alpha(r)\)</span>. Then <span class="math inline">\(\mathcal H_\alpha&#39;(r)=N_\alpha(r)/r^2\)</span> and <span class="math inline">\(N_\alpha&#39;(r)=rA_\alpha&#39;&#39;(r)&gt;0\)</span>, whereas</p>
+<p><span class="math display">\[
+N_\alpha(1/2)=\tfrac14 f_\alpha&#39;(1/2)&lt;0,\qquad
+N_\alpha(1)=f_\alpha(0)-\int_0^1 f_\alpha(x)\,dx&gt;0.
+\]</span></p>
+<p>There is exactly one zero, and it is the unique minimizer. The analytic implicit function theorem applies because this zero is simple. Uniform convergence of the discrete costs then forces every subsequential limit of <span class="math inline">\(R_p/p\)</span> to equal <span class="math inline">\(r_*(\alpha)\)</span>, proving convergence of the minimizers.</p>
+<p>Finally, the expansion <span class="math inline">\(f_\alpha(x)=1-(2x-1)\alpha/\ln2+O(\alpha^2)\)</span> is uniform in <span class="math inline">\(x\)</span>. Substitution gives, uniformly in <span class="math inline">\(r\)</span>,</p>
+<p><span class="math display">\[
+\mathcal H_\alpha(r)=
+1-\left(3-2r-\frac1r\right)\frac{\alpha}{\ln2}+O(\alpha^2).
+\]</span></p>
+<p>The bracket has its unique maximum <span class="math inline">\(3-2\sqrt2\)</span> at <span class="math inline">\(r=1/\sqrt2\)</span>. This proves <a href="#eq:continuum_weak">(57)</a>, including convergence of the minimizers by compactness. Substituting this ratio into <span class="math inline">\(\overline m_{p,R}/p\to2-r-1/(2r)\)</span> gives the stated satisfaction and defect fractions.</p>
+<p>These continuum statements concern the two-run candidate and do not assume Conjecture <a href="#conj:two_run">17</a>.</p>
+<p><a id="summary-and-computational-audit"></a></p>
+<h3>Summary and computational audit</h3>
+<p>Table <a href="#tab:family_summary">1</a> collects the uniform-noise formulas.</p>
+<p><a id="tab:family_summary"></a></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Family</strong></th>
+<th style="text-align: left;"><strong>Conditions</strong></th>
+<th style="text-align: left;"><span class="math inline">\(\boldsymbol{h_\infty}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Positive gbAR</td>
+<td style="text-align: left;"><span class="math inline">\(\alpha_i\ge0\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(w_H\)</span> for uniform noise</td>
+</tr>
+<tr>
+<td style="text-align: left;">Single active lag</td>
+<td style="text-align: left;">one nonzero coefficient</td>
+<td style="text-align: left;"><span class="math inline">\(w_H\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Alternating signs</td>
+<td style="text-align: left;">even <span class="math inline">\(p\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(w_H\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Two active lags, compatible</td>
+<td style="text-align: left;"><span class="math inline">\(as_b+bs_a\equiv0\pmod2\)</span> after compression</td>
+<td style="text-align: left;"><span class="math inline">\(w_H\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Two active lags, frustrated</td>
+<td style="text-align: left;"><span class="math inline">\(as_b+bs_a\equiv1\pmod2\)</span> for coprime <span class="math inline">\(a&lt;b\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\min\{((a-1)w_H+w_a)/a,\ ((b-1)w_H+w_b)/b\}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">order two</td>
+<td style="text-align: left;"><span class="math inline">\((a,b)=(1,2)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\min\{w_1,(w_{12}+w_2)/2\}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">endpoint lags</td>
+<td style="text-align: left;">even <span class="math inline">\(p\)</span>, equal weights at lags <span class="math inline">\(1,p\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(((p-1)w_H+1)/p\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Balanced negative gbAR(3)</td>
+<td style="text-align: left;"><span class="math inline">\(\alpha_i=-\alpha/3\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(-\log((3+\alpha)/6)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Balanced negative gbAR(4)</td>
+<td style="text-align: left;"><span class="math inline">\(\alpha_i=-\alpha/4\)</span></td>
+<td style="text-align: left;"><span class="math inline">\((1+2c_3)/3\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Balanced negative gbAR(<span class="math inline">\(p\ge5\)</span>)</td>
+<td style="text-align: left;"><span class="math inline">\(\alpha_i=-\alpha/p\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\min_R H_{p,R}\)</span>, conjectural</td>
+</tr>
+<tr>
+<td style="text-align: left;">Odd alternating signs</td>
+<td style="text-align: left;">odd <span class="math inline">\(p\)</span></td>
+<td style="text-align: left;">same as balanced negative order <span class="math inline">\(p\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Closed and conjectural gbAR min-entropy rates. Here <span class="math inline">\(w_H=-\log(1-\beta/2)\)</span>, the two-lag costs <span class="math inline">\(w_a,w_b\)</span> are defined in Section <a href="#subsec:two_lag">4.2</a>, and <span class="math inline">\(c_m\)</span> is defined in <a href="#eq:balanced_cost">(44)</a>.</p>
+<p>The accompanying code checks the floor criterion through order five, the closed families, the order-four integer certificate, and the two-run envelope. Running <code>python3 repo/verify.py</code> with <code>--karp-max-order 13</code> and <code>--karp-workdir /tmp</code> reproduces the full-graph comparisons at <span class="math inline">\(\alpha\in\{0.2,0.5,0.8\}\)</span>. The separate script <code>experiments/verify_two_lag_master.py</code> checks 384 frustrated lag-sign-weight configurations against Karp's algorithm and exhaustively checks 393,192 periodic words of lengths one through fourteen across twelve frustrated lag-sign choices. The covering inequality is attained in every choice.</p>
+<p>The C program <code>repo/two_run_certificate.c</code>, run with <code>--max-order 24</code>, constructs reduced-cost potentials and checks every edge for orders two through twenty-four at the same three couplings. It uses double precision and accepts slack down to <span class="math inline">\(-10^{-9}\)</span>. These checks are numerical evidence, not rigorous finite-block certificates; the latter require verified error bounds as in Corollary <a href="#cor:finite_block_certificate">2</a>. The script <code>repo/generate_figures.py</code> reproduces Figures <a href="#fig:order_two_phase_diagram">2</a> and <a href="#fig:two_run_envelope">3</a>.</p>
+<p><a id="conclusion"></a></p>
+<h2>Conclusion</h2>
+<p><a id="sec:conclusion"></a></p>
+<p>For binary sources with finite memory, the minimum mean cycle gives an exact entropy rate, and an edge potential certifies finite-block lower bounds. The critical graph also determines the leading large-order Rényi correction and the eventual periodicity of block costs. At the order-two branch crossing, its spectral radius is the golden ratio and its cyclicity is one.</p>
+<p>For parity-rule mixtures, a polynomial gcd decides whether the noise floor is attained. Every incompatible system has a two-rule witness, and counting its translated defects gives weighted entropy gaps and finite-block bounds. These bounds are attained for every two-lag gbAR source. Gauge symmetry preserves all block entropies, while profiles describe the cost of defects when more rules interact.</p>
+<p>The balanced negative family remains open at general order. Its two-run candidate agrees with the computations reported here and has a unique continuum minimizing ratio, with an explicit convergence bound for its values. The order-five counterexample rules out a universal increasing-convex comparison of defect profiles. Proving the conjecture requires a sharper inequality for the logarithmic cost or an all-order potential. More generally, the gap between pairwise covering bounds and realizable defect profiles is the remaining obstacle for mixtures of three or more rules.</p>
+<p><a id="ai-assistance"></a></p>
+<h2>AI assistance</h2>
+<p>The research vision and original ideas are the author's. The author used OpenAI's GPT models, including Astra, and Anthropic's Claude Opus models for writing, theorem proving, and literature review. GPT models were used most often, and Astra was the most useful overall. This work is in progress. Not all claims have been verified by a human.</p>
+<p><a id="references"></a></p>
+<h2>References</h2>
+<p><a id="ref-jentsch2019generalized"></a></p>
+<p>[1]</p>
+<p>Carsten Jentsch and Lena Reichmann. Generalized binary time series models. <em>Econometrics</em>, 7(4):47, 2019.</p>
+<p><a id="ref-renyi1961measures"></a></p>
+<p>[2]</p>
+<p>Alfréd Rényi. On measures of entropy and information. In <em>Proceedings of the fourth Berkeley symposium on mathematical statistics and probability, volume 1: contributions to the theory of statistics</em>, volume 4, pages 547–562. University of California Press, 1961.</p>
+<p><a id="ref-dodis2004fuzzy"></a></p>
+<p>[3]</p>
+<p>Yevgeniy Dodis, Leonid Reyzin, and Adam Smith. Fuzzy extractors: How to generate strong keys from biometrics and other noisy data. In <em>International conference on the theory and applications of cryptographic techniques</em>, pages 523–540. Springer, 2004.</p>
+<p><a id="ref-kelsey2015predictive"></a></p>
+<p>[4]</p>
+<p>John Kelsey, Kerry A McKay, and Meltem Sönmez Turan. Predictive models for min-entropy estimation. In <em>International Workshop on Cryptographic Hardware and Embedded Systems</em>, pages 373–392. Springer, 2015.</p>
+<p><a id="ref-jacobs1978discrete"></a></p>
+<p>[5]</p>
+<p>Patricia A Jacobs and Peter AW Lewis. Discrete time series generated by mixtures. i: Correlational and runs properties. <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em>, 40(1):94–105, 1978.</p>
+<p><a id="ref-blanco2025machine"></a></p>
+<p>[6]</p>
+<p>Javier Blanco-Romero, Vicente Lorenzo, Florina Almenares Mendoza, and Daniel Dı́az-Sánchez. Machine learning predictors for min-entropy estimation. <em>Entropy</em>, 27(2):156, 2025.</p>
+<p><a id="ref-karp1978characterization"></a></p>
+<p>[7]</p>
+<p>Richard M Karp. A characterization of the minimum cycle mean in a digraph. <em>Discrete mathematics</em>, 23(3):309–311, 1978.</p>
+<p><a id="ref-baccelli1992synchronization"></a></p>
+<p>[8]</p>
+<p>François Baccelli, Guy Cohen, Geert Jan Olsder, and Jean-Pierre Quadrat. <em>Synchronization and linearity</em>, volume 1. Wiley New York, 1992.</p>
+<p><a id="ref-rached2001renyi"></a></p>
+<p>[9]</p>
+<p>Ziad Rached, Fady Alajaji, and L. Lorne Campbell. Rényi's divergence and entropy rates for finite alphabet Markov sources. <em>IEEE Transactions on Information Theory</em>, 47(4):1553–1561, 2001.</p>
+<p><a id="ref-jenkinson2006ergodic"></a></p>
+<p>[10]</p>
+<p>Oliver Jenkinson. Ergodic optimization. <em>Discrete and Continuous Dynamical Systems</em>, 15(1):197–224, 2006.</p>
+<p><a id="ref-jenkinson2019ergodic"></a></p>
+<p>[11]</p>
+<p>Oliver Jenkinson. Ergodic optimization in dynamical systems. <em>Ergodic Theory and Dynamical Systems</em>, 39(10):2593–2618, 2019.</p>
+<p><a id="ref-bousch2000lepoisson"></a></p>
+<p>[12]</p>
+<p>Thierry Bousch. Le poisson n'a pas d'arêtes. <em>Annales de l'Institut Henri Poincaré, Probabilités et Statistiques</em>, 36(4):489–508, 2000.</p>
+<p><a id="ref-garibaldi2017ergodic"></a></p>
+<p>[13]</p>
+<p>Eduardo Garibaldi. <em>Ergodic Optimization in the Expanding Case: Concepts, Tools and Applications</em>. SpringerBriefs in Mathematics. Springer, 2017.</p>
+<p><a id="ref-bremont2003gibbs"></a></p>
+<p>[14]</p>
+<p>Julien Brémont. Gibbs measures at temperature zero. <em>Nonlinearity</em>, 16(2):419–426, 2003.</p>
+<p><a id="ref-chazottes2011zero"></a></p>
+<p>[15]</p>
+<p>Jean-René Chazottes, Jean-Marc Gambaudo, and Edgardo Ugalde. Zero-temperature limit of one-dimensional Gibbs states via renormalization: the case of locally constant potentials. <em>Ergodic Theory and Dynamical Systems</em>, 31(4):1109–1161, 2011.</p>
+<p><a id="ref-schmidt1995dynamical"></a></p>
+<p>[16]</p>
+<p>Klaus Schmidt. <em>Dynamical Systems of Algebraic Origin</em>, volume 128 of <em>Progress in Mathematics</em>. Birkhäuser, Basel, 1995.</p>
+<p><a id="ref-forney1970convolutional"></a></p>
+<p>[17]</p>
+<p>Jr. Forney, G. David. Convolutional codes I: Algebraic structure. <em>IEEE Transactions on Information Theory</em>, 16(6):720–738, 1970.</p>
+<p><a id="ref-mattis1976solvable"></a></p>
+<p>[18]</p>
+<p>Daniel C. Mattis. Solvable spin systems with random interactions. <em>Physics Letters A</em>, 56(5):421–422, 1976.</p>
+<p><a id="ref-toulouse1977frustration"></a></p>
+<p>[19]</p>
+<p>Gérard Toulouse. Theory of the frustration effect in spin glasses: I. <em>Communications on Physics</em>, 2:115–119, 1977.</p>
+<p><a id="ref-santha1986generating"></a></p>
+<p>[20]</p>
+<p>Miklos Santha and Umesh V Vazirani. Generating quasi-random sequences from semi-random sources. <em>Journal of computer and system sciences</em>, 33(1):75–87, 1986.</p>
+<p><a id="ref-chor1988unbiased"></a></p>
+<p>[21]</p>
+<p>Benny Chor and Oded Goldreich. Unbiased bits from sources of weak randomness and probabilistic communication complexity. <em>SIAM Journal on Computing</em>, 17(2):230–261, 1988.</p>
+<p><a id="ref-poljak1992max"></a></p>
+<p>[22]</p>
+<p>Svatopluk Poljak and Daniel Turzik. Max-cut in circulant graphs. <em>Discrete mathematics</em>, 108(1-3):379–392, 1992.</p>
+<p><a id="ref-shaked2007stochastic"></a></p>
+<p>[23]</p>
+<p>Moshe Shaked and J George Shanthikumar. <em>Stochastic orders</em>. Springer, 2007.</p>
+{% endraw %}

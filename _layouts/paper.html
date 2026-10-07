@@ -1,0 +1,24 @@
+---
+layout: default
+---
+<article class="research-paper">
+  <header class="article-header paper-header">
+    <p class="eyebrow">{{ page.area }}</p>
+    <h1>{{ page.title }}</h1>
+    <p class="paper-author">Javier Blanco-Romero</p>
+    <p class="paper-affiliation">Department of Telematic Engineering, Universidad Carlos III de Madrid, Leganés, Madrid, Spain</p>
+    <p class="research-status"><strong>Work in progress.</strong> Not all claims have been verified by a human.</p>
+    <nav class="paper-sources" aria-label="Manuscript sources">
+      <a href="main.tex" download>LaTeX</a>
+      <a href="manuscript.md" download>Markdown</a>
+      <a href="references.bib" download>References</a>
+      <a href="code/">Code</a>
+    </nav>
+  </header>
+  <div class="paper-content">
+    {{ content }}
+  </div>
+  <footer class="research-footer">
+    <a href="{{ '/research/' | relative_url }}">All working papers</a>
+  </footer>
+</article>

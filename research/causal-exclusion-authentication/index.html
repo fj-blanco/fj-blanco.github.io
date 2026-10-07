@@ -1,0 +1,399 @@
+---
+layout: "paper"
+title: "Causal-Exclusion Authentication in Quantum Field Theory"
+description: "Commuting local algebras turn a causal access restriction into a statistical authentication test."
+section: "research"
+main_class: "paper-page"
+math: true
+permalink: "/research/causal-exclusion-authentication/"
+area: "Quantum fields · Cryptography"
+---
+{% raw %}
+<p><a id="abstract"></a></p>
+<h2>Abstract</h2>
+<p>We formulate an authentication task for causal access across a spacetime cut. The field starts in a prescribed state, the adversary acts in an excluded region, and the verifier measures in a commuting algebra. Locality then bounds the joint forgery probability by the reference acceptance of the deployed test, even when the adversary uses independent quantum memory, postselection, or a collective operation across repetitions. A bounded local test gives explicit finite-copy amplification, while optimized collective tests have Araki relative entropy as their asymptotic soundness exponent. For a coherent excitation of the chiral current on a null half-line, this exponent is a weighted null energy and grows with the packet energy and its distance from the cut. The task certifies causal access rather than identity, ownership, or a unique emission point.</p>
+<p><a id="introduction"></a></p>
+<h2>Introduction</h2>
+<p><a id="sec:intro"></a></p>
+<p>Locality assigns commuting observable algebras to causally disjoint regions [<a href="#ref-haag1964algebraic">1</a>]. Suppose a receiver checks for a public field signature while an adversary is confined to a commuting algebra. Starting from a prescribed reference state, the adversary cannot raise the joint acceptance probability above that state's false-positive probability, even by postselection. This supplies a statistical test of the hypothesis that only the excluded region acted. It does not identify the source or locate a unique emission event.</p>
+<p>Spacetime secret sharing distributes an unknown system among authorized regions [<a href="#ref-hayden2019localizing">2</a>]. Relativistic state verification and position verification constrain where an unknown state or response can be produced [<a href="#ref-kent2014secure">3</a>, <a href="#ref-kent2011quantum">4</a>, <a href="#ref-chandran2009position">5</a>, <a href="#ref-buhrman2014position">6</a>]. Here the signal and test may both be public. The alternative being rejected is simply preparation from a prescribed state using the excluded algebra.</p>
+<p>For each fixed verifier, we show that its reference acceptance is exactly the worst-case forgery probability. Independent repetitions permit amplification, and optimized collective tests have the Araki relative-entropy exponent. In the chiral current, this becomes weighted null energy. We also give a bounded-region detector and distinguish its achievable rate from optimization over the full half-line. The constituent locality, hypothesis-testing, and coherent-state entropy results are established; our contribution is their application to this access test.</p>
+<p>Section <a href="#sec:primitive">2</a> treats one invocation, Sec. <a href="#sec:amplification">3</a> treats repetition, and Sec. <a href="#sec:current">4</a> gives the field realization.</p>
+<p><a id="causal-exclusion-authentication"></a></p>
+<h2>Causal-exclusion authentication</h2>
+<p><a id="sec:primitive"></a></p>
+<p><a id="setup"></a></p>
+<h3>Setup</h3>
+<p>Let <span class="math inline">\(\mathcal{M},\mathcal{N}\subset B(\mathcal{H})\)</span> be von Neumann algebras with</p>
+<p><a id="eq:commuting-algebras"></a></p>
+<p><span class="math display">\[
+\mathcal{N}\subseteq\mathcal{M}&#39;,\tag{1}
+\]</span></p>
+<p>and let <span class="math inline">\(\Omega\in\mathcal{H}\)</span> be a unit reference vector. The adversary controls <span class="math inline">\(\mathcal{M}\)</span> and the verifier accepts according to an effect <span class="math inline">\(\Pi\in\mathcal{N}\)</span>. An honest invocation applies a public unitary <span class="math inline">\(U\in\mathcal{N}\)</span> and prepares <span class="math inline">\(U\Omega\)</span>. We write</p>
+<p><span class="math display">\[
+\omega_0(X)=\langle\Omega,X\Omega\rangle,
+\qquad
+\omega_1(X)=\langle U\Omega,XU\Omega\rangle,\tag{2}
+\]</span></p>
+<p>so the reference acceptance and honest completeness are</p>
+<p><a id="eq:q-c"></a></p>
+<p><span class="math display">\[
+q=\omega_0(\Pi),
+\qquad
+c=\omega_1(\Pi).\tag{3}
+\]</span></p>
+<p>The security objective is to bound the probability that an adversarial branch occurs and the verifier accepts. Discarded branches count as failures. This joint event is the right quantity when postselection is allowed.</p>
+<p>The adversary may use a memory <span class="math inline">\(\mathcal{H}_{\mathrm a}\)</span>, initially independent of the field. A purification lets us take its state to be a vector <span class="math inline">\(\varphi\in\mathcal{H}_{\mathrm a}\)</span>. On the joint system define</p>
+<p><a id="eq:extended-reference"></a></p>
+<p><span class="math display">\[
+\widetilde{\mathcal{N}}=\mathcal{N}\bar\otimes\mathbb C\mathbf{1},
+\qquad
+\widetilde\omega_0(X)
+=\langle\Omega\otimes\varphi,X\Omega\otimes\varphi\rangle.\tag{4}
+\]</span></p>
+<p>In the Heisenberg picture, an accepted adversarial branch is a normal, completely positive, subunital map <span class="math inline">\(\Phi\)</span> on <span class="math inline">\(B(\mathcal{H}\otimes\mathcal{H}_{\mathrm a})\)</span>. We allow every such map that is <span class="math inline">\(\widetilde{\mathcal{N}}\)</span>-bimodular:</p>
+<p><a id="eq:bimodular"></a></p>
+<p><span class="math display">\[
+\Phi(N_1XN_2)=N_1\Phi(X)N_2\tag{5}
+\]</span></p>
+<p>for all <span class="math inline">\(N_1,N_2\in\widetilde{\mathcal{N}}\)</span> and <span class="math inline">\(X\)</span>. Bimodularity says that the operation leaves verifier observables as spectators. It is slightly more general than asking for Kraus operators in the adversary algebra. In particular, it includes every finite or countable local subinstrument</p>
+<p><a id="eq:subinstrument"></a></p>
+<p><span class="math display">\[
+\begin{split}
+B_j&amp;\in\mathcal{M}\bar\otimes B(\mathcal{H}_{\mathrm a}),
+\qquad
+\sum_{j\in J}B_j^*B_j\le\mathbf{1},\\
+\Phi_B(X)&amp;=\sum_{j\in J}B_j^*XB_j.
+\end{split}\tag{6}
+\]</span></p>
+<p>with strong convergence of the sum, because every <span class="math inline">\(B_j\)</span> commutes with <span class="math inline">\(\widetilde{\mathcal{N}}\)</span>. The set <span class="math inline">\(J\)</span> contains the outcomes counted as an attempted forgery; the inequality allows all other outcomes to be discarded.</p>
+<p><a id="one-shot-soundness"></a></p>
+<h3>One-shot soundness</h3>
+<p><strong>Theorem 1 (Locality soundness).</strong> <a id="thm:locality"></a> Every accepted operation in the model above satisfies</p>
+<p><a id="eq:locality-soundness"></a></p>
+<p><span class="math display">\[
+p_{\mathrm{forge}}
+:=\widetilde\omega_0\!\left(
+\Phi(\Pi\otimes\mathbf{1})\right)
+\le\omega_0(\Pi)=q.\tag{7}
+\]</span></p>
+<p>For the local subinstrument <a href="#eq:subinstrument">(6)</a>, this probability is</p>
+<p><a id="eq:kraus-forgery"></a></p>
+<p><span class="math display">\[
+\sum_{j\in J}
+\langle\Omega\otimes\varphi,
+B_j^*(\Pi\otimes\mathbf{1})B_j
+\Omega\otimes\varphi\rangle.\tag{8}
+\]</span></p>
+<p>For a fixed test <span class="math inline">\(\Pi\)</span>, the bound is tight.</p>
+<p><em>Proof.</em> Bimodularity pulls the verifier effect through the adversarial operation,</p>
+<p><span class="math display">\[
+\Phi(\Pi\otimes\mathbf{1})
+=(\Pi\otimes\mathbf{1})\Phi(\mathbf{1})
+=\Phi(\mathbf{1})(\Pi\otimes\mathbf{1}).\tag{9}
+\]</span></p>
+<p>The operator <span class="math inline">\(\Phi(\mathbf{1})\)</span> is the effect associated with the accepted branch. It commutes with <span class="math inline">\(\Pi\otimes\mathbf{1}\)</span> and lies between zero and the identity. Hence</p>
+<p><span class="math display">\[
+0\le\Phi(\Pi\otimes\mathbf{1})
+\le\Pi\otimes\mathbf{1}.\tag{10}
+\]</span></p>
+<p>Applying the reference state proves the bound. The identity operation attains <span class="math inline">\(q\)</span>, so no smaller universal value is possible for the same test.</p>
+<p>The theorem controls joint rather than conditional success. If branch <span class="math inline">\(j\)</span> occurs with probability <span class="math inline">\(p_j\)</span> and has conditional acceptance <span class="math inline">\(a_j\)</span>, then the bounded quantity is <span class="math inline">\(\sum_jp_ja_j\)</span>. A rare branch may have <span class="math inline">\(a_j=1\)</span> without violating soundness. Its rarity remains part of the authentication error. This is also why every scheduled attempt must be counted. If <span class="math inline">\(T\)</span> reset invocations satisfy the assumptions conditionally on the previous transcript, their total false-acceptance probability is at most <span class="math inline">\(\sum_tq_t\)</span>.</p>
+<p>The exact result assumes that the deployed acceptance effect belongs to <span class="math inline">\(\mathcal{N}\)</span>. A simple perturbative estimate covers imperfect localization. If <span class="math inline">\(\|\Pi-\Pi_0\|\le\epsilon\)</span> for an ideal effect <span class="math inline">\(\Pi_0\in\mathcal{N}\)</span>, positivity and subunitality give</p>
+<p><a id="eq:approx-locality"></a></p>
+<p><span class="math display">\[
+\begin{split}
+\widetilde\omega_0\!\left(\Phi(\Pi\otimes\mathbf{1})\right)
+&amp;\le\omega_0(\Pi_0)+\epsilon\\
+&amp;\le\omega_0(\Pi)+2\epsilon.
+\end{split}\tag{11}
+\]</span></p>
+<p>The field theory supplies the algebraic inequality; a detector model must supply <span class="math inline">\(\epsilon\)</span>.</p>
+<p>Soundness depends on the reference acceptance of the actual test. It can be calibrated directly. If <span class="math inline">\(m\)</span> independent reference runs yield frequency <span class="math inline">\(\widehat q\)</span>, then Hoeffding's inequality gives, with confidence at least <span class="math inline">\(1-\eta\)</span>,</p>
+<p><a id="eq:calibration"></a></p>
+<p><span class="math display">\[
+q\le q_{\mathrm{up}}
+:=\min\!\left\{1,\widehat q+
+\sqrt{\frac{\log(1/\eta)}{2m}}\right\}.\tag{12}
+\]</span></p>
+<p>The calibration requires independent, stationary reference runs. These statistical assumptions are separate from locality.</p>
+<p>The map formulation is algebraic. It does not claim that every formal Kraus family in a local algebra has a confined laboratory implementation. Some idealized field-measurement prescriptions conflict with causal signaling constraints [<a href="#ref-sorkin1993impossible">7</a>, <a href="#ref-jubb2022causal">8</a>]. System-probe schemes provide a physically grounded class of causal measurements [<a href="#ref-fewster2020measurement">9</a>, <a href="#ref-bostelmann2021impossible">10</a>], while completely positive maps give a broader language for local operations [<a href="#ref-kitajima2018local">11</a>]. Enlarging the adversary class to all bimodular maps is conservative for any realizable subclass it contains.</p>
+<p><a id="amplification-and-the-optimal-rate"></a></p>
+<h2>Amplification and the optimal rate</h2>
+<p><a id="sec:amplification"></a></p>
+<p>The one-shot theorem becomes useful when the verifier can distinguish the honest and reference states inside <span class="math inline">\(\mathcal{N}\)</span>. If their restrictions to <span class="math inline">\(\mathcal{N}\)</span> differ, they differ on a self-adjoint element. Rescaling that element gives an effect <span class="math inline">\(Q\in\mathcal{N}\)</span> with</p>
+<p><a id="eq:gap"></a></p>
+<p><span class="math display">\[
+c:=\omega_1(Q)&gt;\omega_0(Q)=:q.\tag{13}
+\]</span></p>
+<p>Thus separation never requires an unbounded field observable.</p>
+<p><a id="a-finite-copy-test"></a></p>
+<h3>A finite-copy test</h3>
+<p>Consider <span class="math inline">\(n\)</span> independent preparations of either state. Write <span class="math inline">\(Q^{(1)}=Q\)</span> and <span class="math inline">\(Q^{(0)}=\mathbf{1}-Q\)</span>. Measure each copy with <span class="math inline">\(\{Q,\mathbf{1}-Q\}\)</span> and accept when at least a fraction <span class="math inline">\(\tau\in(q,c)\)</span> of the outcomes equal one. The resulting effect is</p>
+<p><a id="eq:threshold-effect"></a></p>
+<p><span class="math display">\[
+\Pi_{n,\tau} = \sum_{\substack{x\in\{0,1\}^n\\ \sum_kx_k\ge n\tau}}
+\bigotimes_{k=1}^{n}Q^{(x_k)}.\tag{14}
+\]</span></p>
+<p>The tensor products form a product POVM, so <span class="math inline">\(0\le\Pi_{n,\tau}\le\mathbf{1}\)</span> and <span class="math inline">\(\Pi_{n,\tau}\in\mathcal{N}^{\bar\otimes n}\)</span> even when <span class="math inline">\(Q\)</span> is not a projection. The outcomes are Bernoulli variables with means <span class="math inline">\(c\)</span> and <span class="math inline">\(q\)</span> under the honest and reference product states. Hoeffding's inequality therefore gives [<a href="#ref-hoeffding1963probability">12</a>]</p>
+<p><a id="eq:complete-hoeffding"></a></p>
+<p><a id="eq:sound-hoeffding"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+\omega_1^{\otimes n}(\Pi_{n,\tau})
+&amp;\ge1-\exp[-2n(c-\tau)^2],\qquad\text{(15)}\\
+\omega_0^{\otimes n}(\Pi_{n,\tau})
+&amp;\le\exp[-2n(\tau-q)^2].\qquad\text{(16)}
+\end{aligned}
+\]</span></p>
+<p>Theorem <a href="#thm:locality">1</a>, applied to the product verifier algebra, makes the second line a forgery bound against every joint bimodular strategy across the copies. The adversary need not act copywise.</p>
+<p>At the midpoint <span class="math inline">\(\tau=(c+q)/2\)</span>, both errors are at most</p>
+<p><a id="eq:midpoint"></a></p>
+<p><span class="math display">\[
+\exp\!\left[-\frac{n(c-q)^2}{2}\right].\tag{17}
+\]</span></p>
+<p>Hence completeness and soundness errors are at most <span class="math inline">\(\varepsilon\)</span> once</p>
+<p><a id="eq:sample-complexity"></a></p>
+<p><span class="math display">\[
+n\ge \frac{2}{(c-q)^2}\log\frac1\varepsilon.\tag{18}
+\]</span></p>
+<p>This test uses one bounded effect and classical thresholding. It is explicit, though generally not optimal.</p>
+<p><a id="the-optimal-exponent"></a></p>
+<h3>The optimal exponent</h3>
+<p>Let <span class="math inline">\(D_{\mathcal{N}}(\omega_1\|\omega_0)\)</span> denote the Araki relative entropy of the restrictions to <span class="math inline">\(\mathcal{N}\)</span> [<a href="#ref-araki1976relative">13</a>]. For <span class="math inline">\(0&lt;\delta&lt;1/2\)</span>, define</p>
+<p><a id="eq:beta"></a></p>
+<p><span class="math display">\[
+\beta_{\delta}^{(n)}
+=\inf_{\substack{0\le\Pi_n\le\mathbf{1}\\
+\Pi_n\in\mathcal{N}^{\bar\otimes n}\\
+\omega_1^{\otimes n}(\Pi_n)\ge1-\delta}}
+\omega_0^{\otimes n}(\Pi_n).\tag{19}
+\]</span></p>
+<p>The identity attack in Theorem <a href="#thm:locality">1</a> shows that the worst-case forgery probability of a fixed test equals its reference acceptance. Thus <span class="math inline">\(\beta_{\delta}^{(n)}\)</span> is also the smallest worst-case forgery probability among tests with completeness at least <span class="math inline">\(1-\delta\)</span>.</p>
+<p><strong>Theorem 2 (Optimal independent-copy rate).</strong> <a id="thm:stein"></a> Let <span class="math inline">\(\mathcal{N}\)</span> be <span class="math inline">\(\sigma\)</span>-finite, let <span class="math inline">\(\omega_0,\omega_1\)</span> be faithful normal states on <span class="math inline">\(\mathcal{N}\)</span>, and suppose <span class="math inline">\(D_{\mathcal{N}}(\omega_1\|\omega_0)&lt;\infty\)</span>. Every effect <span class="math inline">\(\Pi\in\mathcal{N}\)</span> satisfying <span class="math inline">\(\omega_1(\Pi)\ge1-\delta\)</span> obeys</p>
+<p><a id="eq:one-shot-converse"></a></p>
+<p><span class="math display">\[
+\omega_0(\Pi)
+\ge
+\exp\!\left[
+-\frac{D_{\mathcal{N}}(\omega_1\|\omega_0)+h_2(\delta)}
+{1-\delta}
+\right],\tag{20}
+\]</span></p>
+<p>where <span class="math inline">\(h_2(\delta)=-\delta\log\delta-(1-\delta)\log(1-\delta)\)</span>. In addition,</p>
+<p><a id="eq:stein"></a></p>
+<p><span class="math display">\[
+\lim_{n\to\infty}
+-\frac1n\log\beta_{\delta}^{(n)}
+=D_{\mathcal{N}}(\omega_1\|\omega_0).\tag{21}
+\]</span></p>
+<p><em>Proof.</em> Apply the binary measurement defined by <span class="math inline">\(\Pi\)</span>. Monotonicity of Araki relative entropy reduces the problem to two Bernoulli distributions [<a href="#ref-uhlmann1977relative">14</a>]. Put <span class="math inline">\(r=\omega_1(\Pi)\)</span> and <span class="math inline">\(s=\omega_0(\Pi)\)</span>. Then</p>
+<p><span class="math display">\[
+\begin{split}
+D_{\mathcal{N}}(\omega_1\|\omega_0)
+&amp;\ge d(r\|s)\\
+&amp;\ge r\log(1/s)-h_2(r)\\
+&amp;\ge(1-\delta)\log(1/s)-h_2(\delta),
+\end{split}\tag{22}
+\]</span></p>
+<p>where the last line uses <span class="math inline">\(r\ge1-\delta&gt;1/2\)</span>. Rearrangement gives Eq. <a href="#eq:one-shot-converse">(20)</a>. Pautrat and Wang prove the needed Stein lemma for faithful normal states on a <span class="math inline">\(\sigma\)</span>-finite von Neumann algebra [<a href="#ref-hiai1991proper">15</a>, <a href="#ref-ogawa2000strong">16</a>, <a href="#ref-pautrat2023ke">17</a>], which gives Eq. <a href="#eq:stein">(21)</a>.</p>
+<p>The two statements have different force. Equation <a href="#eq:one-shot-converse">(20)</a> is a finite-copy lower bound, whereas Eq. <a href="#eq:stein">(21)</a> is an asymptotic equality. Relative entropy does not imply <span class="math inline">\(\beta_\delta^{(1)}=e^{-D_{\mathcal{N}}}\)</span>. The threshold test above also need not attain the Stein exponent. The optimization permits collective effects on <span class="math inline">\(\mathcal{N}^{\bar\otimes n}\)</span>, whose physical implementation is a separate measurement-design problem.</p>
+<p><a id="null-cut-realization-in-the-chiral-current"></a></p>
+<h2>Null-cut realization in the chiral current</h2>
+<p><a id="sec:current"></a></p>
+<p>The abstract exponent acquires a geometric meaning in the chiral <span class="math inline">\(U(1)\)</span> current. Let <span class="math inline">\(j(u)\)</span> be the current on a light ray, and let <span class="math inline">\(\mathcal{A}(I)\)</span> be the von Neumann algebra generated by Weyl unitaries <span class="math inline">\(W(f)=e^{ij(f)}\)</span> with real <span class="math inline">\(f\in C_c^\infty(I)\)</span>. Put</p>
+<p><a id="eq:halflines"></a></p>
+<p><span class="math display">\[
+\mathcal{M}=\mathcal{A}((0,\infty)),
+\qquad
+\mathcal{N}=\mathcal{A}((-\infty,0)).\tag{23}
+\]</span></p>
+<p>We fix the displacement and vacuum noise operationally,</p>
+<p><a id="eq:symplectic"></a></p>
+<p><a id="eq:vacuum-characteristic"></a></p>
+<p><span class="math display">\[
+\begin{aligned}
+W(f)W(h)&amp;=e^{-i\sigma(f,h)/2}W(f+h),\qquad\text{(24)}\\
+\omega_0(W(th))&amp;=e^{-t^2v_h/2},\qquad
+v_h=\langle\Omega,j(h)^2\Omega\rangle.\qquad\text{(25)}
+\end{aligned}
+\]</span></p>
+<p>In this convention <span class="math inline">\(\sigma\)</span> is a fixed nonzero multiple of <span class="math inline">\(\int f(u)h&#39;(u)du\)</span>. Its coefficient, the covariance, and the stress tensor must all refer to the same current normalization. In particular, a Weyl convention with phase <span class="math inline">\(-i\sigma\)</span> uses a symplectic form half as large as ours. We express geometric rates in physical energy, leaving that normalization explicit. Disjoint smearing supports commute, hence <span class="math inline">\(\mathcal{N}\subseteq\mathcal{M}&#39;\)</span>. The cut specifies null-ray access; the algebras by themselves do not specify a detector coupling or a unique emission point.</p>
+<p><a id="eq:access-cut"></a></p>
+<p><span class="math display">\[
+\underbrace{(-\infty,0)}_{\text{honest source and verifier}}
+\,\big|\,
+\underbrace{(0,\infty)}_{\text{excluded actor}}.\tag{26}
+\]</span></p>
+<p>Choose <span class="math inline">\(a&gt;0\)</span> and a nonzero real profile <span class="math inline">\(f\in C_c^\infty((-\infty,-a))\)</span>. The honest unitary is <span class="math inline">\(U=W(f)\in\mathcal{N}\)</span>, and</p>
+<p><a id="eq:coherent-state"></a></p>
+<p><span class="math display">\[
+\omega_f(X)
+=\langle W(f)\Omega,XW(f)\Omega\rangle
+=\omega_0(W(f)^*XW(f)).\tag{27}
+\]</span></p>
+<p>We first exhibit a bounded local verifier. For real <span class="math inline">\(h\in C_c^\infty((-\infty,0))\)</span>, set</p>
+<p><span class="math display">\[
+d:=\omega_f(W(h))-\omega_0(W(h)).\tag{28}
+\]</span></p>
+<p>Whenever <span class="math inline">\(d\ne0\)</span>, put <span class="math inline">\(\theta=\arg d\)</span> and define</p>
+<p><a id="eq:weyl-effect"></a></p>
+<p><span class="math display">\[
+X_h=\frac{e^{-i\theta}W(h)+e^{i\theta}W(h)^*}{2},
+\qquad
+Q_h=\frac{\mathbf{1}+X_h}{2}.\tag{29}
+\]</span></p>
+<p>Because <span class="math inline">\(X_h\)</span> is the real part of a phase times a unitary, <span class="math inline">\(-\mathbf{1}\le X_h\le\mathbf{1}\)</span> and <span class="math inline">\(Q_h\)</span> is an effect in <span class="math inline">\(\mathcal{N}\)</span>. Its expectation gap is <span class="math inline">\(|d|/2&gt;0\)</span>. With Eq. <a href="#eq:symplectic">(24)</a>, <span class="math inline">\(\omega_f(W(h))=e^{i\sigma(f,h)}\omega_0(W(h))\)</span>. The gap has the closed form</p>
+<p><a id="eq:explicit-weyl-gap"></a></p>
+<p><span class="math display">\[
+\omega_f(Q_h)-\omega_0(Q_h)
+=\left|\sin\frac{\sigma(f,h)}{2}\right|
+e^{-v_h/2}.\tag{30}
+\]</span></p>
+<p>Such an <span class="math inline">\(h\)</span> always exists. The symplectic form is a nonzero multiple of <span class="math inline">\(-\int f&#39;(u)h(u)\,du\)</span>. Since a nonzero compactly supported <span class="math inline">\(f\)</span> has <span class="math inline">\(f&#39;\ne0\)</span>, one may choose a bump <span class="math inline">\(h\)</span> supported where <span class="math inline">\(f&#39;\)</span> is nonzero and then rescale it so that <span class="math inline">\(\sigma(f,h)\notin2\pi\mathbb Z\)</span>. Equation <a href="#eq:explicit-weyl-gap">(30)</a> also displays the verifier-design tradeoff: scaling <span class="math inline">\(h\)</span> increases the symplectic phase but incurs a Gaussian penalty through <span class="math inline">\(v_h\)</span>.</p>
+<p><a id="a-bounded-region-detector"></a></p>
+<h3>A bounded-region detector</h3>
+<p>Choose a bounded interval <span class="math inline">\(I\subset(-\infty,0)\)</span> containing the supports of <span class="math inline">\(f,h\)</span>, with <span class="math inline">\(\mu=\sigma(f,h)&gt;0\)</span> and <span class="math inline">\(v=v_h&gt;0\)</span>. The quadrature <span class="math inline">\(j(h)\)</span> has laws <span class="math inline">\(N(\mu,v)\)</span> and <span class="math inline">\(N(0,v)\)</span> in the honest and reference states. Allow independent calibrated Gaussian readout noise of variance <span class="math inline">\(v_d\ge0\)</span>. On <span class="math inline">\(n\)</span> independent copies, accept if the mean readout exceeds</p>
+<p><span class="math display">\[
+t_n=\mu-\sqrt{(v+v_d)/n}\,z_\delta,\quad
+z_\delta=\Phi^{-1}(1-\delta),\tag{31}
+\]</span></p>
+<p>where <span class="math inline">\(\Phi\)</span> is the standard normal distribution function. The induced effect belongs to <span class="math inline">\(\mathcal{A}(I)^{\bar\otimes n}\)</span>. Its completeness is exactly <span class="math inline">\(1-\delta\)</span> and its worst-case joint forgery probability is</p>
+<p><a id="eq:local-homodyne"></a></p>
+<p><span class="math display">\[
+q_n=\overline\Phi\!\left(\frac{\sqrt n\mu}{\sqrt{v+v_d}}-z_\delta\right),
+\qquad \overline\Phi=1-\Phi.\tag{32}
+\]</span></p>
+<p>This follows from the Gaussian law of the sample mean and Theorem <a href="#thm:locality">1</a>, including arbitrary collective attacks. The measured exponent is <span class="math inline">\(\mu^2/[2(v+v_d)]\)</span>. The assumed quadrature coupling and independent noise are a detector model, not consequences of modular theory. Finite readout resolution can instead be included in the deployed effect and its calibrated reference acceptance.</p>
+<p><a id="the-full-half-line-exponent"></a></p>
+<h3>The full half-line exponent</h3>
+<p>Write the physical coherent energy density as</p>
+<p><a id="eq:energy-density"></a></p>
+<p><span class="math display">\[
+\rho_f(u)=c_j(f&#39;(u))^2,\quad c_j&gt;0,\qquad
+E_f=\int_{-\infty}^{0}\rho_f(u)\,du.\tag{33}
+\]</span></p>
+<p>Here <span class="math inline">\(c_j\)</span> is fixed by the same current as <span class="math inline">\(\sigma,v_h\)</span>; no independent choice of these constants is permitted. Geometric modular covariance makes the vacuum modular flow act by dilations about the cut [<a href="#ref-bisognano1975duality">18</a>, <a href="#ref-bisognano1976duality">19</a>, <a href="#ref-brunetti1993modular">20</a>]. Coherent-state relative entropy formulas then give [<a href="#ref-longo2019entropy">21</a>, <a href="#ref-casini2019coherent">22</a>, <a href="#ref-bostelmann2022relative">23</a>]</p>
+<p><a id="eq:current-entropy"></a></p>
+<p><span class="math display">\[
+\begin{split}
+D_{\mathcal{N}}(\omega_f\|\omega_0)
+&amp;=2\pi\int_{-\infty}^{0}(-u)\rho_f(u)\,du\\
+&amp;=:M_f.
+\end{split}\tag{34}
+\]</span></p>
+<p>The factor <span class="math inline">\(-u\)</span> weights energy by its null distance from the cut. This is the modular-energy functional that underlies the relative-entropy formulation of the Bekenstein bound [<a href="#ref-casini2008bekenstein">24</a>]. Since the packet lies in <span class="math inline">\(u\le-a\)</span>,</p>
+<p><a id="eq:standoff"></a></p>
+<p><span class="math display">\[
+M_f\ge2\pi aE_f.\tag{35}
+\]</span></p>
+<p>The half-line algebra is <span class="math inline">\(\sigma\)</span>-finite in the vacuum representation; the vacuum and coherent states are faithful and normal; and compact support makes <span class="math inline">\(M_f\)</span> finite. Theorem <a href="#thm:stein">2</a> therefore gives, for fixed <span class="math inline">\(0&lt;\delta&lt;1/2\)</span>,</p>
+<p><a id="eq:explicit-rate"></a></p>
+<p><span class="math display">\[
+\beta_\delta^{(n)}
+=\exp[-nM_f+o(n)].\tag{36}
+\]</span></p>
+<p>For a coherent packet with mean occupation <span class="math inline">\(\bar n&gt;0\)</span>, define its mean angular frequency by <span class="math inline">\(\bar\omega:=E_f/\bar n\)</span> and set <span class="math inline">\(\lambda_{\mathrm{eff}}=2\pi/\bar\omega\)</span> in units <span class="math inline">\(\hbar=c=1\)</span>. Then</p>
+<p><a id="eq:geometry-energy"></a></p>
+<p><span class="math display">\[
+M_f\ge
+4\pi^2\,\frac{a}{\lambda_{\mathrm{eff}}}\,\bar n.\tag{37}
+\]</span></p>
+<p>For a narrowband packet, <span class="math inline">\(\lambda_{\mathrm{eff}}\)</span> agrees with the central wavelength up to the relative bandwidth. Distance from the cut and packet energy therefore increase the exponent optimized over the entire half-line algebra. Equation <a href="#eq:geometry-energy">(37)</a> is a lower bound on the asymptotic exponent, not a one-shot false-acceptance formula.</p>
+<p>The distinction between the full algebra and a deployed receiver matters. Translate <span class="math inline">\(f\)</span>, <span class="math inline">\(h\)</span>, and the fixed-size detector interval together farther from the cut. Vacuum translation invariance leaves <span class="math inline">\(\mu\)</span>, <span class="math inline">\(v\)</span>, and the finite-detector performance in Eq. <a href="#eq:local-homodyne">(32)</a> unchanged, whereas <span class="math inline">\(M_f\)</span> grows. The additional half-line exponent requires a different measurement that uses more of the available algebra. Equation <a href="#eq:geometry-energy">(37)</a> is therefore not a performance gain for a translated fixed apparatus.</p>
+<p><a id="scope"></a></p>
+<h2>Scope</h2>
+<p><a id="sec:limits"></a></p>
+<p>Acceptance rules out only the adversary model specified by the excluded algebra and reference state. It does not identify the emitter, prove possession of a secret, locate a unique event, or provide secrecy. The number <span class="math inline">\(q\)</span> is a false-positive probability, not a posterior probability that an accepted event was honest.</p>
+<p>The reference assumptions are part of the claim. Each invocation must begin in the prescribed field state, with adversarial memory initially independent of it. Initial field-memory correlations require a new joint reference state. The Stein rate further assumes independent honest and reference copies. Several modes in one correlated vacuum need not realize this tensor-product model and require a separate hypothesis-testing analysis.</p>
+<p>Exact one-shot soundness also requires the deployed effect to commute with the adversary algebra. Equation <a href="#eq:approx-locality">(11)</a> isolates a known localization error, while Eq. <a href="#eq:calibration">(12)</a> accommodates noise and loss through the measured reference acceptance. Deriving the localization error from a detector coupling remains model dependent.</p>
+<p>Perfect local one-shot authentication is unavailable in standard vacuum representations. The Reeh-Schlieder property makes the vacuum separating for a local algebra, so every nonzero local effect has positive vacuum expectation [<a href="#ref-reeh1961bemerkungen">25</a>, <a href="#ref-witten2018aps">26</a>]. Authentication is therefore statistical.</p>
+<p>Finally, Theorem <a href="#thm:locality">1</a> applies to each authorized invocation. Reuse requires scheduling, fresh-reference accounting, and replay protection. The result is neither a key-establishment protocol nor a composable security theorem.</p>
+<p><a id="conclusion"></a></p>
+<h2>Conclusion</h2>
+<p><a id="sec:conclusion"></a></p>
+<p>Locality turns a causal cut into an authentication resource. For any fixed local test, the exact worst-case forgery probability is its reference acceptance. A bounded effect and classical thresholding amplify any local statistical gap, while optimized collective tests converge at the Araki relative-entropy rate. In the chiral current this optimized half-line rate is a weighted null energy. A detector confined to a bounded interval has its own achievable rate, which need not improve when moved with the pulse. The resulting certificate concerns causal access, with explicit reference and localization assumptions.</p>
+<p><a id="ai-assistance"></a></p>
+<h2>AI assistance</h2>
+<p>The research vision and original ideas are the author's. The author used OpenAI's GPT models, including Astra, and Anthropic's Claude Opus models for writing, theorem proving, and literature review. GPT models were used most often, and Astra was the most useful overall. This work is in progress. Not all claims have been verified by a human.</p>
+<p><a id="references"></a></p>
+<h2>References</h2>
+<p><a id="ref-haag1964algebraic"></a></p>
+<p>[1]</p>
+<p>Rudolf Haag and Daniel Kastler. An algebraic approach to quantum field theory. <em>Journal of Mathematical Physics</em>, 5(7):848–861, 1964.</p>
+<p><a id="ref-hayden2019localizing"></a></p>
+<p>[2]</p>
+<p>Patrick Hayden and Alex May. Localizing and excluding quantum information; or, how to share a quantum secret in spacetime. <em>Quantum</em>, 3:196, 2019.</p>
+<p><a id="ref-kent2014secure"></a></p>
+<p>[3]</p>
+<p>Adrian Kent, Serge Massar, and Jonathan Silman. Secure and robust transmission and verification of unknown quantum states in minkowski space. <em>Scientific Reports</em>, 4(1):3901, 2014.</p>
+<p><a id="ref-kent2011quantum"></a></p>
+<p>[4]</p>
+<p>Adrian Kent, William J. Munro, and Timothy P. Spiller. Quantum tagging: Authenticating location via quantum information and relativistic signaling constraints. <em>Physical Review A</em>, 84(1):012326, 2011.</p>
+<p><a id="ref-chandran2009position"></a></p>
+<p>[5]</p>
+<p>Nishanth Chandran, Vipul Goyal, Ryan Moriarty, and Rafail Ostrovsky. Position based cryptography. In <em>Annual International Cryptology Conference</em>, pages 391–407. Springer, 2009.</p>
+<p><a id="ref-buhrman2014position"></a></p>
+<p>[6]</p>
+<p>Harry Buhrman, Nishanth Chandran, Serge Fehr, Ran Gelles, Vipul Goyal, Rafail Ostrovsky, and Christian Schaffner. Position-based quantum cryptography: Impossibility and constructions. <em>SIAM Journal on Computing</em>, 43(1):150–178, 2014.</p>
+<p><a id="ref-sorkin1993impossible"></a></p>
+<p>[7]</p>
+<p>Rafael D Sorkin. Impossible measurements on quantum fields. In <em>Directions in general relativity: Proceedings of the 1993 International Symposium, Maryland</em>, volume 2, pages 293–305, 1993.</p>
+<p><a id="ref-jubb2022causal"></a></p>
+<p>[8]</p>
+<p>I Jubb. Causal state updates in real scalar quantum field theory. <em>Physical Review D</em>, 105(2):025003, 2022.</p>
+<p><a id="ref-fewster2020measurement"></a></p>
+<p>[9]</p>
+<p>Christopher J. Fewster and Rainer Verch. Quantum fields and local measurements. <em>Communications in Mathematical Physics</em>, 378(2):851–889, 2020.</p>
+<p><a id="ref-bostelmann2021impossible"></a></p>
+<p>[10]</p>
+<p>Henning Bostelmann, Christopher J Fewster, and Maximilian H Ruep. Impossible measurements require impossible apparatus. <em>Physical Review D</em>, 103(2):025017, 2021.</p>
+<p><a id="ref-kitajima2018local"></a></p>
+<p>[11]</p>
+<p>Yuichiro Kitajima. Local operations and completely positive maps in algebraic quantum field theory. In <em>Reality and Measurement in Algebraic Quantum Theory</em>, volume 261 of <em>Springer Proceedings in Mathematics &amp; Statistics</em>, pages 83–95. Springer, 2018.</p>
+<p><a id="ref-hoeffding1963probability"></a></p>
+<p>[12]</p>
+<p>Wassily Hoeffding. Probability inequalities for sums of bounded random variables. <em>Journal of the American statistical association</em>, 58(301):13–30, 1963.</p>
+<p><a id="ref-araki1976relative"></a></p>
+<p>[13]</p>
+<p>Huzihiro Araki. Relative entropy of states of von Neumann algebras. <em>Publications of the Research Institute for Mathematical Sciences</em>, 11(3):809–833, 1975.</p>
+<p><a id="ref-uhlmann1977relative"></a></p>
+<p>[14]</p>
+<p>Armin Uhlmann. Relative entropy and the Wigner-Yanase-Dyson-Lieb concavity in an interpolation theory. <em>Communications in Mathematical Physics</em>, 54(1):21–32, 1977.</p>
+<p><a id="ref-hiai1991proper"></a></p>
+<p>[15]</p>
+<p>Fumio Hiai and Dénes Petz. The proper formula for relative entropy and its asymptotics in quantum probability. <em>Communications in Mathematical Physics</em>, 143:99–114, 1991.</p>
+<p><a id="ref-ogawa2000strong"></a></p>
+<p>[16]</p>
+<p>Tomohiro Ogawa and Hiroshi Nagaoka. Strong converse and Stein's lemma in quantum hypothesis testing. <em>IEEE Transactions on Information Theory</em>, 46(7):2428–2433, 2000.</p>
+<p><a id="ref-pautrat2023ke"></a></p>
+<p>[17]</p>
+<p>Yan Pautrat and Simeng Wang. Ke Li's lemma for quantum hypothesis testing in general von Neumann algebras. <em>Annales Henri Poincaré</em>, 24(7):2323–2339, 2023.</p>
+<p><a id="ref-bisognano1975duality"></a></p>
+<p>[18]</p>
+<p>Joseph J Bisognano and Eyvind H Wichmann. On the duality condition for a hermitian scalar field. <em>Journal of Mathematical Physics</em>, 16(4):985–1007, 1975.</p>
+<p><a id="ref-bisognano1976duality"></a></p>
+<p>[19]</p>
+<p>Joseph J Bisognano and Eyvind H Wichmann. On the duality condition for quantum fields. <em>Journal of mathematical physics</em>, 17(3):303–321, 1976.</p>
+<p><a id="ref-brunetti1993modular"></a></p>
+<p>[20]</p>
+<p>Romeo Brunetti, D Guido, and Roberto Longo. Modular structure and duality in conformal quantum field theory. <em>Communications in Mathematical Physics</em>, 156(1):201–219, 1993.</p>
+<p><a id="ref-longo2019entropy"></a></p>
+<p>[21]</p>
+<p>Roberto Longo. Entropy of coherent excitations. <em>Letters in Mathematical Physics</em>, 109(12):2587–2600, 2019.</p>
+<p><a id="ref-casini2019coherent"></a></p>
+<p>[22]</p>
+<p>Horacio Casini, Sergio Grillo, and Diego Pontello. Relative entropy for coherent states from Araki formula. <em>Physical Review D</em>, 99(12):125020, 2019.</p>
+<p><a id="ref-bostelmann2022relative"></a></p>
+<p>[23]</p>
+<p>Henning Bostelmann, Daniela Cadamuro, and Simone Del Vecchio. Relative entropy of coherent states on general CCR algebras. <em>Communications in Mathematical Physics</em>, 389(1):661–691, 2022.</p>
+<p><a id="ref-casini2008bekenstein"></a></p>
+<p>[24]</p>
+<p>Horacio Casini. Relative entropy and the Bekenstein bound. <em>Classical and Quantum Gravity</em>, 25(20):205021, 2008.</p>
+<p><a id="ref-reeh1961bemerkungen"></a></p>
+<p>[25]</p>
+<p>Helmut Reeh and Siegfried Schlieder. Bemerkungen zur unitären Äquivalenz von Lorentzinvarianten Feldern. <em>Il Nuovo Cimento</em>, 22(5):1051–1068, 1961.</p>
+<p><a id="ref-witten2018aps"></a></p>
+<p>[26]</p>
+<p>Edward Witten. APS medal for exceptional achievement in research: Invited article on entanglement properties of quantum field theory. <em>Reviews of Modern Physics</em>, 90(4):045003, 2018.</p>
+{% endraw %}

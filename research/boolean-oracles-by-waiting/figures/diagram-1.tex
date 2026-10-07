@@ -1,0 +1,56 @@
+\documentclass[tikz,border=3pt]{standalone}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,xcolor,booktabs,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,arrows,positioning,calc,automata}
+\usepackage[numbers,sort&compress]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{1pt}
+\usepackage{url}
+\usepackage[colorlinks=true,allcolors=blue!45!black]{hyperref}
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\id}{\openone}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth, every node/.style={font=\footnotesize},
+  qb/.style={circle, draw=ink, line width=0.6pt, fill=white, minimum size=6.2mm, inner sep=0pt},
+  aux/.style={circle, draw=accent!85!black, line width=0.8pt, fill=accent!14, minimum size=7.4mm, inner sep=0pt},
+  link/.style={line width=0.55pt, draw=ink!70}]
+  \definecolor{ink}{HTML}{2B2B29}\definecolor{accent}{HTML}{2A78D6}\definecolor{warm}{HTML}{EB6834}
+  \node[aux] (a) at (0,0) {$a$};
+  \node[qb] (x1) at (-2.45, 1.55) {$x_1$};
+  \node[qb] (x2) at (-2.45, 0.55) {$x_2$};
+  \node[ink!70] at (-2.45,-0.3) {$\vdots$};
+  \node[qb] (xn) at (-2.45,-1.25) {$x_n$};
+  \node[qb, draw=warm!85!black, fill=warm!12] (b) at (2.05, 0) {$b$};
+  \draw[link] (a) -- node[above, sloped, pos=0.62, inner sep=2pt, yshift=1.5pt] {\scriptsize$J/M$} (x1);
+  \draw[link] (a) -- node[above, sloped, pos=0.62, inner sep=2pt, yshift=1.5pt] {\scriptsize$2J/M$} (x2);
+  \draw[link] (a) -- node[below, sloped, pos=0.62, inner sep=2pt, yshift=-1.5pt] {\scriptsize$2^{n-1}J/M$} (xn);
+  \draw[link] (a) -- node[above, pos=0.5, inner sep=2.5pt] {\scriptsize$2^{n}J/M$} (b);
+  \node[accent!80!black, align=center] at (0,0.95) {$JX_a$};
+  \node[ink!80, anchor=west] at (-2.0,-1.9) {\scriptsize couplings $Z_aP_i$};
+
+  \begin{scope}[shift={(3.55,0.85)}]
+    \draw[ink, line width=0.6pt] (0,0) circle (0.36);
+    \draw[ink, line width=0.7pt] (0,0) -- (0,0.26);
+    \draw[ink, line width=0.7pt] (0,0) -- (0.18,-0.08);
+    \fill[ink] (0,0) circle (0.9pt);
+  \end{scope}
+  \node[align=center, ink] at (3.55,-0.15) {stop at\\ $t=2\pi q\hbar/J$};
+  \node[align=center, ink!75] at (3.55,-0.95) {$q$ encodes $f$};
+\end{tikzpicture}
+\end{document}

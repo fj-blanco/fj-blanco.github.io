@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "spacelike-quantum-randomness",
+    "title": "Spacelike Guessing of Quantum Randomness",
+    "summary": "Bounds on guessing a vacuum-generated bit from a spacelike region.",
+    "area": "Quantum fields · Randomness"
+  },
+  {
+    "slug": "boolean-oracles-by-waiting",
+    "title": "Boolean Oracles by Waiting",
+    "summary": "A fixed two-body Hamiltonian implements Boolean oracles through its stopping time, with bounds on the required action.",
+    "area": "Quantum computation"
+  },
+  {
+    "slug": "entropy-and-prediction-cost",
+    "title": "Identical Entropy Profiles, Different Prediction Costs",
+    "summary": "Stationary binary sources with the same entropy profiles can have sharply different prediction costs.",
+    "area": "Information theory · Prediction"
+  },
+  {
+    "slug": "binary-context-min-entropy",
+    "title": "On the Min-Entropy Asymptotics of Binary Context Graphs",
+    "summary": "Minimum mean cycles, algebraic noise-floor criteria, and finite-block certificates for binary sources.",
+    "area": "Information theory · Randomness"
+  },
+  {
+    "slug": "soft-pair-which-path-records",
+    "title": "Soft-pair which-path records from a gapped detector",
+    "summary": "A soft pair-emission channel records path information even when slow switching suppresses detector excitation.",
+    "area": "Quantum fields · Interference"
+  },
+  {
+    "slug": "near-coherent-nonclassicality",
+    "title": "Two scales of nonclassicality near coherent states",
+    "summary": "Optical moments and Wigner negativity respond on different scales near coherent states.",
+    "area": "Quantum optics"
+  },
+  {
+    "slug": "causal-exclusion-authentication",
+    "title": "Causal-Exclusion Authentication in Quantum Field Theory",
+    "summary": "Commuting local algebras turn a causal access restriction into a statistical authentication test.",
+    "area": "Quantum fields · Cryptography"
+  },
+  {
+    "slug": "modular-field-encodings",
+    "title": "Modular Localization for Private Field Encodings",
+    "summary": "Coherent field encodings with explicit decoding error, leakage, and restricted preparation bounds.",
+    "area": "Quantum fields · Cryptography"
+  }
+]

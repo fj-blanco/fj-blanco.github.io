@@ -1,0 +1,53 @@
+\documentclass[tikz,border=3pt]{standalone}
+\ifdefined\pdfinfoomitdate\pdfinfoomitdate=1\fi
+\ifdefined\pdftrailerid\pdftrailerid{}\fi
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{graphicx,xcolor,booktabs,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,arrows,positioning,calc,automata}
+\usepackage[numbers,sort&compress]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{1pt}
+\usepackage{url}
+\usepackage[colorlinks=true,allcolors=blue!45!black]{hyperref}
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{0.25em}
+\allowdisplaybreaks
+\providecommand{\openone}{\mathbf{1}}
+\providecommand{\mathds}[1]{\mathbf{#1}}
+\definecolor{myLinkColor}{HTML}{04545c}
+\definecolor{myCiteColor}{HTML}{04545c}
+\definecolor{myURLColor}{HTML}{04545c}
+\begin{document}
+\begin{tikzpicture}[
+    >=stealth',
+    auto,
+    node distance=2.7cm,
+    thick,
+    hnode/.style={circle,draw,fill=red!12,minimum size=1.05cm},
+    lnode/.style={circle,draw,fill=blue!12,minimum size=1.05cm},
+    optimal/.style={->,very thick,draw=myLinkColor},
+    other/.style={->,thin,dashed,draw=black!55}
+]
+    \node[hnode] (00) {$00$};
+    \node[lnode] (01) [right of=00] {$01$};
+    \node[lnode] (10) [below of=00] {$10$};
+    \node[hnode] (11) [right of=10] {$11$};
+
+    \draw[optimal] (00) edge[bend left=15] node[above]{$x=1$} (01);
+    \draw[optimal] (01) edge[bend left=15] node[right]{$x=1$} (11);
+    \draw[optimal] (11) edge[bend left=15] node[below]{$x=0$} (10);
+    \draw[optimal] (10) edge[bend left=15] node[left]{$x=0$} (00);
+
+    \draw[other] (00) edge[loop left] node{$x=0$} (00);
+    \draw[other] (11) edge[loop right] node{$x=1$} (11);
+    \draw[other] (01) edge node[above left]{$x=0$} (10);
+    \draw[other] (10) edge node[below right]{$x=1$} (01);
+\end{tikzpicture}
+\end{document}
