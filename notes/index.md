@@ -9,6 +9,10 @@ description: Technical notes by Javier Blanco-Romero.
 
 <ul class="note-list">
   <li>
+    <a href="/notes/empty-de-sitter-private-randomness/">No Private Randomness in Empty de Sitter Space?</a>
+    <time datetime="2026-11-25">25 November 2026</time>
+  </li>
+  <li>
     <a href="/notes/ros2-zephyr/">Native ROS 2 on Zephyr</a>
     <time datetime="2026-09-16">16 September 2026</time>
   </li>
